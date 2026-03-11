@@ -30,7 +30,7 @@ export interface CourseSection {
 }
 
 export interface Review {
-  id: number;
+  id: number | string;
   user: string;
   avatar: string;
   rate: number;

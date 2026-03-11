@@ -71,7 +71,7 @@ export const useAdminAuth = () => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [loading, setLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(true); // Đã khởi tạo xong
+  const [isInitialized] = useState(true); // Đã khởi tạo xong
   const [error, setError] = useState<string | null>(null);
   const [loginHistory] = useState<LoginHistoryItem[]>(mockLoginHistory);
 

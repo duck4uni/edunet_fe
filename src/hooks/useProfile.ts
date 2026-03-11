@@ -45,7 +45,7 @@ export const useProfile = () => {
     socialLinks: profileData.data.socialLinks || {},
     joinDate: profileData.data.createdAt,
     coursesCompleted: 0,
-    coursesInProgress: enrollmentsData?.data?.rows?.filter((e: { status: string }) => e.status === 'active').length || 0,
+    coursesInProgress: (enrollmentsData?.data as Array<{ status: string }> | undefined)?.filter((e) => e.status === 'active').length || 0,
   } : null;
 
   const supportTickets = (ticketsData?.data || []).map((ticket: { id: string; subject: string; message: string; status: string; priority: string; category: string; createdAt: string; }) => ({

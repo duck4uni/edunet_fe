@@ -9,7 +9,7 @@ import {
   useDeleteReviewMutation,
   useToggleReviewVisibilityMutation,
 } from '../services/courseApi';
-import type { Course, Review, QueryParams } from '../services/courseApi';
+import type { Course, QueryParams } from '../services/courseApi';
 
 interface Filters {
   status?: string;

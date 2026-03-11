@@ -45,7 +45,7 @@ export const useCourseDetail = () => {
       name: `${apiCourse.teacher.firstName} ${apiCourse.teacher.lastName}`,
       avatar: apiCourse.teacher.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=teacher',
     } : undefined,
-    content: (Array.isArray(lessons) ? lessons : []).map((lesson, index) => ({
+    content: (Array.isArray(lessons) ? lessons : []).map((lesson) => ({
       title: lesson.title,
       items: [lesson.description || lesson.title].filter(Boolean) as string[],
     })),
