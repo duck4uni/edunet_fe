@@ -68,7 +68,7 @@ const AdminLogin: React.FC = () => {
             <span className="text-white font-bold text-2xl">E</span>
           </div>
           <Title level={2} className="mb-2">
-            Admin Panel
+            Trang quản trị
           </Title>
           <Text type="secondary">
             Đăng nhập để quản lý hệ thống EduNet
@@ -158,7 +158,7 @@ const AdminLogin: React.FC = () => {
             <Text strong>Email:</Text> admin@edunet.com
           </Paragraph>
           <Paragraph className="mb-0 text-sm">
-            <Text strong>Password:</Text> admin123
+            <Text strong>Mật khẩu:</Text> admin123
           </Paragraph>
         </div>
 

@@ -23,12 +23,12 @@ const ListCourse: React.FC = () => {
   const transformedCourses = courses.map(course => ({
     id: course.id,
     title: course.title,
-    author: course.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : 'Unknown',
+    author: course.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : 'Chưa rõ',
     image: course.thumbnail || 'https://via.placeholder.com/400x200',
     price: course.price,
     lessons: course.totalLessons,
     duration: course.duration || '0h',
-    category: course.category?.name || 'General',
+    category: course.category?.name || 'Chung',
     startDate: course.startDate,
   }));
 

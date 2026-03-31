@@ -11,12 +11,12 @@ interface ReviewsTabProps {
 }
 
 const REPORT_REASONS = [
-  'Spam or misleading',
-  'Inappropriate content',
-  'Harassment or bullying',
-  'False information',
-  'Copyright violation',
-  'Other',
+  'Spam hoặc gây hiểu lầm',
+  'Nội dung không phù hợp',
+  'Quấy rối hoặc bắt nạt',
+  'Thông tin sai lệch',
+  'Vi phạm bản quyền',
+  'Khác',
 ];
 
 const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
@@ -35,7 +35,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
 
   const handleSubmitReport = (values: any) => {
     console.log('Report submitted:', { review: reportingReview, ...values });
-    message.success('Report submitted successfully. We will review it shortly.');
+    message.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
     setReportModalOpen(false);
     reportForm.resetFields();
   };
@@ -67,7 +67,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
       key: 'report',
       label: (
         <span className="flex items-center gap-2 text-red-500">
-          <FlagOutlined /> Report Review
+          <FlagOutlined /> Báo cáo đánh giá
         </span>
       ),
       onClick: () => handleReport(review),
@@ -82,7 +82,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
           <div className="text-center">
             <h1 className="text-6xl font-bold mb-2">4.5</h1>
             <Rate disabled defaultValue={4.5} allowHalf className="text-yellow-400" />
-            <p className="text-blue-200 mt-2">Based on 128 reviews</p>
+            <p className="text-blue-200 mt-2">Dựa trên 128 đánh giá</p>
           </div>
           <div className="flex-1 w-full">
             {[5, 4, 3, 2, 1].map((star) => {
@@ -116,24 +116,24 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
       <div className="bg-white p-4 rounded-xl mb-6 flex flex-wrap items-center justify-between gap-4 border border-gray-100">
         <div className="flex items-center gap-2">
           <FilterOutlined className="text-gray-400" />
-          <Text className="text-gray-500">Filter by:</Text>
+          <Text className="text-gray-500">Lọc theo:</Text>
           <Select
             value={filterRating}
             onChange={setFilterRating}
-            placeholder="All ratings"
+            placeholder="Tất cả đánh giá"
             allowClear
             className="w-36"
             options={[
-              { value: 5, label: '5 Stars' },
-              { value: 4, label: '4 Stars' },
-              { value: 3, label: '3 Stars' },
-              { value: 2, label: '2 Stars' },
-              { value: 1, label: '1 Star' },
+              { value: 5, label: '5 Sao' },
+              { value: 4, label: '4 Sao' },
+              { value: 3, label: '3 Sao' },
+              { value: 2, label: '2 Sao' },
+              { value: 1, label: '1 Sao' },
             ]}
           />
         </div>
         <Text className="text-gray-500">
-          Showing {filteredReviews.length} of {reviews.length} reviews
+          Hiển thị {filteredReviews.length} trên {reviews.length} đánh giá
         </Text>
       </div>
 
@@ -190,7 +190,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
 
                   {/* Like/Dislike Actions */}
                   <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
-                    <Tooltip title="Helpful">
+                    <Tooltip title="Hữu ích">
                       <Button 
                         type="text" 
                         icon={likedReviews.includes(item.id) ? <LikeFilled className="text-[#e5698e]" /> : <LikeOutlined />}
@@ -200,7 +200,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
                         {12 + (likedReviews.includes(item.id) ? 1 : 0)}
                       </Button>
                     </Tooltip>
-                    <Tooltip title="Not helpful">
+                    <Tooltip title="Không hữu ích">
                       <Button 
                         type="text" 
                         icon={dislikedReviews.includes(item.id) ? <DislikeFilled className="text-gray-600" /> : <DislikeOutlined />}
@@ -220,45 +220,45 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
 
       {/* Add Review Form */}
       <div className="mt-8 bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-        <h3 className="text-2xl font-bold mb-2 text-[#012643]">Write a Review</h3>
-        <p className="text-gray-500 mb-6">Share your experience with this course</p>
+        <h3 className="text-2xl font-bold mb-2 text-[#012643]">Viết đánh giá</h3>
+        <p className="text-gray-500 mb-6">Chia sẻ trải nghiệm của bạn về khóa học này</p>
         
         <Form form={form} onFinish={handleFinishReview} layout="vertical" size="large">
           <Form.Item 
             name="rate" 
-            label={<span className="font-medium">Your Rating</span>}
-            rules={[{ required: true, message: 'Please select a rating' }]}
+            label={<span className="font-medium">Đánh giá của bạn</span>}
+            rules={[{ required: true, message: 'Vui lòng chọn mức đánh giá' }]}
           >
             <Rate className="text-2xl text-yellow-500" />
           </Form.Item>
           
           <Form.Item 
             name="title" 
-            label={<span className="font-medium">Review Title</span>}
-            rules={[{ required: true, message: 'Please add a title' }]}
+            label={<span className="font-medium">Tiêu đề đánh giá</span>}
+            rules={[{ required: true, message: 'Vui lòng thêm tiêu đề' }]}
           >
-            <Input placeholder="Summarize your experience" className="!rounded-lg" />
+            <Input placeholder="Tóm tắt trải nghiệm của bạn" className="!rounded-lg" />
           </Form.Item>
           
           <Form.Item 
             name="content" 
-            label={<span className="font-medium">Your Review</span>}
-            rules={[{ required: true, message: 'Please write your review' }]}
+            label={<span className="font-medium">Nội dung đánh giá</span>}
+            rules={[{ required: true, message: 'Vui lòng viết đánh giá' }]}
           >
             <TextArea 
               rows={5} 
-              placeholder="What did you like or dislike about this course? How was the instructor? Would you recommend it?" 
+              placeholder="Bạn thích hoặc không thích điều gì về khóa học? Giảng viên thế nào? Bạn có giới thiệu không?" 
               className="!rounded-lg"
               showCount
               maxLength={1000}
             />
           </Form.Item>
           
-          <Form.Item name="images" label={<span className="font-medium">Add Photos (Optional)</span>}>
+          <Form.Item name="images" label={<span className="font-medium">Thêm ảnh (Tùy chọn)</span>}>
             <Upload listType="picture-card" maxCount={5}>
               <div className="text-gray-400">
                 <UploadOutlined className="text-xl" />
-                <div className="mt-2 text-sm">Upload</div>
+                <div className="mt-2 text-sm">Tải lên</div>
               </div>
             </Upload>
           </Form.Item>
@@ -270,7 +270,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
               size="large" 
               className="!bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-xl !h-12 !px-8"
             >
-              Submit Review
+              Gửi đánh giá
             </Button>
           </Form.Item>
         </Form>
@@ -281,7 +281,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
         title={
           <div className="flex items-center gap-2 text-red-500">
             <ExclamationCircleOutlined />
-            <span>Report Review</span>
+            <span>Báo cáo đánh giá</span>
           </div>
         }
         open={reportModalOpen}
@@ -293,15 +293,15 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
       >
         <Form form={reportForm} onFinish={handleSubmitReport} layout="vertical">
           <p className="text-gray-500 mb-4">
-            Help us understand what's wrong with this review. Your report will be reviewed by our team.
+            Giúp chúng tôi hiểu vấn đề của đánh giá này. Báo cáo của bạn sẽ được đội ngũ của chúng tôi xem xét.
           </p>
           
           <Form.Item 
             name="reason" 
-            label="Reason for reporting"
-            rules={[{ required: true, message: 'Please select a reason' }]}
+            label="Lý do báo cáo"
+            rules={[{ required: true, message: 'Vui lòng chọn lý do' }]}
           >
-            <Select placeholder="Select a reason">
+            <Select placeholder="Chọn lý do">
               {REPORT_REASONS.map(reason => (
                 <Select.Option key={reason} value={reason}>{reason}</Select.Option>
               ))}
@@ -310,18 +310,18 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
           
           <Form.Item 
             name="details" 
-            label="Additional details"
+            label="Chi tiết bổ sung"
           >
             <TextArea 
               rows={4} 
-              placeholder="Provide any additional information that might help us understand the issue..."
+              placeholder="Cung cấp thông tin bổ sung giúp chúng tôi hiểu vấn đề..."
             />
           </Form.Item>
           
           <div className="flex justify-end gap-3">
-            <Button onClick={() => setReportModalOpen(false)}>Cancel</Button>
+            <Button onClick={() => setReportModalOpen(false)}>Hủy</Button>
             <Button type="primary" htmlType="submit" danger>
-              Submit Report
+              Gửi báo cáo
             </Button>
           </div>
         </Form>

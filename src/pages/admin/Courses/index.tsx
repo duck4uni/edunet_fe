@@ -372,7 +372,7 @@ const CourseManagement: React.FC = () => {
     { label: 'Cập nhật', value: formatDate(selectedCourse.updatedAt) },
     { label: 'Xuất bản', value: selectedCourse.publishedAt ? formatDate(selectedCourse.publishedAt) : '—' },
     { label: 'Mô tả', value: selectedCourse.description, span: 2 },
-    { label: 'Tags', value: (selectedCourse.tags || []).map(t => <Tag key={t}>{t}</Tag>), span: 2 },
+    { label: 'Thẻ', value: (selectedCourse.tags || []).map(t => <Tag key={t}>{t}</Tag>), span: 2 },
   ] : [];
 
   return (
@@ -412,7 +412,7 @@ const CourseManagement: React.FC = () => {
         <Col xs={12} sm={6}>
           <Card size="small" className="text-center">
             <div className="text-2xl font-bold text-red-500">{statistics.flaggedReviews}</div>
-            <Text type="secondary" className="text-xs">Review bị báo cáo</Text>
+            <Text type="secondary" className="text-xs">Đánh giá bị báo cáo</Text>
           </Card>
         </Col>
       </Row>

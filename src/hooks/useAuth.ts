@@ -54,10 +54,10 @@ export const useAuth = (): UseAuthReturn => {
         return true;
       }
       
-      setError('Login failed');
+      setError('Đăng nhập thất bại');
       return false;
     } catch (err: unknown) {
-      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Login failed';
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Đăng nhập thất bại';
       setError(errorMessage);
       return false;
     }
@@ -74,10 +74,10 @@ export const useAuth = (): UseAuthReturn => {
         return true;
       }
       
-      setError('Registration failed');
+      setError('Đăng ký thất bại');
       return false;
     } catch (err: unknown) {
-      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Registration failed';
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Đăng ký thất bại';
       setError(errorMessage);
       return false;
     }
@@ -100,7 +100,7 @@ export const useAuth = (): UseAuthReturn => {
       const result = await forgotPasswordMutation({ email }).unwrap();
       return result.success;
     } catch (err: unknown) {
-      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Failed to send reset email';
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Gửi email đặt lại mật khẩu thất bại';
       setError(errorMessage);
       return false;
     }
@@ -112,7 +112,7 @@ export const useAuth = (): UseAuthReturn => {
       const result = await resetPasswordMutation({ token, password }).unwrap();
       return result.success;
     } catch (err: unknown) {
-      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Failed to reset password';
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Đặt lại mật khẩu thất bại';
       setError(errorMessage);
       return false;
     }

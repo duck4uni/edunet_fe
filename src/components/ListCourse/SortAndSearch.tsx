@@ -25,15 +25,15 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, t
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <Title level={2} className="!mb-1 !text-[#012643]">Explore Courses</Title>
+          <Title level={2} className="!mb-1 !text-[#012643]">Khám phá khóa học</Title>
           <Text className="text-gray-500">
-            Showing <span className="font-semibold text-[#012643]">{totalCourses}</span> courses available
+            Hiển thị <span className="font-semibold text-[#012643]">{totalCourses}</span> khóa học có sẵn
           </Text>
         </div>
         
         {/* View Toggle - Desktop */}
         <div className="hidden md:flex items-center gap-3">
-          <Text className="text-gray-500">View:</Text>
+          <Text className="text-gray-500">Hiển thị:</Text>
           <Segmented
             value={view}
             onChange={handleViewChange}
@@ -53,7 +53,7 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, t
           <div className="flex-1">
             <Input
               size="large"
-              placeholder="Search for courses, topics, or instructors..."
+              placeholder="Tìm khóa học, chủ đề hoặc giảng viên..."
               prefix={<SearchOutlined className="text-gray-400 text-lg" />}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -72,11 +72,11 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, t
               popupClassName="rounded-xl"
               suffixIcon={<SortAscendingOutlined className="text-gray-400" />}
               options={[
-                { value: 'newest', label: 'Newest First' },
-                { value: 'popular', label: 'Most Popular' },
-                { value: 'rating', label: 'Highest Rated' },
-                { value: 'price-low', label: 'Price: Low to High' },
-                { value: 'price-high', label: 'Price: High to Low' },
+                { value: 'newest', label: 'Mới nhất' },
+                { value: 'popular', label: 'Phổ biến nhất' },
+                { value: 'rating', label: 'Đánh giá cao nhất' },
+                { value: 'price-low', label: 'Giá: Thấp đến Cao' },
+                { value: 'price-high', label: 'Giá: Cao đến Thấp' },
               ]}
             />
             
@@ -86,7 +86,7 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, t
               icon={<FilterOutlined />}
               className="lg:hidden !rounded-xl !border-gray-200"
             >
-              Filters
+              Bộ lọc
             </Button>
 
             <Button 
@@ -96,15 +96,15 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, t
               onClick={() => onSearch(searchValue)}
               className="!bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-xl !px-6"
             >
-              Search
+              Tìm kiếm
             </Button>
           </div>
         </div>
 
         {/* Quick Filters */}
         <div className="mt-4 flex flex-wrap gap-2">
-          <Text className="text-gray-500 mr-2">Quick filters:</Text>
-          {['Free', 'Beginner Friendly', 'Certificate', 'New This Week', 'Top Rated'].map((filter) => (
+          <Text className="text-gray-500 mr-2">Lọc nhanh:</Text>
+          {['Miễn phí', 'Phù hợp người mới', 'Có chứng chỉ', 'Mới trong tuần', 'Đánh giá cao'].map((filter) => (
             <Button 
               key={filter}
               size="small"

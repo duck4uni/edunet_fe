@@ -64,7 +64,7 @@ const Schedule: React.FC = () => {
           );
         })}
         {events.length > 3 && (
-          <li className="text-xs text-gray-400">+{events.length - 3} more</li>
+          <li className="text-xs text-gray-400">+{events.length - 3} thêm</li>
         )}
       </ul>
     );
@@ -82,9 +82,9 @@ const Schedule: React.FC = () => {
           <div>
             <Title level={2} className="!text-[#012643] !mb-1 flex items-center gap-3">
               <CalendarOutlined className="text-blue-500" />
-              My Schedule
+              Lịch học của tôi
             </Title>
-            <Text className="text-gray-500">Manage your learning schedule and upcoming events</Text>
+            <Text className="text-gray-500">Quản lý lịch học và các sự kiện sắp tới</Text>
           </div>
           <div className="flex gap-3">
             <Select
@@ -92,12 +92,12 @@ const Schedule: React.FC = () => {
               onChange={setFilterType}
               className="!w-40"
               options={[
-                { value: 'all', label: 'All Events' },
-                { value: 'class', label: 'Classes' },
-                { value: 'assignment', label: 'Assignments' },
-                { value: 'quiz', label: 'Quizzes' },
-                { value: 'meeting', label: 'Meetings' },
-                { value: 'deadline', label: 'Deadlines' },
+                { value: 'all', label: 'Tất cả sự kiện' },
+                { value: 'class', label: 'Lớp học' },
+                { value: 'assignment', label: 'Bài tập' },
+                { value: 'quiz', label: 'Kiểm tra' },
+                { value: 'meeting', label: 'Cuộc họp' },
+                { value: 'deadline', label: 'Hạn chót' },
               ]}
             />
           </div>
@@ -109,7 +109,7 @@ const Schedule: React.FC = () => {
             <Card className="rounded-xl border-0 shadow-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#012643]">{stats.total}</div>
-                <div className="text-gray-500 text-sm">Total Events</div>
+                <div className="text-gray-500 text-sm">Tổng sự kiện</div>
               </div>
             </Card>
           </Col>
@@ -117,7 +117,7 @@ const Schedule: React.FC = () => {
             <Card className="rounded-xl border-0 shadow-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-500">{stats.classes}</div>
-                <div className="text-gray-500 text-sm">Classes</div>
+                <div className="text-gray-500 text-sm">Lớp học</div>
               </div>
             </Card>
           </Col>
@@ -125,7 +125,7 @@ const Schedule: React.FC = () => {
             <Card className="rounded-xl border-0 shadow-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-500">{stats.assignments}</div>
-                <div className="text-gray-500 text-sm">Assignments</div>
+                <div className="text-gray-500 text-sm">Bài tập</div>
               </div>
             </Card>
           </Col>
@@ -133,7 +133,7 @@ const Schedule: React.FC = () => {
             <Card className="rounded-xl border-0 shadow-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-500">{stats.quizzes}</div>
-                <div className="text-gray-500 text-sm">Quizzes</div>
+                <div className="text-gray-500 text-sm">Kiểm tra</div>
               </div>
             </Card>
           </Col>
@@ -176,12 +176,12 @@ const Schedule: React.FC = () => {
             {/* Today's Events */}
             <Card className="rounded-2xl border-0 shadow-md mb-6">
               <div className="flex items-center justify-between mb-4">
-                <Title level={5} className="!mb-0 !text-[#012643]">Today's Schedule</Title>
-                <Tag color="blue" className="!rounded-full">{todayEvents.length} events</Tag>
+                <Title level={5} className="!mb-0 !text-[#012643]">Lịch hôm nay</Title>
+                <Tag color="blue" className="!rounded-full">{todayEvents.length} sự kiện</Tag>
               </div>
               {todayEvents.length === 0 ? (
                 <Empty 
-                  description="No events today" 
+                  description="Không có sự kiện hôm nay" 
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   className="!my-4"
                 />
@@ -197,11 +197,11 @@ const Schedule: React.FC = () => {
             {/* Upcoming Events */}
             <Card className="rounded-2xl border-0 shadow-md">
               <div className="flex items-center justify-between mb-4">
-                <Title level={5} className="!mb-0 !text-[#012643]">Upcoming Events</Title>
+                <Title level={5} className="!mb-0 !text-[#012643]">Sự kiện sắp tới</Title>
               </div>
               {upcomingEvents.length === 0 ? (
                 <Empty 
-                  description="No upcoming events" 
+                  description="Không có sự kiện sắp tới" 
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   className="!my-4"
                 />
@@ -218,14 +218,14 @@ const Schedule: React.FC = () => {
 
         {/* Event Detail Modal */}
         <Modal
-          title={selectedEvent ? 'Event Details' : `Events on ${selectedDate.format('MMMM D, YYYY')}`}
+          title={selectedEvent ? 'Chi tiết sự kiện' : `Sự kiện ngày ${selectedDate.format('DD/MM/YYYY')}`}
           open={isModalOpen}
           onCancel={closeModal}
           footer={selectedEvent ? [
-            <Button key="close" onClick={closeModal}>Close</Button>,
+            <Button key="close" onClick={closeModal}>Đóng</Button>,
             selectedEvent.type === 'class' && (
               <Button key="join" type="primary" icon={<VideoCameraOutlined />} className="!bg-[#012643]">
-                Join Class
+                Tham gia lớp
               </Button>
             )
           ] : null}
@@ -276,7 +276,7 @@ const Schedule: React.FC = () => {
 
               {selectedEvent.description && (
                 <div className="pt-3 border-t border-gray-100">
-                  <Text className="text-gray-500 text-sm block mb-1">Description</Text>
+                  <Text className="text-gray-500 text-sm block mb-1">Mô tả</Text>
                   <Text>{selectedEvent.description}</Text>
                 </div>
               )}
@@ -285,7 +285,7 @@ const Schedule: React.FC = () => {
             // Multiple events view
             <div className="space-y-3">
               {getEventsForDate(selectedDate).length === 0 ? (
-                <Empty description="No events on this day" />
+                <Empty description="Không có sự kiện trong ngày này" />
               ) : (
                 getEventsForDate(selectedDate).map(event => (
                   <EventCard key={event.id} event={event} onClick={openEventModal} />

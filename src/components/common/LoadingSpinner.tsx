@@ -11,7 +11,7 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'default',
-  tip = 'Loading...',
+  tip = 'Đang tải...',
   fullScreen = false,
   className = '',
 }) => {

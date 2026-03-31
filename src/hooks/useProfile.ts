@@ -6,7 +6,7 @@ import {
 } from '../services/authApi';
 import { useGetMyTicketsQuery, useCreateTicketMutation } from '../services/supportApi';
 import { useGetUserEnrollmentsQuery } from '../services/courseApi';
-import type { SupportTicket } from '../types/profile';
+import type { SupportTicket, Achievement, Certificate } from '../types/profile';
 
 export const useProfile = () => {
   const [activeTab, setActiveTab] = useState('info');
@@ -48,7 +48,7 @@ export const useProfile = () => {
     coursesInProgress: (enrollmentsData?.data as Array<{ status: string }> | undefined)?.filter((e) => e.status === 'active').length || 0,
   } : null;
 
-  const supportTickets = (ticketsData?.data || []).map((ticket: { id: string; subject: string; message: string; status: string; priority: string; category: string; createdAt: string; }) => ({
+  const supportTickets = (ticketsData?.data || []).map((ticket: { id: string; subject: string; message: string; status: string; priority: string; category: string; createdAt: string; updatedAt?: string; }) => ({
     id: ticket.id,
     subject: ticket.subject,
     description: ticket.message,
@@ -56,6 +56,8 @@ export const useProfile = () => {
     priority: ticket.priority,
     category: ticket.category,
     createdAt: ticket.createdAt,
+    updatedAt: ticket.updatedAt || ticket.createdAt,
+    responses: [] as { id: string; message: string; isStaff: boolean; authorName: string; authorAvatar: string; createdAt: string; }[],
   }));
 
   const handleEditProfile = () => {
@@ -111,13 +113,13 @@ export const useProfile = () => {
   const getTicketStatusConfig = (status: string) => {
     switch (status) {
       case 'open':
-        return { color: 'blue', text: 'Open' };
+        return { color: 'blue', text: 'Đang mở' };
       case 'in-progress':
-        return { color: 'orange', text: 'In Progress' };
+        return { color: 'orange', text: 'Đang xử lý' };
       case 'resolved':
-        return { color: 'green', text: 'Resolved' };
+        return { color: 'green', text: 'Đã giải quyết' };
       case 'closed':
-        return { color: 'default', text: 'Closed' };
+        return { color: 'default', text: 'Đã đóng' };
       default:
         return { color: 'default', text: status };
     }
@@ -144,9 +146,9 @@ export const useProfile = () => {
     isTicketModalOpen,
     selectedTicket,
     setSelectedTicket,
-    achievements: [],
-    certificates: [],
-    supportTickets,
+    achievements: [] as Achievement[],
+    certificates: [] as Certificate[],
+    supportTickets: supportTickets as SupportTicket[],
     handleEditProfile,
     handleSaveProfile,
     handleChangePassword,

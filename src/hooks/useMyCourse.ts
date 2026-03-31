@@ -36,14 +36,14 @@ const mapEnrollmentToCourse = (enrollment: Enrollment): MyCourseItem => {
     id: enrollment.courseId,
     enrollmentId: enrollment.id,
     image: course?.thumbnail || 'https://placehold.co/400x250?text=Course',
-    title: course?.title || 'Untitled Course',
+    title: course?.title || 'Khóa học chưa có tên',
     teacher: course?.teacher
       ? `${course.teacher.firstName} ${course.teacher.lastName}`
-      : 'Unknown',
+      : 'Chưa rõ',
     status: mapEnrollmentStatus(enrollment),
     lessons: `${completedLessons}/${totalLessons}`,
     progress: enrollment.progress,
-    category: course?.category?.name || 'General',
+    category: course?.category?.name || 'Chung',
     completedDate: enrollment.completedAt,
     startDate: course?.startDate,
     level: course?.level,
@@ -89,7 +89,7 @@ export const useMyCourse = () => {
       case 'pending':
         return { color: 'warning', text: 'Chưa bắt đầu' };
       default:
-        return { color: 'default', text: 'Unknown' };
+        return { color: 'default', text: 'Không rõ' };
     }
   }, []);
 

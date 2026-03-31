@@ -233,7 +233,7 @@ const Quizz: React.FC = () => {
                         {quiz.bestScore !== undefined && (
                           <div className="flex items-center gap-2 text-gray-600">
                             <TrophyOutlined className="text-yellow-500" />
-                            <span>Best: {quiz.bestScore}%</span>
+                            <span>Cao nhất: {quiz.bestScore}%</span>
                           </div>
                         )}
                       </div>
@@ -256,7 +256,7 @@ const Quizz: React.FC = () => {
                       {/* Due Date */}
                       {quiz.dueDate && quiz.status === 'not-started' && (
                         <div className="bg-orange-50 p-3 rounded-xl mb-4">
-                          <Text className="text-xs text-orange-600">Due: {quiz.dueDate}</Text>
+                          <Text className="text-xs text-orange-600">Hạn: {quiz.dueDate}</Text>
                         </div>
                       )}
 

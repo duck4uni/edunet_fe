@@ -8,28 +8,28 @@ const stats = [
   {
     icon: <UserOutlined />,
     count: '10k+',
-    label: 'Active Students',
+    label: 'Học viên tích cực',
     color: '#17EAD9',
     bgColor: 'rgba(23, 234, 217, 0.15)',
   },
   {
     icon: <ReadOutlined />,
     count: '500+',
-    label: 'Quality Courses',
+    label: 'Khóa học chất lượng',
     color: '#6078EA',
     bgColor: 'rgba(96, 120, 234, 0.15)',
   },
   {
     icon: <TrophyOutlined />,
     count: '100+',
-    label: 'Award Winning',
+    label: 'Giải thưởng',
     color: '#e5698e',
     bgColor: 'rgba(229, 105, 142, 0.15)',
   },
   {
     icon: <GlobalOutlined />,
     count: '50+',
-    label: 'Countries',
+    label: 'Quốc gia',
     color: '#FFCE00',
     bgColor: 'rgba(255, 206, 0, 0.15)',
   },
@@ -52,9 +52,9 @@ const StatsSection: React.FC = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-12" data-aos="fade-up">
           <Title level={2} className="!text-3xl md:!text-4xl !font-bold !text-white !mb-3">
-            Our Impact in Numbers
+            Thành tựu của chúng tôi qua con số
           </Title>
-          <Text className="text-blue-200 text-lg">Join our growing community of learners worldwide</Text>
+          <Text className="text-blue-200 text-lg">Tham gia cộng đồng học viên đang ngày càng lớn mạnh toàn cầu</Text>
         </div>
 
         <Row gutter={[32, 32]} justify="center">

@@ -26,19 +26,19 @@ const CoursesSection: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-12" data-aos="fade-up">
           <div>
             <div className="inline-block px-4 py-2 bg-[#e5698e]/10 rounded-full mb-4">
-              <span className="text-[#e5698e] font-semibold">🔥 Trending Now</span>
+              <span className="text-[#e5698e] font-semibold">🔥 Xu hướng</span>
             </div>
             <Title level={2} className="!mb-2 !text-[#012643] !text-3xl md:!text-4xl">
-              Most <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Popular</span> Courses
+              Khóa học <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Phổ biến</span> nhất
             </Title>
-            <Paragraph className="text-gray-500 max-w-lg">Discover our most-loved courses handpicked by our community of learners</Paragraph>
+            <Paragraph className="text-gray-500 max-w-lg">Khám phá các khóa học được yêu thích nhất do cộng đồng học viên của chúng tôi bình chọn</Paragraph>
           </div>
           <Link to="/courses">
             <Button 
               className="!rounded-full !border-[#e5698e] !text-[#e5698e] hover:!bg-[#e5698e] hover:!text-white !h-11 !px-6 !font-medium"
               icon={<ArrowRightOutlined />}
             >
-              Explore All Courses
+              Xem tất cả khóa học
             </Button>
           </Link>
         </div>
@@ -65,19 +65,19 @@ const CoursesSection: React.FC = () => {
                   <CourseCard course={{
                     id: course.id,
                     title: course.title,
-                    author: course.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : 'Unknown',
+                    author: course.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : 'Chưa rõ',
                     image: course.thumbnail || 'https://via.placeholder.com/400x200',
                     price: course.price,
                     lessons: course.totalLessons,
                     duration: course.duration || '0h',
-                    category: course.category?.name || 'General',
+                    category: course.category?.name || 'Chung',
                   }} />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
             <div className="text-center py-10 text-gray-500">
-              No courses available yet
+              Chưa có khóa học nào
             </div>
           )}
         </div>

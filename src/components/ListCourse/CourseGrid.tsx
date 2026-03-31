@@ -35,8 +35,8 @@ const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view 
         <Empty
           description={
             <div className="mt-4">
-              <Text className="text-gray-500 text-lg">No courses found</Text>
-              <p className="text-gray-400 mt-2">Try adjusting your filters or search terms</p>
+              <Text className="text-gray-500 text-lg">Không tìm thấy khóa học</Text>
+              <p className="text-gray-400 mt-2">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
             </div>
           }
         />
@@ -62,7 +62,7 @@ const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view 
       {/* Pagination */}
       <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm">
         <Text className="text-gray-500">
-          Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, courses.length)} of {courses.length} courses
+          Hiển thị {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, courses.length)} trên {courses.length} khóa học
         </Text>
         <Pagination 
           current={currentPage}

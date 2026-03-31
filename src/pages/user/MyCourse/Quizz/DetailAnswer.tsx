@@ -7,7 +7,6 @@ import {
   Typography,
   Breadcrumb,
   Spin,
-  Progress,
   Row,
   Col,
 } from 'antd';

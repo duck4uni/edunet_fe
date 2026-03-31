@@ -85,7 +85,7 @@ const Material: React.FC = () => {
 
   const columns = [
     {
-      title: 'Material',
+      title: 'Tài liệu',
       dataIndex: 'title',
       key: 'title',
       render: (_: any, record: MaterialItem) => {
@@ -104,7 +104,7 @@ const Material: React.FC = () => {
       },
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => {
@@ -117,13 +117,13 @@ const Material: React.FC = () => {
       },
     },
     {
-      title: 'Size',
+      title: 'Kích thước',
       dataIndex: 'size',
       key: 'size',
       render: (size: string) => <Text className="text-gray-500">{size || '-'}</Text>,
     },
     {
-      title: 'Uploaded',
+      title: 'Ngày tải lên',
       dataIndex: 'uploadedAt',
       key: 'uploadedAt',
       render: (date: string) => (
@@ -131,12 +131,12 @@ const Material: React.FC = () => {
       ),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       render: (_: any, record: MaterialItem) => (
         <Space>
           {record.type === 'link' ? (
-            <Tooltip title="Open Link">
+            <Tooltip title="Mở liên kết">
               <Button 
                 type="text" 
                 icon={<LinkOutlined />} 
@@ -146,22 +146,22 @@ const Material: React.FC = () => {
             </Tooltip>
           ) : (
             <>
-              <Tooltip title="Preview">
+              <Tooltip title="Xem trước">
                 <Button type="text" icon={<EyeOutlined />} className="!text-blue-500" />
               </Tooltip>
-              <Tooltip title="Download">
+              <Tooltip title="Tải xuống">
                 <Button type="text" icon={<DownloadOutlined />} className="!text-green-500" />
               </Tooltip>
             </>
           )}
           {userRole === 'teacher' && (
             <Popconfirm
-              title="Delete this material?"
+              title="Xóa tài liệu này?"
               onConfirm={() => handleDelete(record.id)}
-              okText="Yes"
-              cancelText="No"
+              okText="Có"
+              cancelText="Không"
             >
-              <Tooltip title="Delete">
+              <Tooltip title="Xóa">
                 <Button type="text" icon={<DeleteOutlined />} className="!text-red-500" />
               </Tooltip>
             </Popconfirm>
@@ -230,7 +230,7 @@ const Material: React.FC = () => {
             <Card className="rounded-xl border-0 shadow-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-500">{stats.video}</div>
-                <div className="text-gray-500 text-sm">Videos</div>
+                <div className="text-gray-500 text-sm">Video</div>
               </div>
             </Card>
           </Col>
@@ -263,9 +263,9 @@ const Material: React.FC = () => {
                 { value: 'all', label: 'Tất cả loại' },
                 { value: 'pdf', label: 'PDF' },
                 { value: 'video', label: 'Video' },
-                { value: 'document', label: 'Document' },
-                { value: 'link', label: 'Link' },
-                { value: 'image', label: 'Image' },
+                { value: 'document', label: 'Tài liệu' },
+                { value: 'link', label: 'Liên kết' },
+                { value: 'image', label: 'Hình ảnh' },
               ]}
             />
           </div>
@@ -339,13 +339,13 @@ const Material: React.FC = () => {
                     <Input placeholder="https://example.com/resource" />
                   </Form.Item>
                 ) : (
-                  <Form.Item label="Upload File">
+                  <Form.Item label="Tải lên tệp">
                     <Dragger>
                       <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                       </p>
-                      <p className="ant-upload-text">Click or drag file to upload</p>
-                      <p className="ant-upload-hint">Support for single or bulk upload</p>
+                      <p className="ant-upload-text">Nhấp hoặc kéo thả tệp để tải lên</p>
+                      <p className="ant-upload-hint">Hỗ trợ tải lên từng tệp hoặc nhiều tệp</p>
                     </Dragger>
                   </Form.Item>
                 )

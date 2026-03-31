@@ -89,7 +89,7 @@ const AdminDashboard: React.FC = () => {
   // Recent tickets columns
   const ticketColumns = [
     {
-      title: 'Ticket',
+      title: 'Mã ticket',
       dataIndex: 'ticketId',
       key: 'ticketId',
       render: (text: string, record: any) => (
@@ -124,7 +124,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="Dashboard"
+        title="Tổng quan"
         subtitle="Tổng quan về hoạt động của hệ thống"
         extra={
           <Text type="secondary">

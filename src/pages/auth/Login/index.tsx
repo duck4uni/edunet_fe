@@ -11,17 +11,17 @@ const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
 const SUPPORT_CATEGORIES = [
-  { value: 'login', label: 'Login Issues' },
-  { value: 'registration', label: 'Registration Problems' },
-  { value: 'password', label: 'Password Recovery' },
-  { value: 'account', label: 'Account Access' },
-  { value: 'other', label: 'Other' },
+  { value: 'login', label: 'Vấn đề đăng nhập' },
+  { value: 'registration', label: 'Vấn đề đăng ký' },
+  { value: 'password', label: 'Khôi phục mật khẩu' },
+  { value: 'account', label: 'Truy cập tài khoản' },
+  { value: 'other', label: 'Khác' },
 ];
 
 const features = [
-  { icon: <BookOutlined className="text-[#17EAD9]" />, text: '500+ Premium Courses' },
-  { icon: <TeamOutlined className="text-[#6078EA]" />, text: '10,000+ Active Learners' },
-  { icon: <SafetyCertificateOutlined className="text-[#e5698e]" />, text: 'Industry Certificates' },
+  { icon: <BookOutlined className="text-[#17EAD9]" />, text: '500+ Khóa học chất lượng' },
+  { icon: <TeamOutlined className="text-[#6078EA]" />, text: '10,000+ Học viên tích cực' },
+  { icon: <SafetyCertificateOutlined className="text-[#e5698e]" />, text: 'Chứng chỉ chuyên ngành' },
 ];
 
 const Login: React.FC = () => {
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    message.info('Redirecting to Google Login...');
+    message.info('Đang chuyển hướng đến Google...');
   };
 
   const handleForgotPassword = () => {
@@ -106,10 +106,10 @@ const Login: React.FC = () => {
             <img src={Logo} alt="EduNet" className="w-28 h-28 rounded-2xl shadow-2xl relative z-10 border-4 border-white/10" />
           </div>
           <Title level={1} className="!text-white !mb-4 !text-4xl !font-bold">
-            Welcome Back to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">EduNet</span>
+            Chào mừng trở lại <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">EduNet</span>
           </Title>
           <Paragraph className="text-blue-200 text-lg mb-10">
-            Your gateway to world-class education. Continue your learning journey with thousands of courses and expert instructors.
+            Cổng thông tin giáo dục đẳng cấp. Tiếp tục hành trình học tập với hàng nghìn khóa học và giảng viên chuyên gia.
           </Paragraph>
           
           {/* Features */}
@@ -141,8 +141,8 @@ const Login: React.FC = () => {
           {/* Form Card */}
           <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100">
             <div className="mb-8">
-              <Title level={2} className="!text-[#012643] !mb-2 !text-2xl">Sign In</Title>
-              <Text className="text-gray-500">Welcome back! Please enter your details.</Text>
+              <Title level={2} className="!text-[#012643] !mb-2 !text-2xl">Đăng nhập</Title>
+              <Text className="text-gray-500">Chào mừng trở lại! Vui lòng nhập thông tin của bạn.</Text>
             </div>
 
             <Form
@@ -157,32 +157,32 @@ const Login: React.FC = () => {
               <Form.Item
                 name="email"
                 label={<span className="text-gray-600 font-medium">Email</span>}
-                rules={[{ required: true, message: 'Please input your Email!' }]}
+                rules={[{ required: true, message: 'Vui lòng nhập Email!' }]}
               >
                 <Input 
                   prefix={<MailOutlined className="text-gray-400" />} 
-                  placeholder="Enter your email" 
+                  placeholder="Nhập email của bạn" 
                   className="!rounded-xl !h-12"
                 />
               </Form.Item>
               <Form.Item
                 name="password"
-                label={<span className="text-gray-600 font-medium">Password</span>}
-                rules={[{ required: true, message: 'Please input your Password!' }]}
+                label={<span className="text-gray-600 font-medium">Mật khẩu</span>}
+                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
               >
                 <Input.Password
                   prefix={<LockOutlined className="text-gray-400" />}
-                  placeholder="Enter your password"
+                  placeholder="Nhập mật khẩu"
                   className="!rounded-xl !h-12"
                 />
               </Form.Item>
               <Form.Item>
                 <div className="flex justify-between items-center">
                   <Form.Item name="remember" valuePropName="checked" noStyle>
-                    <Checkbox className="text-gray-500">Remember me</Checkbox>
+                    <Checkbox className="text-gray-500">Ghi nhớ đăng nhập</Checkbox>
                   </Form.Item>
                   <a className="text-[#e5698e] hover:text-[#d64d72] font-medium text-sm" onClick={handleForgotPassword}>
-                    Forgot Password?
+                    Quên mật khẩu?
                   </a>
                 </div>
               </Form.Item>
@@ -194,7 +194,7 @@ const Login: React.FC = () => {
                   loading={isLoading}
                   className="w-full !bg-gradient-to-r from-[#012643] to-[#01385f] !border-none !h-12 !text-base !font-semibold hover:!opacity-90 !rounded-xl shadow-lg shadow-blue-900/20 transition-all"
                 >
-                  Sign In
+                  Đăng nhập
                 </Button>
               </Form.Item>
 
@@ -203,7 +203,7 @@ const Login: React.FC = () => {
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-400">or continue with</span>
+                  <span className="px-4 bg-white text-gray-400">hoặc tiếp tục với</span>
                 </div>
               </div>
 
@@ -227,14 +227,14 @@ const Login: React.FC = () => {
             </Form>
 
             <div className="text-center">
-              <Text className="text-gray-500">Don't have an account? </Text>
+              <Text className="text-gray-500">Chưa có tài khoản? </Text>
               <div className="mt-3 flex justify-center gap-4">
                 <Link to="/auth/register/student" className="text-[#6078EA] font-semibold hover:text-[#4a5db8] transition-colors">
-                  Register as Student
+                  Đăng ký học viên
                 </Link>
                 <span className="text-gray-300">|</span>
                 <Link to="/auth/register/teacher" className="text-[#e5698e] font-semibold hover:text-[#d64d72] transition-colors">
-                  Register as Teacher
+                  Đăng ký giảng viên
                 </Link>
               </div>
             </div>
@@ -248,7 +248,7 @@ const Login: React.FC = () => {
               onClick={() => setIsSupportModalOpen(true)}
               className="!text-gray-500 hover:!text-[#012643]"
             >
-              Need help? Submit a support ticket
+              Bạn cần giúp đỡ? Gửi yêu cầu hỗ trợ
             </Button>
           </div>
         </div>
@@ -259,30 +259,30 @@ const Login: React.FC = () => {
         title={
           <div className="flex items-center gap-2">
             <LockOutlined className="text-[#6078EA]" />
-            <span>Reset Password</span>
+            <span>Đặt lại mật khẩu</span>
           </div>
         }
         open={isModalOpen} 
         onOk={handleSendResetLink} 
         onCancel={() => setIsModalOpen(false)}
-        okText="Send Reset Link"
+        okText="Gửi liên kết"
         confirmLoading={isSendingReset}
         okButtonProps={{ className: '!bg-[#012643]' }}
       >
         <div className="py-4">
           <Paragraph className="text-gray-500 mb-4">
-            Enter your email address and we'll send you a link to reset your password.
+            Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
           </Paragraph>
           <Form form={resetEmailForm}>
             <Form.Item
               name="resetEmail"
               rules={[
-                { required: true, message: 'Please enter your email' },
-                { type: 'email', message: 'Please enter a valid email' }
+                { required: true, message: 'Vui lòng nhập email' },
+                { type: 'email', message: 'Vui lòng nhập email hợp lệ' }
               ]}
             >
               <Input 
-                placeholder="Enter your email address" 
+                placeholder="Nhập địa chỉ email" 
                 prefix={<MailOutlined className="text-gray-400" />} 
                 size="large" 
                 className="!rounded-xl"
@@ -297,7 +297,7 @@ const Login: React.FC = () => {
         title={
           <div className="flex items-center gap-2">
             <QuestionCircleOutlined className="text-[#e5698e]" />
-            <span>Submit Support Ticket</span>
+            <span>Gửi yêu cầu hỗ trợ</span>
           </div>
         }
         open={isSupportModalOpen} 
@@ -307,7 +307,7 @@ const Login: React.FC = () => {
       >
         <div className="py-2">
           <Text className="text-gray-500 block mb-4">
-            Having trouble accessing your account? Submit a ticket and our support team will help you.
+            Bạn gặp vấn đề truy cập tài khoản? Gửi yêu cầu và đội ngũ hỗ trợ sẽ giúp bạn.
           </Text>
           <Form
             form={supportForm}
@@ -316,57 +316,57 @@ const Login: React.FC = () => {
           >
             <Form.Item 
               name="email" 
-              label="Your Email"
+              label="Email của bạn"
               rules={[
-                { required: true, message: 'Please enter your email' },
-                { type: 'email', message: 'Please enter a valid email' }
+                { required: true, message: 'Vui lòng nhập email' },
+                { type: 'email', message: 'Vui lòng nhập email hợp lệ' }
               ]}
             >
-              <Input prefix={<MailOutlined />} placeholder="Enter your email address" className="!rounded-lg" />
+              <Input prefix={<MailOutlined />} placeholder="Nhập địa chỉ email" className="!rounded-lg" />
             </Form.Item>
 
             <Form.Item 
               name="name" 
-              label="Your Name"
-              rules={[{ required: true, message: 'Please enter your name' }]}
+              label="Họ tên"
+              rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
             >
-              <Input prefix={<UserOutlined />} placeholder="Enter your full name" className="!rounded-lg" />
+              <Input prefix={<UserOutlined />} placeholder="Nhập họ tên đầy đủ" className="!rounded-lg" />
             </Form.Item>
 
             <Form.Item 
               name="category" 
-              label="Issue Category"
-              rules={[{ required: true, message: 'Please select a category' }]}
+              label="Loại vấn đề"
+              rules={[{ required: true, message: 'Vui lòng chọn loại vấn đề' }]}
             >
               <Select 
                 options={SUPPORT_CATEGORIES} 
-                placeholder="Select the type of issue"
+                placeholder="Chọn loại vấn đề"
                 className="!rounded-lg"
               />
             </Form.Item>
 
             <Form.Item 
               name="subject" 
-              label="Subject"
-              rules={[{ required: true, message: 'Please enter a subject' }]}
+              label="Tiêu đề"
+              rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}
             >
-              <Input placeholder="Brief description of your issue" className="!rounded-lg" />
+              <Input placeholder="Mô tả ngắn gọn vấn đề" className="!rounded-lg" />
             </Form.Item>
 
             <Form.Item 
               name="description" 
-              label="Description"
-              rules={[{ required: true, message: 'Please describe your issue' }]}
+              label="Mô tả chi tiết"
+              rules={[{ required: true, message: 'Vui lòng mô tả vấn đề' }]}
             >
               <TextArea 
                 rows={4} 
-                placeholder="Please provide detailed information about your issue..."
+                placeholder="Vui lòng cung cấp thông tin chi tiết về vấn đề của bạn..."
                 className="!rounded-lg"
               />
             </Form.Item>
 
             <div className="flex justify-end gap-3 mt-4">
-              <Button onClick={() => setIsSupportModalOpen(false)} className="!rounded-lg">Cancel</Button>
+              <Button onClick={() => setIsSupportModalOpen(false)} className="!rounded-lg">Hủy</Button>
               <Button 
                 type="primary" 
                 htmlType="submit"
@@ -374,7 +374,7 @@ const Login: React.FC = () => {
                 loading={isCreatingTicket}
                 className="!bg-[#012643] !rounded-lg"
               >
-                Submit Ticket
+                Gửi yêu cầu
               </Button>
             </div>
           </Form>

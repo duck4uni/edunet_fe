@@ -30,22 +30,22 @@ const DetailCourse: React.FC = () => {
   const items = [
     {
       key: '1',
-      label: 'Overview',
+      label: 'Tổng quan',
       children: <OverviewTab description={courseData.description || ''} />,
     },
     {
       key: '2',
-      label: 'Course Content',
+      label: 'Nội dung khóa học',
       children: <ContentTab content={courseData.content || []} />,
     },
     {
       key: '3',
-      label: 'Description',
+      label: 'Mô tả',
       children: <DescriptionTab goal={courseData.goal || ''} />,
     },
     {
       key: '4',
-      label: 'Reviews',
+      label: 'Đánh giá',
       children: <ReviewsTab reviews={courseData.reviews || []} />,
     },
   ];

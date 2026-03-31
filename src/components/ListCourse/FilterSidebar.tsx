@@ -4,7 +4,7 @@ import { SearchOutlined, StarFilled } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetCategoriesQuery } from '../../services/courseApi';
 
-const FILTER_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const FILTER_DAYS = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
 
 const FilterSidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -45,10 +45,10 @@ const FilterSidebar: React.FC = () => {
   const items = [
     {
       key: '1',
-      label: <span className="font-semibold text-base text-[#012643]">Search</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Tìm kiếm</span>,
       children: (
         <Input
-          placeholder="Search in filters..."
+          placeholder="Tìm trong bộ lọc..."
           prefix={<SearchOutlined className="text-gray-400" />}
           className="!rounded-lg"
           allowClear
@@ -57,7 +57,7 @@ const FilterSidebar: React.FC = () => {
     },
     {
       key: '2',
-      label: <span className="font-semibold text-base text-[#012643]">Categories</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Danh mục</span>,
       children: isCategoriesLoading ? (
         <div className="flex justify-center py-4">
           <Spin size="small" />
@@ -87,7 +87,7 @@ const FilterSidebar: React.FC = () => {
     },
     {
       key: '3',
-      label: <span className="font-semibold text-base text-[#012643]">Price Range</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Khoảng giá</span>,
       children: (
         <div className="px-2">
           <Slider
@@ -109,7 +109,7 @@ const FilterSidebar: React.FC = () => {
     },
     {
       key: '4',
-      label: <span className="font-semibold text-base text-[#012643]">Rating</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Đánh giá</span>,
       children: (
         <div className="flex flex-col gap-2">
           {[5, 4, 3, 2, 1].map((rating) => (
@@ -123,7 +123,7 @@ const FilterSidebar: React.FC = () => {
               }`}
             >
               <Rate disabled defaultValue={rating} className="text-sm" />
-              <span className="text-gray-500 text-sm">& up</span>
+              <span className="text-gray-500 text-sm">trở lên</span>
             </div>
           ))}
         </div>
@@ -131,7 +131,7 @@ const FilterSidebar: React.FC = () => {
     },
     {
       key: '5',
-      label: <span className="font-semibold text-base text-[#012643]">Schedule</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Lịch học</span>,
       children: (
         <div className="flex flex-col gap-2">
           <Checkbox.Group 
@@ -154,10 +154,10 @@ const FilterSidebar: React.FC = () => {
     },
     {
       key: '6',
-      label: <span className="font-semibold text-base text-[#012643]">Level</span>,
+      label: <span className="font-semibold text-base text-[#012643]">Trình độ</span>,
       children: (
         <div className="flex flex-col gap-2">
-          {['Beginner', 'Intermediate', 'Advanced', 'All Levels'].map((level) => (
+          {['Người mới', 'Trung cấp', 'Nâng cao', 'Tất cả trình độ'].map((level) => (
             <Checkbox key={level} className="!ml-0 p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-gray-600">{level}</span>
             </Checkbox>
@@ -170,13 +170,13 @@ const FilterSidebar: React.FC = () => {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm sticky top-24 border border-gray-100">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-[#012643]">Filters</h3>
+        <h3 className="text-xl font-bold text-[#012643]">Bộ lọc</h3>
         <Button 
           type="text" 
           onClick={handleReset}
           className="text-gray-400 hover:!text-[#e5698e] font-medium"
         >
-          Reset All
+          Đặt lại
         </Button>
       </div>
       
@@ -223,7 +223,7 @@ const FilterSidebar: React.FC = () => {
         onClick={handleApplyFilters}
         className="!mt-6 !bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-xl !h-12 !font-medium"
       >
-        Apply Filters
+        Áp dụng bộ lọc
       </Button>
     </div>
   );

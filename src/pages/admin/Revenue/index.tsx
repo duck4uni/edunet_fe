@@ -70,7 +70,7 @@ const RevenueManagement: React.FC = () => {
         <Col xs={24} lg={16}>
           <Card title="Biến động doanh thu" extra={<Select defaultValue="month" size="small" options={[{ value: 'week', label: '7 ngày' }, { value: 'month', label: '30 ngày' }, { value: 'year', label: '12 tháng' }]} />}>
             <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded">
-              <Text type="secondary">Chart Component - Doanh thu theo thời gian</Text>
+              <Text type="secondary">Biểu đồ - Doanh thu theo thời gian</Text>
             </div>
           </Card>
         </Col>
@@ -165,14 +165,14 @@ const RevenueManagement: React.FC = () => {
       <Col xs={24} lg={12}>
         <Card title="So sánh kỳ">
           <div className="h-48 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded">
-            <Text type="secondary">Chart - So sánh doanh thu các kỳ</Text>
+            <Text type="secondary">Biểu đồ - So sánh doanh thu các kỳ</Text>
           </div>
         </Card>
       </Col>
       <Col xs={24} lg={12}>
         <Card title="Phân tích xu hướng">
           <div className="h-48 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded">
-            <Text type="secondary">Chart - Xu hướng tăng trưởng</Text>
+            <Text type="secondary">Biểu đồ - Xu hướng tăng trưởng</Text>
           </div>
         </Card>
       </Col>

@@ -151,7 +151,7 @@ const AdminProfile: React.FC = () => {
                 <SunOutlined className="text-2xl text-yellow-500" />
               )}
               <div>
-                <Text strong className="block">Chế độ tối (Dark Mode)</Text>
+                <Text strong className="block">Chế độ tối</Text>
                 <Text type="secondary">Giảm mỏi mắt khi làm việc trong môi trường ánh sáng yếu</Text>
               </div>
             </div>
@@ -306,7 +306,7 @@ const AdminProfile: React.FC = () => {
               <Title level={4} className="mb-1">{admin?.firstName} {admin?.lastName}</Title>
               <Text type="secondary">{admin?.email}</Text>
               <div className="mt-2">
-                <Tag color="purple">{admin?.role === 'super_admin' ? 'Super Admin' : 'Admin'}</Tag>
+                <Tag color="purple">{admin?.role === 'super_admin' ? 'Quản trị viên cao cấp' : 'Quản trị viên'}</Tag>
               </div>
             </div>
 

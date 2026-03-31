@@ -52,97 +52,97 @@ const RegisterStudent: React.FC = () => {
 
   const steps = [
     {
-      title: 'Account',
+      title: 'Tài khoản',
       content: (
         <>
           <Form.Item
             name="email"
             label="Email"
             rules={[
-              { required: true, message: 'Please input your Email!' },
-              { type: 'email', message: 'The input is not valid E-mail!' },
+              { required: true, message: 'Vui lòng nhập Email!' },
+              { type: 'email', message: 'Email không hợp lệ!' },
             ]}
           >
-            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Enter your email" className="!rounded-lg" size="large" />
+            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập email của bạn" className="!rounded-lg" size="large" />
           </Form.Item>
           <Form.Item
             name="password"
-            label="Password"
-            rules={[{ required: true, message: 'Please input your Password!' }]}
+            label="Mật khẩu"
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
           >
-            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Create a password" className="!rounded-lg" size="large" />
+            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Tạo mật khẩu" className="!rounded-lg" size="large" />
           </Form.Item>
           <Form.Item
             name="confirmPassword"
-            label="Confirm Password"
+            label="Xác nhận mật khẩu"
             dependencies={['password']}
             rules={[
-              { required: true, message: 'Please confirm your password!' },
+              { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Passwords do not match!'));
+                  return Promise.reject(new Error('Mật khẩu không khớp!'));
                 },
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Confirm your password" className="!rounded-lg" size="large" />
+            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Xác nhận mật khẩu" className="!rounded-lg" size="large" />
           </Form.Item>
         </>
       ),
     },
     {
-      title: 'Personal',
+      title: 'Cá nhân',
       content: (
         <>
           <Form.Item
             name="name"
-            label="Full Name"
-            rules={[{ required: true, message: 'Please input your Full Name!' }]}
+            label="Họ tên"
+            rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
           >
-            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Enter your full name" className="!rounded-lg" size="large" />
+            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập họ tên đầy đủ" className="!rounded-lg" size="large" />
           </Form.Item>
           <Form.Item
             name="phone"
-            label="Phone Number"
-            rules={[{ required: true, message: 'Please input your Phone Number!' }]}
+            label="Số điện thoại"
+            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
           >
-            <Input prefix={<PhoneOutlined className="text-gray-400" />} placeholder="Enter your phone number" className="!rounded-lg" size="large" />
+            <Input prefix={<PhoneOutlined className="text-gray-400" />} placeholder="Nhập số điện thoại" className="!rounded-lg" size="large" />
           </Form.Item>
           <Form.Item
             name="age"
-            label="Age"
-            rules={[{ required: true, message: 'Please input your Age!' }]}
+            label="Tuổi"
+            rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}
           >
-            <InputNumber placeholder="Enter your age" size="large" className="!w-full !rounded-lg" min={1} max={100} />
+            <InputNumber placeholder="Nhập tuổi" size="large" className="!w-full !rounded-lg" min={1} max={100} />
           </Form.Item>
         </>
       ),
     },
     {
-      title: 'Education',
+      title: 'Học vấn',
       content: (
         <>
           <Form.Item
             name="major"
-            label="Major / Field of Study"
-            rules={[{ required: true, message: 'Please input your Major!' }]}
+            label="Chuyên ngành"
+            rules={[{ required: true, message: 'Vui lòng nhập chuyên ngành!' }]}
           >
-            <Input prefix={<BookOutlined className="text-gray-400" />} placeholder="e.g. Computer Science" className="!rounded-lg" size="large" />
+            <Input prefix={<BookOutlined className="text-gray-400" />} placeholder="VD: Khoa học máy tính" className="!rounded-lg" size="large" />
           </Form.Item>
           <Form.Item
             name="degree"
-            label="Education Level"
+            label="Trình độ học vấn"
             initialValue="University"
-            rules={[{ required: true, message: 'Please select your Degree!' }]}
+            rules={[{ required: true, message: 'Vui lòng chọn trình độ!' }]}
           >
-            <Select size="large" placeholder="Select your education level" className="!rounded-lg">
-              <Option value="Primary School">Primary School</Option>
-              <Option value="Middle School">Middle School</Option>
-              <Option value="High School">High School</Option>
-              <Option value="University">University</Option>
+            <Select size="large" placeholder="Chọn trình độ học vấn" className="!rounded-lg">
+              <Option value="Primary School">Tiểu học</Option>
+              <Option value="Middle School">Trung học cơ sở</Option>
+              <Option value="High School">Trung học phổ thông</Option>
+              <Option value="University">Đại học</Option>
             </Select>
           </Form.Item>
         </>
@@ -156,9 +156,9 @@ const RegisterStudent: React.FC = () => {
       <div className="hidden lg:flex lg:w-5/12 bg-[#012643] items-center justify-center relative overflow-hidden">
         <div className="z-10 text-center p-12">
           <img src={Logo} alt="EduNet" className="w-28 h-28 rounded-full mb-6 mx-auto shadow-lg" />
-          <Title level={2} className="!text-white !mb-4">Join as a Student</Title>
+          <Title level={2} className="!text-white !mb-4">Đăng ký học viên</Title>
           <Text className="text-blue-200 text-base block max-w-sm mx-auto">
-            Start your learning journey today. Access thousands of courses from expert instructors.
+            Bắt đầu hành trình học tập ngay hôm nay. Truy cập hàng nghìn khóa học từ giảng viên chuyên gia.
           </Text>
         </div>
         <div className="absolute -top-20 -left-20 w-80 h-80 bg-[#17EAD9] rounded-full opacity-10 blur-3xl"></div>
@@ -174,8 +174,8 @@ const RegisterStudent: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <Title level={3} className="!text-[#012643] !mb-1">Student Registration</Title>
-            <Text className="text-gray-500">Complete the steps below to create your account.</Text>
+            <Title level={3} className="!text-[#012643] !mb-1">Đăng ký học viên</Title>
+            <Text className="text-gray-500">Hoàn thành các bước dưới đây để tạo tài khoản.</Text>
           </div>
 
           <Steps current={current} className="mb-8" size="small" items={steps.map(s => ({ title: s.title }))} />
@@ -195,27 +195,27 @@ const RegisterStudent: React.FC = () => {
             <div className="flex justify-between mt-6 gap-4">
               {current > 0 && (
                 <Button onClick={() => setCurrent(current - 1)} size="large" className="!rounded-lg">
-                  Previous
+                  Quay lại
                 </Button>
               )}
               {current === 0 && <div></div>}
               
               <Button type="primary" htmlType="submit" size="large" loading={isLoading} className="!bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-lg !px-8">
-                {current === 2 ? 'Create Account' : 'Continue'}
+                {current === 2 ? 'Tạo tài khoản' : 'Tiếp tục'}
               </Button>
             </div>
           </Form>
 
           <div className="text-center mt-6 pt-6 border-t border-gray-100">
             <Text className="text-gray-500">
-              Already have an account? 
-              <Link to="/auth/login" className="text-[#e5698e] ml-1 font-medium hover:underline">Login</Link>
+              Đã có tài khoản? 
+              <Link to="/auth/login" className="text-[#e5698e] ml-1 font-medium hover:underline">Đăng nhập</Link>
             </Text>
           </div>
 
           <div className="text-center mt-4">
              <a href="mailto:support@edunet.com" className="inline-flex items-center gap-2 text-gray-500 text-sm hover:text-[#012643] transition-colors">
-                <MailOutlined /> Need help? Contact Support
+                <MailOutlined /> Cần giúp đỡ? Liên hệ hỗ trợ
              </a>
           </div>
         </div>

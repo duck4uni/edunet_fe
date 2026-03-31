@@ -34,19 +34,19 @@ const CategoriesSection: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-12" data-aos="fade-up">
           <div>
             <div className="inline-block px-4 py-2 bg-[#17EAD9]/10 rounded-full mb-4">
-              <span className="text-[#17EAD9] font-semibold">📚 Categories</span>
+              <span className="text-[#17EAD9] font-semibold">📚 Danh mục</span>
             </div>
             <Title level={2} className="!mb-2 !text-[#012643] !text-3xl md:!text-4xl">
-              Explore Top <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Categories</span>
+              Khám phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Danh mục</span> nổi bật
             </Title>
-            <Paragraph className="text-gray-500 max-w-lg">Discover courses in trending fields and start your learning journey today</Paragraph>
+            <Paragraph className="text-gray-500 max-w-lg">Khám phá các khóa học trong những lĩnh vực thịnh hành và bắt đầu hành trình học tập của bạn ngay hôm nay</Paragraph>
           </div>
           <Link to="/courses">
             <Button 
               className="!rounded-full !border-[#6078EA] !text-[#6078EA] hover:!bg-[#6078EA] hover:!text-white !h-11 !px-6 !font-medium"
               icon={<ArrowRightOutlined />}
             >
-              View All Categories
+              Xem tất cả danh mục
             </Button>
           </Link>
         </div>
@@ -88,14 +88,14 @@ const CategoriesSection: React.FC = () => {
                         <Tag 
                           className="!absolute !top-3 !right-3 !border-0 !bg-white/90 !backdrop-blur-sm !rounded-full !px-3 !py-1 !text-[#012643] !font-medium"
                         >
-                          {cat.courses?.length || 0} Courses
+                          {cat.courses?.length || 0} Khóa học
                         </Tag>
                       </div>
                       <div className="p-5">
                         <Title level={5} className="!mb-1 !text-[#012643] group-hover:!text-[#6078EA] transition-colors">
                           {cat.name}
                         </Title>
-                        <Text type="secondary" className="text-sm">Start learning today →</Text>
+                        <Text type="secondary" className="text-sm">Bắt đầu học ngay →</Text>
                       </div>
                     </Card>
                   </Link>
@@ -104,7 +104,7 @@ const CategoriesSection: React.FC = () => {
             </Swiper>
           ) : (
             <div className="text-center py-10 text-gray-500">
-              No categories available yet
+              Chưa có danh mục nào
             </div>
           )}
         </div>

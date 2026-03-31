@@ -43,18 +43,18 @@ const ContactList: React.FC<ContactListProps> = ({
     const diff = now.getTime() - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     
-    if (hours < 1) return 'Just now';
-    if (hours < 24) return `${hours}h ago`;
-    if (hours < 48) return 'Yesterday';
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (hours < 1) return 'Vừa xong';
+    if (hours < 24) return `${hours}h trước`;
+    if (hours < 48) return 'Hôm qua';
+    return date.toLocaleDateString('vi-VN', { month: 'short', day: 'numeric' });
   };
 
   const getContactMenu = (contact: Contact) => ({
     items: [
-      { key: 'pin', icon: <PushpinOutlined />, label: contact.isPinned ? 'Unpin' : 'Pin conversation' },
-      { key: 'mute', icon: <BellOutlined />, label: contact.isMuted ? 'Unmute' : 'Mute notifications' },
+      { key: 'pin', icon: <PushpinOutlined />, label: contact.isPinned ? 'Bỏ ghim' : 'Ghim hội thoại' },
+      { key: 'mute', icon: <BellOutlined />, label: contact.isMuted ? 'Bật thông báo' : 'Tắt thông báo' },
       { type: 'divider' as const },
-      { key: 'delete', icon: <DeleteOutlined />, label: 'Delete conversation', danger: true },
+      { key: 'delete', icon: <DeleteOutlined />, label: 'Xóa hội thoại', danger: true },
     ],
   });
 
@@ -63,7 +63,7 @@ const ContactList: React.FC<ContactListProps> = ({
       {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-[#012643]">Chats</h2>
+          <h2 className="text-2xl font-bold text-[#012643]">Tin nhắn</h2>
           <div className="flex gap-2">
             <Button 
               type="text" 
@@ -83,7 +83,7 @@ const ContactList: React.FC<ContactListProps> = ({
         {/* Search */}
         <Input
           prefix={<SearchOutlined className="text-gray-400" />}
-          placeholder="Search conversations"
+          placeholder="Tìm kiếm hội thoại"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="!rounded-full !bg-gray-100 hover:!bg-gray-50 !border-none"
@@ -97,9 +97,9 @@ const ContactList: React.FC<ContactListProps> = ({
           activeKey={activeTab}
           onChange={setActiveTab}
           items={[
-            { key: 'all', label: 'All' },
-            { key: 'unread', label: 'Unread' },
-            { key: 'groups', label: 'Groups' },
+            { key: 'all', label: 'Tất cả' },
+            { key: 'unread', label: 'Chưa đọc' },
+            { key: 'groups', label: 'Nhóm' },
           ]}
           className="!mb-0"
         />
@@ -110,7 +110,7 @@ const ContactList: React.FC<ContactListProps> = ({
         {/* Pinned Section */}
         {filteredContacts.some(c => c.isPinned) && (
           <div className="px-4 py-2">
-            <Text className="text-xs text-gray-500 font-semibold uppercase">Pinned</Text>
+            <Text className="text-xs text-gray-500 font-semibold uppercase">Đã ghim</Text>
           </div>
         )}
         
@@ -129,7 +129,7 @@ const ContactList: React.FC<ContactListProps> = ({
         {/* All Chats Section */}
         {filteredContacts.some(c => !c.isPinned) && (
           <div className="px-4 py-2">
-            <Text className="text-xs text-gray-500 font-semibold uppercase">All Chats</Text>
+            <Text className="text-xs text-gray-500 font-semibold uppercase">Tất cả hội thoại</Text>
           </div>
         )}
         
@@ -147,7 +147,7 @@ const ContactList: React.FC<ContactListProps> = ({
 
         {filteredContacts.length === 0 && (
           <div className="text-center py-8">
-            <Text className="text-gray-400">No conversations found</Text>
+            <Text className="text-gray-400">Không tìm thấy hội thoại</Text>
           </div>
         )}
       </div>
@@ -222,9 +222,9 @@ const ContactItem: React.FC<ContactItemProps> = ({
             className={`text-sm ${contact.unreadCount > 0 ? 'text-[#012643] font-medium' : 'text-gray-500'}`}
           >
             {lastMessage?.senderId === 'me' && (
-              <span className="text-gray-400">You: </span>
+              <span className="text-gray-400">Bạn: </span>
             )}
-            {lastMessage?.content || 'Start a conversation'}
+            {lastMessage?.content || 'Bắt đầu cuộc trò chuyện'}
           </Text>
           
           <div className="flex items-center gap-2">

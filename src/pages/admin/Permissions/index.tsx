@@ -84,7 +84,7 @@ const PermissionsManagement: React.FC = () => {
   const permColumns = [
     { title: 'Quyền', dataIndex: 'name', key: 'name' },
     { title: 'Mã', dataIndex: 'code', key: 'code', render: (c: string) => <Tag>{c}</Tag> },
-    { title: 'Module', dataIndex: 'module', key: 'module', render: (m: string) => <Tag color="blue" className="capitalize">{m}</Tag> },
+    { title: 'Phân hệ', dataIndex: 'module', key: 'module', render: (m: string) => <Tag color="blue" className="capitalize">{m}</Tag> },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', ellipsis: true },
   ];
 

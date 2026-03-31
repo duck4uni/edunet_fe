@@ -80,7 +80,7 @@ const RecruitmentManagement: React.FC = () => {
       ),
     },
     { title: 'Phòng ban', dataIndex: 'department', key: 'dept', width: 140, render: (d: string) => <Tag color="geekblue">{d}</Tag> },
-    { title: 'Loại', dataIndex: 'type', key: 'type', width: 120, render: (t: string) => <Tag color={t === 'full-time' ? 'green' : 'blue'}>{t === 'full-time' ? 'Toàn thời gian' : t}</Tag> },
+    { title: 'Loại', dataIndex: 'type', key: 'type', width: 120, render: (t: string) => <Tag color={t === 'full-time' ? 'green' : t === 'internship' ? 'orange' : 'blue'}>{t === 'full-time' ? 'Toàn thời gian' : t === 'internship' ? 'Thực tập' : t}</Tag> },
     { title: 'Mức lương', key: 'salary', width: 160, render: (_: unknown, r: JobPosting) => r.salaryRange ? `${formatCurrency(r.salaryRange.min)} - ${formatCurrency(r.salaryRange.max)}` : '-' },
     { title: 'Ứng viên', dataIndex: 'applicationsCount', key: 'apps', width: 90 },
     { title: 'Hạn', dataIndex: 'deadline', key: 'deadline', width: 110, render: (d: string | undefined) => d ? formatDate(d) : '-' },

@@ -38,7 +38,7 @@ const menuItems = [
   {
     key: '/admin',
     icon: <DashboardOutlined />,
-    label: 'Dashboard',
+    label: 'Tổng quan',
   },
   {
     key: 'courses',
@@ -139,11 +139,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   }, [location.pathname, collapsed]);
 
   const roleLabels: Record<string, string> = {
-    super_admin: 'Super Admin',
-    admin: 'Admin',
-    manager: 'Manager',
-    support: 'Support',
-    hr: 'HR',
+    super_admin: 'Quản trị viên cao cấp',
+    admin: 'Quản trị viên',
+    manager: 'Quản lý',
+    support: 'Hỗ trợ',
+    hr: 'Nhân sự',
   };
 
   return (

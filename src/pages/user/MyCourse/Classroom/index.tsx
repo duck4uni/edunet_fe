@@ -17,8 +17,7 @@ import {
   Tooltip,
   Row,
   Col,
-  Dropdown,
-  Spin
+  Dropdown
 } from 'antd';
 import { 
   UserOutlined, 
@@ -89,7 +88,7 @@ const Classroom: React.FC = () => {
 
   const columns = [
     {
-      title: 'Member',
+      title: 'Thành viên',
       dataIndex: 'name',
       key: 'name',
       render: (_: any, record: ClassMember) => (
@@ -106,7 +105,7 @@ const Classroom: React.FC = () => {
       ),
     },
     {
-      title: 'Role',
+      title: 'Vai trò',
       dataIndex: 'role',
       key: 'role',
       render: (role: string) => {
@@ -119,7 +118,7 @@ const Classroom: React.FC = () => {
       },
     },
     {
-      title: 'Progress',
+      title: 'Tiến độ',
       dataIndex: 'progress',
       key: 'progress',
       render: (progress: number | undefined, record: ClassMember) => (
@@ -133,17 +132,17 @@ const Classroom: React.FC = () => {
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
         <Tag color={status === 'active' ? 'success' : 'default'} className="!rounded-full">
-          {status === 'active' ? 'Active' : 'Inactive'}
+          {status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
         </Tag>
       ),
     },
     {
-      title: 'Joined',
+      title: 'Ngày tham gia',
       dataIndex: 'joinedAt',
       key: 'joinedAt',
       render: (date: string) => (
@@ -151,11 +150,11 @@ const Classroom: React.FC = () => {
       ),
     },
     ...(userRole === 'teacher' ? [{
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       render: (_: any, record: ClassMember) => (
         <Space>
-          <Tooltip title="Edit">
+          <Tooltip title="Chỉnh sửa">
             <Button 
               type="text" 
               icon={<EditOutlined />} 
@@ -163,7 +162,7 @@ const Classroom: React.FC = () => {
               className="!text-blue-500"
             />
           </Tooltip>
-          <Tooltip title="Send Email">
+          <Tooltip title="Gửi Email">
             <Button 
               type="text" 
               icon={<MailOutlined />} 
@@ -172,13 +171,13 @@ const Classroom: React.FC = () => {
           </Tooltip>
           {record.role !== 'teacher' && (
             <Popconfirm
-              title="Remove this member?"
-              description="This action cannot be undone."
+              title="Xóa thành viên này?"
+              description="Hành động này không thể hoàn tác."
               onConfirm={() => handleDeleteMember(record.id)}
-              okText="Yes"
-              cancelText="No"
+              okText="Có"
+              cancelText="Không"
             >
-              <Tooltip title="Remove">
+              <Tooltip title="Xóa">
                 <Button type="text" icon={<DeleteOutlined />} className="!text-red-500" />
               </Tooltip>
             </Popconfirm>
@@ -319,7 +318,7 @@ const Classroom: React.FC = () => {
               label="Họ và tên"
               rules={[{ required: true, message: 'Vui lòng nhập tên' }]}
             >
-              <Input prefix={<UserOutlined />} placeholder="John Doe" />
+              <Input prefix={<UserOutlined />} placeholder="Nguyễn Văn A" />
             </Form.Item>
 
             <Form.Item

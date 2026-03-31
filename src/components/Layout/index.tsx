@@ -17,7 +17,7 @@ const AppLayout: React.FC = () => {
         <Outlet />
       </Content>
       <Footer style={{ textAlign: 'center', background: '#f0f2f5' }}>
-        EduNet ©{new Date().getFullYear()} Created by Ant UED
+        EduNet ©{new Date().getFullYear()} Được phát triển bởi EduNet Team
       </Footer>
     </Layout>
   );

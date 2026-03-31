@@ -73,7 +73,7 @@ export const employees: Employee[] = [
     phone: '0901234567',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     department: 'Kỹ thuật',
-    position: 'Senior Developer',
+    position: 'Lập trình viên cao cấp',
     role: 'admin',
     status: 'active',
     hireDate: '2023-03-15',
@@ -90,7 +90,7 @@ export const employees: Employee[] = [
     phone: '0902345678',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     department: 'Nhân sự',
-    position: 'HR Manager',
+    position: 'Trưởng phòng Nhân sự',
     role: 'hr',
     status: 'active',
     hireDate: '2022-06-01',
@@ -107,7 +107,7 @@ export const employees: Employee[] = [
     phone: '0903456789',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
     department: 'Hỗ trợ',
-    position: 'Support Lead',
+    position: 'Trưởng nhóm Hỗ trợ',
     role: 'support',
     status: 'active',
     hireDate: '2023-01-10',
@@ -124,7 +124,7 @@ export const employees: Employee[] = [
     phone: '0904567890',
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
     department: 'Marketing',
-    position: 'Marketing Specialist',
+    position: 'Chuyên viên Marketing',
     role: 'manager',
     status: 'active',
     hireDate: '2023-08-20',
@@ -141,7 +141,7 @@ export const employees: Employee[] = [
     phone: '0905678901',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
     department: 'Tài chính',
-    position: 'Accountant',
+    position: 'Kế toán',
     role: 'manager',
     status: 'on_leave',
     hireDate: '2022-11-05',
@@ -403,7 +403,7 @@ export const courseReviews: CourseReview[] = [
     userName: 'Nguyễn Thị Lan',
     userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     rating: 5,
-    comment: 'Nội dung chuyên sâu, phù hợp với người đã có nền tảng Python. Highly recommended!',
+    comment: 'Nội dung chuyên sâu, phù hợp với người đã có nền tảng Python. Rất đáng giới thiệu!',
     isReported: false,
     status: 'visible',
     createdAt: '2024-11-10T14:20:00Z',
@@ -443,7 +443,7 @@ export const cvApplications: CVApplication[] = [
     applicantName: 'Nguyễn Văn Hùng',
     email: 'nguyenvanhung@gmail.com',
     phone: '0921234567',
-    position: 'Senior Frontend Developer',
+    position: 'Lập trình viên Frontend cao cấp',
     department: 'Kỹ thuật',
     cvUrl: '/uploads/cv/nguyen-van-hung.pdf',
     coverLetter: 'Tôi rất quan tâm đến vị trí này và tin rằng kinh nghiệm 5 năm của tôi sẽ phù hợp...',
@@ -464,7 +464,7 @@ export const cvApplications: CVApplication[] = [
     applicantName: 'Trần Thị Hoa',
     email: 'tranthihoa@gmail.com',
     phone: '0922345678',
-    position: 'UI/UX Designer',
+    position: 'Nhà thiết kế UI/UX',
     department: 'Thiết kế',
     cvUrl: '/uploads/cv/tran-thi-hoa.pdf',
     experience: 3,
@@ -481,7 +481,7 @@ export const cvApplications: CVApplication[] = [
     applicantName: 'Lê Minh Đức',
     email: 'leminhduc@gmail.com',
     phone: '0923456789',
-    position: 'Content Marketing Specialist',
+    position: 'Chuyên viên Content Marketing',
     department: 'Marketing',
     cvUrl: '/uploads/cv/le-minh-duc.pdf',
     coverLetter: 'Với đam mê về content và kinh nghiệm làm việc với các startup...',
@@ -499,7 +499,7 @@ export const cvApplications: CVApplication[] = [
     applicantName: 'Phạm Quốc Bảo',
     email: 'phamquocbao@gmail.com',
     phone: '0924567890',
-    position: 'DevOps Engineer',
+    position: 'Kỹ sư DevOps',
     department: 'Kỹ thuật',
     cvUrl: '/uploads/cv/pham-quoc-bao.pdf',
     experience: 4,
@@ -520,11 +520,11 @@ export const cvApplications: CVApplication[] = [
 export const jobPostings: JobPosting[] = [
   {
     id: 'job-001',
-    title: 'Senior Frontend Developer',
+    title: 'Lập trình viên Frontend cao cấp',
     department: 'Kỹ thuật',
     location: 'TP. Hồ Chí Minh',
     type: 'full-time',
-    description: 'Chúng tôi đang tìm kiếm Senior Frontend Developer để tham gia phát triển nền tảng EdTech hàng đầu Việt Nam.',
+    description: 'Chúng tôi đang tìm kiếm Lập trình viên Frontend cao cấp để tham gia phát triển nền tảng EdTech hàng đầu Việt Nam.',
     requirements: [
       '5+ năm kinh nghiệm với React/Vue',
       'Thành thạo TypeScript',
@@ -545,11 +545,11 @@ export const jobPostings: JobPosting[] = [
   },
   {
     id: 'job-002',
-    title: 'UI/UX Designer',
+    title: 'Nhà thiết kế UI/UX',
     department: 'Thiết kế',
     location: 'TP. Hồ Chí Minh',
     type: 'full-time',
-    description: 'Tìm kiếm UI/UX Designer sáng tạo để thiết kế giao diện cho các sản phẩm giáo dục.',
+    description: 'Tìm kiếm Nhà thiết kế UI/UX sáng tạo để thiết kế giao diện cho các sản phẩm giáo dục.',
     requirements: [
       '3+ năm kinh nghiệm thiết kế UI/UX',
       'Thành thạo Figma, Adobe XD',
@@ -570,7 +570,7 @@ export const jobPostings: JobPosting[] = [
   },
   {
     id: 'job-003',
-    title: 'Marketing Intern',
+    title: 'Thực tập sinh Marketing',
     department: 'Marketing',
     location: 'TP. Hồ Chí Minh',
     type: 'internship',
@@ -680,42 +680,42 @@ export const supportTickets: AdminSupportTicket[] = [
 // Permissions
 export const permissions: Permission[] = [
   // Dashboard
-  { id: 'perm-001', name: 'Xem Dashboard', code: 'dashboard.view', description: 'Xem tổng quan dashboard', module: 'Dashboard' },
+  { id: 'perm-001', name: 'Xem Bảng điều khiển', code: 'dashboard.view', description: 'Xem tổng quan bảng điều khiển', module: 'Bảng điều khiển' },
   // Users
-  { id: 'perm-002', name: 'Xem danh sách người dùng', code: 'users.view', description: 'Xem danh sách tất cả người dùng', module: 'Users' },
-  { id: 'perm-003', name: 'Chỉnh sửa người dùng', code: 'users.edit', description: 'Chỉnh sửa thông tin người dùng', module: 'Users' },
-  { id: 'perm-004', name: 'Xóa người dùng', code: 'users.delete', description: 'Xóa người dùng khỏi hệ thống', module: 'Users' },
+  { id: 'perm-002', name: 'Xem danh sách người dùng', code: 'users.view', description: 'Xem danh sách tất cả người dùng', module: 'Người dùng' },
+  { id: 'perm-003', name: 'Chỉnh sửa người dùng', code: 'users.edit', description: 'Chỉnh sửa thông tin người dùng', module: 'Người dùng' },
+  { id: 'perm-004', name: 'Xóa người dùng', code: 'users.delete', description: 'Xóa người dùng khỏi hệ thống', module: 'Người dùng' },
   // Courses
-  { id: 'perm-005', name: 'Xem khóa học', code: 'courses.view', description: 'Xem danh sách khóa học', module: 'Courses' },
-  { id: 'perm-006', name: 'Duyệt khóa học', code: 'courses.approve', description: 'Duyệt khóa học mới', module: 'Courses' },
-  { id: 'perm-007', name: 'Khóa khóa học', code: 'courses.lock', description: 'Khóa/mở khóa khóa học', module: 'Courses' },
-  { id: 'perm-008', name: 'Xóa khóa học', code: 'courses.delete', description: 'Xóa khóa học', module: 'Courses' },
+  { id: 'perm-005', name: 'Xem khóa học', code: 'courses.view', description: 'Xem danh sách khóa học', module: 'Khóa học' },
+  { id: 'perm-006', name: 'Duyệt khóa học', code: 'courses.approve', description: 'Duyệt khóa học mới', module: 'Khóa học' },
+  { id: 'perm-007', name: 'Khóa khóa học', code: 'courses.lock', description: 'Khóa/mở khóa khóa học', module: 'Khóa học' },
+  { id: 'perm-008', name: 'Xóa khóa học', code: 'courses.delete', description: 'Xóa khóa học', module: 'Khóa học' },
   // Teachers
-  { id: 'perm-009', name: 'Xem giáo viên', code: 'teachers.view', description: 'Xem danh sách giáo viên', module: 'Teachers' },
-  { id: 'perm-010', name: 'Duyệt giáo viên', code: 'teachers.approve', description: 'Duyệt giáo viên mới', module: 'Teachers' },
-  { id: 'perm-011', name: 'Quản lý giáo viên', code: 'teachers.manage', description: 'Quản lý thông tin giáo viên', module: 'Teachers' },
+  { id: 'perm-009', name: 'Xem giáo viên', code: 'teachers.view', description: 'Xem danh sách giáo viên', module: 'Giáo viên' },
+  { id: 'perm-010', name: 'Duyệt giáo viên', code: 'teachers.approve', description: 'Duyệt giáo viên mới', module: 'Giáo viên' },
+  { id: 'perm-011', name: 'Quản lý giáo viên', code: 'teachers.manage', description: 'Quản lý thông tin giáo viên', module: 'Giáo viên' },
   // Employees
-  { id: 'perm-012', name: 'Xem nhân viên', code: 'employees.view', description: 'Xem danh sách nhân viên', module: 'Employees' },
-  { id: 'perm-013', name: 'Quản lý nhân viên', code: 'employees.manage', description: 'Thêm/sửa/xóa nhân viên', module: 'Employees' },
+  { id: 'perm-012', name: 'Xem nhân viên', code: 'employees.view', description: 'Xem danh sách nhân viên', module: 'Nhân viên' },
+  { id: 'perm-013', name: 'Quản lý nhân viên', code: 'employees.manage', description: 'Thêm/sửa/xóa nhân viên', module: 'Nhân viên' },
   // Support
-  { id: 'perm-014', name: 'Xem ticket', code: 'support.view', description: 'Xem danh sách ticket hỗ trợ', module: 'Support' },
-  { id: 'perm-015', name: 'Xử lý ticket', code: 'support.handle', description: 'Xử lý và phản hồi ticket', module: 'Support' },
+  { id: 'perm-014', name: 'Xem ticket', code: 'support.view', description: 'Xem danh sách ticket hỗ trợ', module: 'Hỗ trợ' },
+  { id: 'perm-015', name: 'Xử lý ticket', code: 'support.handle', description: 'Xử lý và phản hồi ticket', module: 'Hỗ trợ' },
   // Revenue
-  { id: 'perm-016', name: 'Xem doanh thu', code: 'revenue.view', description: 'Xem báo cáo doanh thu', module: 'Revenue' },
-  { id: 'perm-017', name: 'Xuất báo cáo', code: 'revenue.export', description: 'Xuất báo cáo doanh thu', module: 'Revenue' },
+  { id: 'perm-016', name: 'Xem doanh thu', code: 'revenue.view', description: 'Xem báo cáo doanh thu', module: 'Doanh thu' },
+  { id: 'perm-017', name: 'Xuất báo cáo', code: 'revenue.export', description: 'Xuất báo cáo doanh thu', module: 'Doanh thu' },
   // Settings
-  { id: 'perm-018', name: 'Quản lý cài đặt', code: 'settings.manage', description: 'Quản lý cài đặt hệ thống', module: 'Settings' },
-  { id: 'perm-019', name: 'Quản lý quyền', code: 'permissions.manage', description: 'Quản lý quyền và nhóm quyền', module: 'Permissions' },
+  { id: 'perm-018', name: 'Quản lý cài đặt', code: 'settings.manage', description: 'Quản lý cài đặt hệ thống', module: 'Cài đặt' },
+  { id: 'perm-019', name: 'Quản lý quyền', code: 'permissions.manage', description: 'Quản lý quyền và nhóm quyền', module: 'Phân quyền' },
   // Recruitment
-  { id: 'perm-020', name: 'Xem tuyển dụng', code: 'recruitment.view', description: 'Xem danh sách CV và job posting', module: 'Recruitment' },
-  { id: 'perm-021', name: 'Quản lý tuyển dụng', code: 'recruitment.manage', description: 'Quản lý quy trình tuyển dụng', module: 'Recruitment' },
+  { id: 'perm-020', name: 'Xem tuyển dụng', code: 'recruitment.view', description: 'Xem danh sách CV và tin tuyển dụng', module: 'Tuyển dụng' },
+  { id: 'perm-021', name: 'Quản lý tuyển dụng', code: 'recruitment.manage', description: 'Quản lý quy trình tuyển dụng', module: 'Tuyển dụng' },
 ];
 
 // Role Groups
 export const roleGroups: RoleGroup[] = [
   {
     id: 'role-001',
-    name: 'Super Admin',
+    name: 'Quản trị viên cao cấp',
     description: 'Toàn quyền quản trị hệ thống',
     permissions: permissions.map(p => p.code),
     usersCount: 1,
@@ -724,7 +724,7 @@ export const roleGroups: RoleGroup[] = [
   },
   {
     id: 'role-002',
-    name: 'Admin',
+    name: 'Quản trị viên',
     description: 'Quản trị viên với hầu hết các quyền',
     permissions: [
       'dashboard.view', 'users.view', 'users.edit', 'courses.view', 'courses.approve',
@@ -737,7 +737,7 @@ export const roleGroups: RoleGroup[] = [
   },
   {
     id: 'role-003',
-    name: 'HR Manager',
+    name: 'Trưởng phòng Nhân sự',
     description: 'Quản lý nhân sự và tuyển dụng',
     permissions: [
       'dashboard.view', 'employees.view', 'employees.manage',
@@ -749,7 +749,7 @@ export const roleGroups: RoleGroup[] = [
   },
   {
     id: 'role-004',
-    name: 'Support Staff',
+    name: 'Nhân viên Hỗ trợ',
     description: 'Nhân viên hỗ trợ khách hàng',
     permissions: [
       'dashboard.view', 'users.view', 'support.view', 'support.handle',
@@ -760,7 +760,7 @@ export const roleGroups: RoleGroup[] = [
   },
   {
     id: 'role-005',
-    name: 'Course Manager',
+    name: 'Quản lý Khóa học',
     description: 'Quản lý khóa học và giáo viên',
     permissions: [
       'dashboard.view', 'courses.view', 'courses.approve', 'courses.lock',
@@ -929,12 +929,12 @@ export const employeeStatuses = [
 ];
 
 export const employeeRoles = [
-  { value: 'super_admin', label: 'Super Admin', color: 'red' },
-  { value: 'admin', label: 'Admin', color: 'blue' },
-  { value: 'manager', label: 'Manager', color: 'purple' },
-  { value: 'hr', label: 'HR', color: 'cyan' },
-  { value: 'support', label: 'Support', color: 'green' },
-  { value: 'staff', label: 'Staff', color: 'default' },
+  { value: 'super_admin', label: 'Quản trị viên cao cấp', color: 'red' },
+  { value: 'admin', label: 'Quản trị viên', color: 'blue' },
+  { value: 'manager', label: 'Quản lý', color: 'purple' },
+  { value: 'hr', label: 'Nhân sự', color: 'cyan' },
+  { value: 'support', label: 'Hỗ trợ', color: 'green' },
+  { value: 'staff', label: 'Nhân viên', color: 'default' },
 ];
 
 export const cvStatuses = [

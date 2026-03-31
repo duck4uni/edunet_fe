@@ -87,7 +87,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', { 
+    return new Date(timestamp).toLocaleTimeString('vi-VN', { 
       hour: 'numeric', 
       minute: '2-digit',
       hour12: true 
@@ -101,11 +101,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return 'Today';
+      return 'Hôm nay';
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return 'Hôm qua';
     }
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('vi-VN', { 
       weekday: 'long', 
       month: 'short', 
       day: 'numeric' 
@@ -141,10 +141,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             <SendOutlined className="text-white text-5xl" />
           </div>
           <Text className="text-2xl font-semibold text-[#012643] block mb-2">
-            Select a conversation
+            Chọn một cuộc hội thoại
           </Text>
           <Text className="text-gray-500">
-            Choose from your existing conversations or start a new one
+            Chọn từ các cuộc hội thoại hiện có hoặc bắt đầu cuộc trò chuyện mới
           </Text>
         </div>
       </div>
@@ -173,16 +173,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             </Text>
             <Text className="text-sm text-gray-500">
               {contact.isOnline ? (
-                <span className="text-green-500">Active now</span>
+                <span className="text-green-500">Đang hoạt động</span>
               ) : (
-                `Active ${contact.lastSeen || 'recently'}`
+                `Hoạt động ${contact.lastSeen || 'gần đây'}`
               )}
             </Text>
           </div>
         </div>
         
         <div className="flex items-center gap-1">
-          <Tooltip title="Voice call">
+          <Tooltip title="Gọi thoại">
             <Button 
               type="text" 
               shape="circle" 
@@ -191,7 +191,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               size="large"
             />
           </Tooltip>
-          <Tooltip title="Video call">
+          <Tooltip title="Gọi video">
             <Button 
               type="text" 
               shape="circle" 
@@ -200,7 +200,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               size="large"
             />
           </Tooltip>
-          <Tooltip title="Conversation info">
+          <Tooltip title="Thông tin hội thoại">
             <Button 
               type="text" 
               shape="circle" 
@@ -269,7 +269,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div className="flex items-end gap-2">
           {/* Action Buttons */}
           <div className="flex gap-1 mb-1">
-            <Tooltip title="Attach file">
+            <Tooltip title="Đính kèm tệp">
               <Button 
                 type="text" 
                 shape="circle" 
@@ -277,7 +277,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 className="hover:!bg-gray-100"
               />
             </Tooltip>
-            <Tooltip title="Send image">
+            <Tooltip title="Gửi ảnh">
               <Button 
                 type="text" 
                 shape="circle" 
@@ -285,7 +285,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 className="hover:!bg-gray-100"
               />
             </Tooltip>
-            <Tooltip title="Send GIF">
+            <Tooltip title="Gửi GIF">
               <Button 
                 type="text" 
                 shape="circle" 
@@ -327,7 +327,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               size="large"
             />
           ) : (
-            <Tooltip title="Send voice message">
+            <Tooltip title="Gửi tin nhắn thoại">
               <Button 
                 type="text" 
                 shape="circle" 
@@ -459,11 +459,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         <Dropdown
           menu={{
             items: [
-              { key: 'reply', label: 'Reply' },
-              { key: 'forward', label: 'Forward' },
-              { key: 'copy', label: 'Copy' },
+              { key: 'reply', label: 'Trả lời' },
+              { key: 'forward', label: 'Chuyển tiếp' },
+              { key: 'copy', label: 'Sao chép' },
               { type: 'divider' },
-              { key: 'delete', label: 'Delete', danger: true },
+              { key: 'delete', label: 'Xóa', danger: true },
             ]
           }}
           trigger={['click']}

@@ -94,7 +94,7 @@ const Assignment: React.FC = () => {
 
   const columns = [
     {
-      title: 'Assignment',
+      title: 'Bài tập',
       dataIndex: 'title',
       key: 'title',
       render: (_: any, record: AssignmentItem) => (
@@ -105,7 +105,7 @@ const Assignment: React.FC = () => {
       ),
     },
     {
-      title: 'Due Date',
+      title: 'Hạn nộp',
       dataIndex: 'dueDate',
       key: 'dueDate',
       render: (date: string) => (
@@ -113,7 +113,7 @@ const Assignment: React.FC = () => {
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => {
@@ -126,7 +126,7 @@ const Assignment: React.FC = () => {
       },
     },
     {
-      title: 'Grade',
+      title: 'Điểm',
       dataIndex: 'grade',
       key: 'grade',
       render: (grade: number | undefined, record: AssignmentItem) => (
@@ -141,11 +141,11 @@ const Assignment: React.FC = () => {
       ),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       render: (_: any, record: AssignmentItem) => (
         <Space>
-          <Tooltip title="View">
+          <Tooltip title="Xem">
             <Button 
               type="text" 
               icon={<EyeOutlined />} 
@@ -155,7 +155,7 @@ const Assignment: React.FC = () => {
           </Tooltip>
           {userRole === 'teacher' && (
             <>
-              <Tooltip title="Edit">
+              <Tooltip title="Chỉnh sửa">
                 <Button 
                   type="text" 
                   icon={<EditOutlined />} 
@@ -164,12 +164,12 @@ const Assignment: React.FC = () => {
                 />
               </Tooltip>
               <Popconfirm
-                title="Delete this assignment?"
+                title="Xóa bài tập này?"
                 onConfirm={() => handleDelete(record.id)}
-                okText="Yes"
-                cancelText="No"
+                okText="Có"
+                cancelText="Không"
               >
-                <Tooltip title="Delete">
+                <Tooltip title="Xóa">
                   <Button type="text" icon={<DeleteOutlined />} className="!text-red-500" />
                 </Tooltip>
               </Popconfirm>

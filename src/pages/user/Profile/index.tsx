@@ -128,19 +128,19 @@ const Profile: React.FC = () => {
 
   const ticketColumns = [
     {
-      title: 'Ticket ID',
+      title: 'Mã ticket',
       dataIndex: 'id',
       key: 'id',
       render: (id: string) => <Text className="font-mono text-[#012643]">{id}</Text>,
     },
     {
-      title: 'Subject',
+      title: 'Tiêu đề',
       dataIndex: 'subject',
       key: 'subject',
       render: (subject: string) => <Text className="font-medium">{subject}</Text>,
     },
     {
-      title: 'Category',
+      title: 'Danh mục',
       dataIndex: 'category',
       key: 'category',
       render: (category: string) => {
@@ -149,7 +149,7 @@ const Profile: React.FC = () => {
       },
     },
     {
-      title: 'Priority',
+      title: 'Mức ưu tiên',
       dataIndex: 'priority',
       key: 'priority',
       render: (priority: string) => {
@@ -158,22 +158,22 @@ const Profile: React.FC = () => {
       },
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => {
         const config = getTicketStatusConfig(status);
-        return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>;
+        return <Tag color={config.color}>{config.text}</Tag>;
       },
     },
     {
-      title: 'Created',
+      title: 'Ngày tạo',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
-      title: 'Action',
+      title: 'Thao tác',
       key: 'action',
       render: (_: any, record: SupportTicket) => (
         <Button 
@@ -181,7 +181,7 @@ const Profile: React.FC = () => {
           icon={<EyeOutlined />}
           onClick={() => setSelectedTicket(record)}
         >
-          View
+          Xem
         </Button>
       ),
     },
@@ -193,7 +193,7 @@ const Profile: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <UserOutlined />
-          Personal Info
+          Thông tin cá nhân
         </span>
       ),
       children: (
@@ -224,7 +224,7 @@ const Profile: React.FC = () => {
                     {profile.firstName} {profile.lastName}
                   </Title>
                   <Tag color="gold" className="!rounded-full !mb-2">
-                    {profile.role === 'student' ? '👨‍🎓 Student' : '👨‍🏫 Teacher'}
+                    {profile.role === 'student' ? '👨‍🎓 Học viên' : '👨‍🏫 Giảng viên'}
                   </Tag>
                   <Text className="text-white/80 block">{profile.bio}</Text>
                   <div className="flex justify-center md:justify-start gap-3 mt-4">
@@ -249,7 +249,7 @@ const Profile: React.FC = () => {
                     onClick={onEditProfile}
                     className="!bg-white !text-[#012643] !border-0 hover:!bg-gray-100"
                   >
-                    Edit Profile
+                    Sửa hồ sơ
                   </Button>
                 </div>
               </div>
@@ -269,14 +269,14 @@ const Profile: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <PhoneOutlined className="text-[#e5698e] text-lg" />
                     <div>
-                      <Text className="text-gray-500 text-xs block">Phone</Text>
+                      <Text className="text-gray-500 text-xs block">Số điện thoại</Text>
                       <Text className="font-medium">{profile.phone}</Text>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <CalendarOutlined className="text-[#e5698e] text-lg" />
                     <div>
-                      <Text className="text-gray-500 text-xs block">Date of Birth</Text>
+                      <Text className="text-gray-500 text-xs block">Ngày sinh</Text>
                       <Text className="font-medium">{new Date(profile.dateOfBirth).toLocaleDateString()}</Text>
                     </div>
                   </div>
@@ -287,14 +287,14 @@ const Profile: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <EnvironmentOutlined className="text-[#e5698e] text-lg" />
                     <div>
-                      <Text className="text-gray-500 text-xs block">Address</Text>
+                      <Text className="text-gray-500 text-xs block">Địa chỉ</Text>
                       <Text className="font-medium">{profile.address}, {profile.city}, {profile.country}</Text>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <CalendarOutlined className="text-[#e5698e] text-lg" />
                     <div>
-                      <Text className="text-gray-500 text-xs block">Member Since</Text>
+                      <Text className="text-gray-500 text-xs block">Thành viên từ</Text>
                       <Text className="font-medium">{profile?.joinDate ? new Date(profile.joinDate).toLocaleDateString() : ''}</Text>
                     </div>
                   </div>
@@ -311,8 +311,8 @@ const Profile: React.FC = () => {
                   <LockOutlined className="text-red-500 text-xl" />
                 </div>
                 <div>
-                  <Text className="font-semibold text-[#012643] block">Password & Security</Text>
-                  <Text className="text-gray-500 text-sm">Manage your password and security settings</Text>
+                  <Text className="font-semibold text-[#012643] block">Mật khẩu & Bảo mật</Text>
+                  <Text className="text-gray-500 text-sm">Quản lý mật khẩu và cài đặt bảo mật</Text>
                 </div>
               </div>
               <Button 
@@ -331,7 +331,7 @@ const Profile: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <TrophyOutlined />
-          Achievements
+          Thành tựu
         </span>
       ),
       children: (
@@ -343,7 +343,7 @@ const Profile: React.FC = () => {
                 <div className="text-center">
                   <div className="text-3xl mb-2">🏆</div>
                   <div className="text-2xl font-bold text-[#012643]">{achievements.length}</div>
-                  <div className="text-gray-500 text-sm">Achievements</div>
+                  <div className="text-gray-500 text-sm">Thành tựu</div>
                 </div>
               </Card>
             </Col>
@@ -352,7 +352,7 @@ const Profile: React.FC = () => {
                 <div className="text-center">
                   <div className="text-3xl mb-2">📜</div>
                   <div className="text-2xl font-bold text-[#012643]">{certificates.length}</div>
-                  <div className="text-gray-500 text-sm">Certificates</div>
+                  <div className="text-gray-500 text-sm">Chứng chỉ</div>
                 </div>
               </Card>
             </Col>
@@ -361,7 +361,7 @@ const Profile: React.FC = () => {
                 <div className="text-center">
                   <div className="text-3xl mb-2">🔥</div>
                   <div className="text-2xl font-bold text-[#012643]">30</div>
-                  <div className="text-gray-500 text-sm">Day Streak</div>
+                  <div className="text-gray-500 text-sm">Chuỗi ngày</div>
                 </div>
               </Card>
             </Col>
@@ -370,7 +370,7 @@ const Profile: React.FC = () => {
                 <div className="text-center">
                   <div className="text-3xl mb-2">⭐</div>
                   <div className="text-2xl font-bold text-[#012643]">1,250</div>
-                  <div className="text-gray-500 text-sm">XP Points</div>
+                  <div className="text-gray-500 text-sm">Điểm XP</div>
                 </div>
               </Card>
             </Col>
@@ -378,7 +378,7 @@ const Profile: React.FC = () => {
 
           {/* Achievements Grid */}
           <Card className="rounded-2xl border-0 shadow-md">
-            <Title level={4} className="!text-[#012643] !mb-4">🏆 My Achievements</Title>
+            <Title level={4} className="!text-[#012643] !mb-4">🏆 Thành tựu của tôi</Title>
             {achievements.length === 0 ? (
               <Empty description="Chưa có thành tựu nào. Hãy hoàn thành khóa học để nhận!" />
             ) : (
@@ -410,12 +410,12 @@ const Profile: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <SafetyCertificateOutlined />
-          Certificates
+          Chứng chỉ
         </span>
       ),
       children: (
         <Card className="rounded-2xl border-0 shadow-md">
-          <Title level={4} className="!text-[#012643] !mb-4">📜 My Certificates</Title>
+          <Title level={4} className="!text-[#012643] !mb-4">📜 Chứng chỉ của tôi</Title>
           {certificates.length === 0 ? (
             <Empty description="Chưa có chứng chỉ nào. Hãy hoàn thành khóa học để nhận chứng chỉ đầu tiên!" />
           ) : (
@@ -429,21 +429,21 @@ const Profile: React.FC = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <Text className="font-semibold text-[#012643] block text-lg">{cert.courseName}</Text>
-                        <Text className="text-gray-500 text-sm block">Credential ID: {cert.credentialId}</Text>
+                        <Text className="text-gray-500 text-sm block">Mã chứng chỉ: {cert.credentialId}</Text>
                         <div className="flex items-center gap-4 mt-2">
                           <Text className="text-xs text-gray-400">
-                            Issued: {new Date(cert.issueDate).toLocaleDateString()}
+                            Ngày cấp: {new Date(cert.issueDate).toLocaleDateString()}
                           </Text>
                           {cert.expiryDate && (
                             <Text className="text-xs text-orange-500">
-                              Expires: {new Date(cert.expiryDate).toLocaleDateString()}
+                              Hết hạn: {new Date(cert.expiryDate).toLocaleDateString()}
                             </Text>
                           )}
                         </div>
                         <div className="flex gap-2 mt-3">
-                          <Button size="small" icon={<EyeOutlined />} className="!rounded-lg">View</Button>
+                          <Button size="small" icon={<EyeOutlined />} className="!rounded-lg">Xem</Button>
                           <Button size="small" icon={<DownloadOutlined />} type="primary" className="!bg-[#012643] !rounded-lg">
-                            Download
+                            Tải xuống
                           </Button>
                         </div>
                       </div>
@@ -461,7 +461,7 @@ const Profile: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <QuestionCircleOutlined />
-          Support Tickets
+          Yêu cầu hỗ trợ
         </span>
       ),
       children: (
@@ -469,8 +469,8 @@ const Profile: React.FC = () => {
           <Card className="rounded-2xl border-0 shadow-md">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <div>
-                <Title level={4} className="!text-[#012643] !mb-1">Support Tickets</Title>
-                <Text className="text-gray-500">View and manage your support requests</Text>
+                <Title level={4} className="!text-[#012643] !mb-1">Yêu cầu hỗ trợ</Title>
+                <Text className="text-gray-500">Xem và quản lý các yêu cầu hỗ trợ của bạn</Text>
               </div>
               <Button 
                 type="primary" 
@@ -478,7 +478,7 @@ const Profile: React.FC = () => {
                 onClick={openTicketModal}
                 className="!bg-[#012643] !rounded-lg"
               >
-                New Ticket
+                Tạo ticket mới
               </Button>
             </div>
 
@@ -667,12 +667,12 @@ const Profile: React.FC = () => {
           {selectedTicket && (
             <div className="space-y-4">
               <div>
-                <Text className="text-gray-500 text-sm">Subject</Text>
+                <Text className="text-gray-500 text-sm">Tiêu đề</Text>
                 <Title level={5} className="!mt-0">{selectedTicket.subject}</Title>
               </div>
               <Row gutter={16}>
                 <Col span={8}>
-                  <Text className="text-gray-500 text-sm">Status</Text>
+                  <Text className="text-gray-500 text-sm">Trạng thái</Text>
                   <div>
                     <Tag color={getTicketStatusConfig(selectedTicket.status).color}>
                       {getTicketStatusConfig(selectedTicket.status).text}
@@ -680,11 +680,11 @@ const Profile: React.FC = () => {
                   </div>
                 </Col>
                 <Col span={8}>
-                  <Text className="text-gray-500 text-sm">Category</Text>
+                  <Text className="text-gray-500 text-sm">Danh mục</Text>
                   <div>{SUPPORT_CATEGORIES.find(c => c.value === selectedTicket.category)?.label}</div>
                 </Col>
                 <Col span={8}>
-                  <Text className="text-gray-500 text-sm">Priority</Text>
+                  <Text className="text-gray-500 text-sm">Mức ưu tiên</Text>
                   <div>
                     <Tag color={TICKET_PRIORITIES.find(p => p.value === selectedTicket.priority)?.color}>
                       {TICKET_PRIORITIES.find(p => p.value === selectedTicket.priority)?.label}
@@ -693,12 +693,12 @@ const Profile: React.FC = () => {
                 </Col>
               </Row>
               <div>
-                <Text className="text-gray-500 text-sm">Description</Text>
+                <Text className="text-gray-500 text-sm">Mô tả</Text>
                 <Paragraph className="bg-gray-50 p-3 rounded-lg mt-1">{selectedTicket.description}</Paragraph>
               </div>
               {selectedTicket.responses?.length > 0 && (
                 <div>
-                  <Text className="text-gray-500 text-sm">Responses</Text>
+                  <Text className="text-gray-500 text-sm">Phản hồi</Text>
                   <Timeline className="mt-2">
                     {selectedTicket.responses?.map(response => (
                       <Timeline.Item 

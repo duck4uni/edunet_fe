@@ -25,7 +25,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               shape="round"
               className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 !bg-[#e5698e] !border-[#e5698e]"
             >
-              View Detail
+              Xem chi tiết
             </Button>
           </Link>
         </div>
@@ -52,7 +52,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             </div>
             <div className="flex items-center gap-1 text-gray-500 text-xs">
               <CalendarOutlined className="text-[#17EAD9]" />
-              <span>{course.lessons} lessons</span>
+              <span>{course.lessons} bài học</span>
             </div>
           </div>
           <div className="flex items-center gap-1 font-bold text-lg text-[#e5698e]">

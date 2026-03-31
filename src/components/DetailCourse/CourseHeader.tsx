@@ -19,11 +19,11 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
         </div>
         <div className="flex items-center gap-2">
           <ClockCircleOutlined className="text-[#e5698e]" />
-          <span>Last updated 10/2023</span>
+          <span>Cập nhật lần cuối 10/2023</span>
         </div>
         <div className="flex items-center gap-2">
           <GlobalOutlined className="text-[#e5698e]" />
-          <span>English</span>
+          <span>Tiếng Việt</span>
         </div>
       </div>
       

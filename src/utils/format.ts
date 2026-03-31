@@ -24,10 +24,10 @@ export const formatRelativeTime = (date: string | Date): string => {
   const diffHours = now.diff(target, 'hour');
   const diffDays = now.diff(target, 'day');
 
-  if (diffMinutes < 1) return 'Just now';
-  if (diffMinutes < 60) return `${diffMinutes} minutes ago`;
-  if (diffHours < 24) return `${diffHours} hours ago`;
-  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffMinutes < 1) return 'Vừa xong';
+  if (diffMinutes < 60) return `${diffMinutes} phút trước`;
+  if (diffHours < 24) return `${diffHours} giờ trước`;
+  if (diffDays < 7) return `${diffDays} ngày trước`;
   return formatDate(date);
 };
 

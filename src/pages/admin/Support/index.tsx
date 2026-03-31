@@ -55,7 +55,7 @@ const SupportManagement: React.FC = () => {
 
   const columns = [
     {
-      title: 'Ticket', dataIndex: 'ticketId', key: 'ticketId', width: 130,
+      title: 'Mã ticket', dataIndex: 'ticketId', key: 'ticketId', width: 130,
       render: (id: string, r: AdminSupportTicket) => (
         <div>
           <Text strong className="cursor-pointer hover:text-blue-500" onClick={() => handleView(r)}>#{id}</Text>
@@ -94,7 +94,7 @@ const SupportManagement: React.FC = () => {
   ];
 
   const detailItems = selectedTicket ? [
-    { label: 'Ticket ID', value: `#${selectedTicket.ticketId}` },
+    { label: 'Mã ticket', value: `#${selectedTicket.ticketId}` },
     { label: 'Người gửi', value: selectedTicket.userName },
     { label: 'Email', value: selectedTicket.userEmail },
     { label: 'Phân loại', value: <Tag>{selectedTicket.category}</Tag> },

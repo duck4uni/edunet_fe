@@ -16,7 +16,6 @@ import {
 import {
   HomeOutlined,
   ClockCircleOutlined,
-  CheckCircleOutlined,
   LeftOutlined,
   RightOutlined,
   SendOutlined,

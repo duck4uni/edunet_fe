@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 const { Title, Paragraph, Text } = Typography;
 
 const benefits = [
-  'Lifetime access to courses',
-  'Certificate on completion',
-  '24/7 Expert support',
-  'Money-back guarantee',
+  'Truy cập khóa học trọn đời',
+  'Chứng chỉ khi hoàn thành',
+  'Hỗ trợ chuyên gia 24/7',
+  'Đảm bảo hoàn tiền',
 ];
 
 const CTASection: React.FC = () => {
@@ -33,13 +33,13 @@ const CTASection: React.FC = () => {
           <Col xs={24} lg={14}>
             <div data-aos="fade-right">
               <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-                <span className="text-[#17EAD9] font-semibold">🚀 Start Learning Today</span>
+                <span className="text-[#17EAD9] font-semibold">🚀 Bắt đầu học ngay</span>
               </div>
               <Title level={1} className="!text-3xl sm:!text-4xl md:!text-5xl !font-bold !text-white !mb-6 !leading-tight">
-                Ready to Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Career?</span>
+                Sẵn sàng thay đổi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Sự nghiệp?</span>
               </Title>
               <Paragraph className="text-lg md:text-xl text-blue-100 mb-8 max-w-xl">
-                Join thousands of students and start learning the skills you need for your future career today. No credit card required.
+                Tham gia cùng hàng nghìn học viên và bắt đầu học các kỹ năng cần thiết cho sự nghiệp tương lai của bạn ngay hôm nay. Không cần thẻ tín dụng.
               </Paragraph>
               
               {/* Benefits */}
@@ -59,7 +59,7 @@ const CTASection: React.FC = () => {
                     size="large" 
                     className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-gradient-to-r from-[#e5698e] to-[#d64d72] !border-none hover:!opacity-90 shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2"
                   >
-                    Get Started Free <ArrowRightOutlined />
+                    Bắt đầu miễn phí <ArrowRightOutlined />
                   </Button>
                 </Link>
                 <Link to="/auth/register/teacher">
@@ -68,7 +68,7 @@ const CTASection: React.FC = () => {
                     className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-white/10 !backdrop-blur-sm !border-2 !border-white/30 !text-white hover:!bg-white hover:!text-[#012643] transition-all duration-300"
                     icon={<PlayCircleOutlined />}
                   >
-                    Become an Instructor
+                    Trở thành giảng viên
                   </Button>
                 </Link>
               </div>
@@ -88,21 +88,21 @@ const CTASection: React.FC = () => {
                       <span className="text-3xl">🎓</span>
                     </div>
                     <div>
-                      <Text className="text-white font-bold text-xl block">Join 10,000+</Text>
-                      <Text className="text-blue-200">Happy Students</Text>
+                      <Text className="text-white font-bold text-xl block">Tham gia 10,000+</Text>
+                      <Text className="text-blue-200">Học viên hài lòng</Text>
                     </div>
                   </div>
                   
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Text className="text-blue-200">Courses Completed</Text>
+                      <Text className="text-blue-200">Khóa học hoàn thành</Text>
                       <Text className="text-white font-bold">500+</Text>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">
                       <div className="bg-gradient-to-r from-[#17EAD9] to-[#6078EA] h-2 rounded-full w-3/4"></div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <Text className="text-blue-200">Satisfaction Rate</Text>
+                      <Text className="text-blue-200">Tỷ lệ hài lòng</Text>
                       <Text className="text-white font-bold">98%</Text>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">

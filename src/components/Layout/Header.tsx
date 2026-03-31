@@ -34,11 +34,11 @@ const Header: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
-    { title: 'Home', path: '/' },
-    { title: 'Courses', path: '/courses' },
-    { title: 'MyCourse', path: '/my-course' },
-    { title: 'Schedule', path: '/schedule' },
-    { title: 'Chats', path: '/chat' },
+    { title: 'Trang chủ', path: '/' },
+    { title: 'Khóa học', path: '/courses' },
+    { title: 'Khóa học của tôi', path: '/my-course' },
+    { title: 'Lịch học', path: '/schedule' },
+    { title: 'Tin nhắn', path: '/chat' },
   ];
 
   const handleLogout = async () => {
@@ -162,7 +162,7 @@ const Header: React.FC = () => {
                   <div className="w-8 h-8 rounded-full bg-[#30C2EC] flex items-center justify-center text-white">
                     <UserOutlined />
                   </div>
-                  <span>Login</span>
+                  <span>Đăng nhập</span>
                 </Link>
               )}
             </div>
@@ -239,7 +239,7 @@ const Header: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#30C2EC] flex items-center justify-center text-white">
                   <UserOutlined />
                 </div>
-                <span>Login</span>
+                <span>Đăng nhập</span>
               </Link>
             )}
           </div>

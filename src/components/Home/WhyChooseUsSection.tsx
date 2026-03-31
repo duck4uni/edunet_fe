@@ -7,43 +7,43 @@ const { Title, Paragraph } = Typography;
 const features = [
   {
     icon: <TeamOutlined />,
-    title: 'Expert Instructors',
-    description: 'Learn from industry experts who are passionate about teaching and helping you succeed.',
+    title: 'Giảng viên chuyên gia',
+    description: 'Học từ các chuyên gia trong ngành, những người đam mê giảng dạy và giúp bạn thành công.',
     color: '#17EAD9',
     bgGradient: 'from-cyan-50 to-teal-50',
   },
   {
     icon: <ClockCircleOutlined />,
-    title: 'Flexible Learning',
-    description: 'Study at your own pace, anytime, anywhere. Our platform is designed to fit your schedule.',
+    title: 'Học tập linh hoạt',
+    description: 'Học theo tốc độ của bạn, mọi lúc, mọi nơi. Nền tảng được thiết kế phù hợp với lịch trình của bạn.',
     color: '#6078EA',
     bgGradient: 'from-blue-50 to-indigo-50',
   },
   {
     icon: <SafetyCertificateOutlined />,
-    title: 'Certified Courses',
-    description: 'Earn recognized certificates upon completion to boost your career and professional profile.',
+    title: 'Khóa học có chứng chỉ',
+    description: 'Nhận chứng chỉ được công nhận khi hoàn thành để nâng cao sự nghiệp và hồ sơ chuyên môn.',
     color: '#e5698e',
     bgGradient: 'from-pink-50 to-rose-50',
   },
   {
     icon: <GlobalOutlined />,
-    title: 'Global Community',
-    description: 'Connect with learners from around the world and expand your professional network.',
+    title: 'Cộng đồng toàn cầu',
+    description: 'Kết nối với học viên trên toàn thế giới và mở rộng mạng lưới chuyên môn của bạn.',
     color: '#FFCE00',
     bgGradient: 'from-yellow-50 to-amber-50',
   },
   {
     icon: <PlayCircleOutlined />,
-    title: 'Interactive Content',
-    description: 'Engage with videos, quizzes, and hands-on projects that make learning fun and effective.',
+    title: 'Nội dung tương tác',
+    description: 'Trải nghiệm với video, bài kiểm tra và dự án thực hành giúp việc học trở nên thú vị và hiệu quả.',
     color: '#10B981',
     bgGradient: 'from-emerald-50 to-green-50',
   },
   {
     icon: <CustomerServiceOutlined />,
-    title: '24/7 Support',
-    description: 'Get help whenever you need it with our dedicated support team available around the clock.',
+    title: 'Hỗ trợ 24/7',
+    description: 'Nhận hỗ trợ bất cứ lúc nào với đội ngũ hỗ trợ tận tâm luôn sẵn sàng phục vụ.',
     color: '#8B5CF6',
     bgGradient: 'from-violet-50 to-purple-50',
   },
@@ -59,13 +59,13 @@ const WhyChooseUsSection: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-16" data-aos="fade-up">
           <div className="inline-block px-4 py-2 bg-[#e5698e]/10 rounded-full mb-4">
-            <span className="text-[#e5698e] font-semibold">✨ Why Choose Us</span>
+            <span className="text-[#e5698e] font-semibold">✨ Tại sao chọn chúng tôi</span>
           </div>
           <Title level={2} className="!text-3xl md:!text-4xl !font-bold !mb-4 !text-[#012643]">
-            Everything You Need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Succeed</span>
+            Tất cả những gì bạn cần để <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Thành công</span>
           </Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We provide a comprehensive learning environment that empowers you to achieve your goals with cutting-edge tools and resources.
+            Chúng tôi cung cấp môi trường học tập toàn diện giúp bạn đạt được mục tiêu với các công cụ và tài nguyên tiên tiến.
           </Paragraph>
         </div>
 

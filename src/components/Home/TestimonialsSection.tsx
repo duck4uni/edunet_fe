@@ -11,35 +11,35 @@ const { Title, Paragraph, Text } = Typography;
 const testimonials = [
   {
     id: 1,
-    name: 'Sarah Johnson',
-    role: 'UX Designer at Google',
+    name: 'Nguyễn Thị Lan',
+    role: 'Nhà thiết kế UX tại FPT Software',
     avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
     rating: 5,
-    comment: "EduNet has completely transformed my career. The courses are well-structured and the instructors are top-notch. I highly recommend it to anyone looking to upskill.",
+    comment: "EduNet đã hoàn toàn thay đổi sự nghiệp của tôi. Các khóa học được tổ chức bài bản và giảng viên rất xuất sắc. Tôi rất khuyến khích cho bất kỳ ai muốn nâng cao kỹ năng.",
   },
   {
     id: 2,
-    name: 'Michael Chen',
-    role: 'Senior Developer at Meta',
+    name: 'Trần Văn Minh',
+    role: 'Lập trình viên cao cấp tại VNG',
     avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     rating: 5,
-    comment: "The practical projects in the web development course helped me build a portfolio that got me hired. The community support is also amazing.",
+    comment: "Các dự án thực hành trong khóa học lập trình web đã giúp tôi xây dựng portfolio và được tuyển dụng. Cộng đồng hỗ trợ cũng rất tuyệt vời.",
   },
   {
     id: 3,
-    name: 'Emily Davis',
-    role: 'Marketing Lead at Spotify',
+    name: 'Lê Thị Hương',
+    role: 'Trưởng phòng Marketing tại Shopee',
     avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
     rating: 4,
-    comment: "Great content and flexible learning schedule. I could learn at my own pace while working full-time. The marketing strategies I learned were immediately applicable.",
+    comment: "Nội dung tuyệt vời và lịch học linh hoạt. Tôi có thể học theo tốc độ của mình trong khi vẫn làm việc toàn thời gian. Các chiến lược marketing học được có thể áp dụng ngay.",
   },
   {
     id: 4,
-    name: 'David Wilson',
-    role: 'Data Scientist at Netflix',
+    name: 'Phạm Đức Anh',
+    role: 'Nhà khoa học dữ liệu tại Tiki',
     avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
     rating: 5,
-    comment: "The data science track is comprehensive and easy to follow. The hands-on labs made complex concepts simple to understand.",
+    comment: "Lộ trình khoa học dữ liệu toàn diện và dễ theo dõi. Các bài thực hành giúp các khái niệm phức tạp trở nên dễ hiểu.",
   },
 ];
 
@@ -53,13 +53,13 @@ const TestimonialsSection: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-16" data-aos="fade-up">
           <div className="inline-block px-4 py-2 bg-[#6078EA]/10 rounded-full mb-4">
-            <span className="text-[#6078EA] font-semibold">💬 Testimonials</span>
+            <span className="text-[#6078EA] font-semibold">💬 Cảm nhận</span>
           </div>
           <Title level={2} className="!text-3xl md:!text-4xl !font-bold !mb-4 !text-[#012643]">
-            Loved by <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Thousands</span> of Students
+            Được yêu thích bởi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Hàng nghìn</span> học viên
           </Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Hear from our community of learners who have achieved their goals.
+            Đừng chỉ nghe chúng tôi nói. Hãy lắng nghe từ cộng đồng học viên đã đạt được mục tiêu của họ.
           </Paragraph>
         </div>
 

@@ -25,7 +25,7 @@ const HeroSection: React.FC = () => {
             <StarFilled className="text-white text-xl" />
           </div>
           <div>
-            <Text className="block text-xs text-gray-500">Course Rating</Text>
+            <Text className="block text-xs text-gray-500">Đánh giá khóa học</Text>
             <Text className="font-bold text-lg text-[#012643]">4.9/5.0</Text>
           </div>
         </div>
@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
             <img src="https://randomuser.me/api/portraits/women/2.jpg" className="w-8 h-8 rounded-full border-2 border-white" />
           </div>
           <div>
-            <Text className="block text-xs text-gray-500">Active Learners</Text>
+            <Text className="block text-xs text-gray-500">Học viên đang hoạt động</Text>
             <Text className="font-bold text-[#012643]">10,000+</Text>
           </div>
         </div>
@@ -48,15 +48,15 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           <div className="lg:w-1/2 z-10" data-aos="fade-right">
-            <Badge.Ribbon text="🎓 #1 Learning Platform" color="#e5698e" className="!-ml-6">
+            <Badge.Ribbon text="🎓 Nền tảng học tập #1" color="#e5698e" className="!-ml-6">
               <div className="pt-8">
                 <Title level={1} className="!text-4xl sm:!text-5xl md:!text-6xl !font-bold !mb-6 !text-[#012643] !leading-tight">
-                  Unlock Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Potential</span> with World-Class Learning
+                  Khai phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Tiềm năng</span> với nền tảng học tập đẳng cấp
                 </Title>
               </div>
             </Badge.Ribbon>
             <Paragraph className="text-lg md:text-xl text-gray-600 mb-8 max-w-lg">
-              Join millions of learners and transform your career with expert-led courses, hands-on projects, and a supportive community.
+              Tham gia cùng hàng triệu học viên và thay đổi sự nghiệp của bạn với các khóa học chuyên sâu, dự án thực hành và cộng đồng hỗ trợ.
             </Paragraph>
             
             {/* Search Box */}
@@ -66,7 +66,7 @@ const HeroSection: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <SearchOutlined className="text-gray-400 text-xl" />
                     <Input 
-                      placeholder="What do you want to learn?" 
+                      placeholder="Bạn muốn học gì?" 
                       bordered={false} 
                       className="!text-base !p-0 hover:bg-transparent focus:bg-transparent"
                     />
@@ -76,15 +76,15 @@ const HeroSection: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <AppstoreOutlined className="text-gray-400 text-xl" />
                     <Select 
-                      placeholder="Category" 
+                      placeholder="Danh mục" 
                       bordered={false}
                       className="w-full !text-base"
                       dropdownStyle={{ borderRadius: '12px', padding: '8px' }}
                     >
-                      <Option value="design">Design</Option>
-                      <Option value="development">Development</Option>
+                      <Option value="design">Thiết kế</Option>
+                      <Option value="development">Lập trình</Option>
                       <Option value="marketing">Marketing</Option>
-                      <Option value="business">Business</Option>
+                      <Option value="business">Kinh doanh</Option>
                     </Select>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ const HeroSection: React.FC = () => {
                   size="large" 
                   className="w-full md:w-auto !h-12 !px-8 !rounded-xl !bg-gradient-to-r from-[#17EAD9] to-[#6078EA] !border-none hover:!opacity-90 shadow-md font-semibold"
                 >
-                  Search
+                  Tìm kiếm
                 </Button>
               </div>
             </div>
@@ -105,8 +105,8 @@ const HeroSection: React.FC = () => {
                   <PlayCircleOutlined className="text-green-600 text-lg" />
                 </div>
                 <div>
-                  <Text className="font-bold text-[#012643] block">500+ Courses</Text>
-                  <Text className="text-xs text-gray-500">Learn at your pace</Text>
+                  <Text className="font-bold text-[#012643] block">500+ Khóa học</Text>
+                  <Text className="text-xs text-gray-500">Học theo tốc độ của bạn</Text>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -114,8 +114,8 @@ const HeroSection: React.FC = () => {
                   <StarFilled className="text-purple-600 text-lg" />
                 </div>
                 <div>
-                  <Text className="font-bold text-[#012643] block">Expert Tutors</Text>
-                  <Text className="text-xs text-gray-500">Industry leaders</Text>
+                  <Text className="font-bold text-[#012643] block">Giảng viên chuyên gia</Text>
+                  <Text className="text-xs text-gray-500">Chuyên gia hàng đầu</Text>
                 </div>
               </div>
             </div>

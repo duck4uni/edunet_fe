@@ -26,31 +26,31 @@ export const validatePassword = (password: string): {
   let score = 0;
 
   if (password.length < 8) {
-    errors.push('Password must be at least 8 characters');
+    errors.push('Mật khẩu phải có ít nhất 8 ký tự');
   } else {
     score++;
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push('Mật khẩu phải chứa ít nhất một chữ thường');
   } else {
     score++;
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push('Mật khẩu phải chứa ít nhất một chữ hoa');
   } else {
     score++;
   }
 
   if (!/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push('Mật khẩu phải chứa ít nhất một chữ số');
   } else {
     score++;
   }
 
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Password should contain at least one special character');
+    errors.push('Mật khẩu nên chứa ít nhất một ký tự đặc biệt');
   } else {
     score++;
   }
