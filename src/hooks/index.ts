@@ -27,4 +27,3 @@ export { useRecruitment } from './useRecruitment';
 export { useSupportManagement, useSupportManagement as useSupport } from './useSupportManagement';
 export { usePermissionManagement, usePermissionManagement as usePermissions } from './usePermissionManagement';
 export { useRevenue } from './useRevenue';
-export { useTheme } from './useTheme';

@@ -256,19 +256,19 @@ const TeacherRegistrations: React.FC = () => {
         <Col xs={8}>
           <Card className="rounded-xl border-0 shadow-sm text-center">
             <div className="text-3xl font-bold text-orange-500">{pending.length}</div>
-            <Text className="text-sm font-semibold text-white">Chờ duyệt</Text>
+            <Text className="text-sm font-semibold">Chờ duyệt</Text>
           </Card>
         </Col>
         <Col xs={8}>
           <Card className="rounded-xl border-0 shadow-sm text-center">
             <div className="text-3xl font-bold text-green-500">{approved.length}</div>
-            <Text className="text-sm font-semibold text-white">Đã duyệt</Text>
+            <Text className="text-sm font-semibold">Đã duyệt</Text>
           </Card>
         </Col>
         <Col xs={8}>
           <Card className="rounded-xl border-0 shadow-sm text-center">
             <div className="text-3xl font-bold text-red-400">{rejected.length}</div>
-            <Text className="text-sm font-semibold text-white">Đã từ chối</Text>
+            <Text className="text-sm font-semibold">Đã từ chối</Text>
           </Card>
         </Col>
       </Row>
@@ -303,9 +303,9 @@ const TeacherRegistrations: React.FC = () => {
         cancelText="Hủy"
       >
         {rejectTarget && (
-          <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <Text strong className="dark:text-white">{rejectTarget.user?.firstName} {rejectTarget.user?.lastName}</Text>
-            <Text type="secondary" className="block text-sm dark:text-gray-300">{rejectTarget.user?.email}</Text>
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+            <Text strong>{rejectTarget.user?.firstName} {rejectTarget.user?.lastName}</Text>
+            <Text type="secondary" className="block text-sm">{rejectTarget.user?.email}</Text>
             {rejectTarget.cvUrl && (
               <a
                 href={`${CV_BASE_URL}${rejectTarget.cvUrl}`}
@@ -385,7 +385,7 @@ const TeacherRegistrations: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div className="grid grid-cols-2 gap-3 bg-gray-50 rounded-lg p-4">
               <div>
                 <Text type="secondary" className="text-xs">Bằng cấp / Học vị</Text>
                 <Text className="block font-medium">{detailModal.qualification || '—'}</Text>
@@ -403,7 +403,7 @@ const TeacherRegistrations: React.FC = () => {
             </div>
 
             {detailModal.cvUrl && (
-              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4 flex items-center justify-between bg-gray-50 dark:bg-transparent">
+              <div className="border border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-between bg-gray-50">
                 <div className="flex items-center gap-3">
                   <FilePdfOutlined className="text-3xl text-red-400" />
                   <div>

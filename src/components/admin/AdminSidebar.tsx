@@ -5,12 +5,8 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   DashboardOutlined,
   BookOutlined,
-  TeamOutlined,
   UserOutlined,
-  FileTextOutlined,
   CustomerServiceOutlined,
-  LockOutlined,
-  DollarOutlined,
   SettingOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
@@ -59,35 +55,30 @@ const menuItems = [
       { key: '/admin/teacher-registrations', label: 'Đăng ký giáo viên' },
     ],
   },
-  {
-    key: '/admin/employees',
-    icon: <TeamOutlined />,
-    label: 'Quản lý nhân viên',
-  },
-  {
-    key: 'recruitment',
-    icon: <FileTextOutlined />,
-    label: 'Tuyển dụng',
-    children: [
-      { key: '/admin/recruitment/applications', label: 'Hồ sơ ứng tuyển' },
-      { key: '/admin/recruitment/jobs', label: 'Tin tuyển dụng' },
-    ],
-  },
+  // {
+  //   key: '/admin/employees',
+  //   icon: <TeamOutlined />,
+  //   label: 'Quản lý nhân viên',
+  // },
+  // {
+  //   key: 'recruitment',
+  //   icon: <FileTextOutlined />,
+  //   label: 'Tuyển dụng',
+  //   children: [
+  //     { key: '/admin/recruitment/applications', label: 'Hồ sơ ứng tuyển' },
+  //     { key: '/admin/recruitment/jobs', label: 'Tin tuyển dụng' },
+  //   ],
+  // },
   {
     key: '/admin/support',
     icon: <CustomerServiceOutlined />,
     label: 'Hỗ trợ',
   },
-  {
-    key: '/admin/permissions',
-    icon: <LockOutlined />,
-    label: 'Phân quyền',
-  },
-  {
-    key: '/admin/revenue',
-    icon: <DollarOutlined />,
-    label: 'Doanh thu',
-  },
+  // {
+  //   key: '/admin/permissions',
+  //   icon: <LockOutlined />,
+  //   label: 'Phân quyền',
+  // },
   {
     key: '/admin/settings',
     icon: <SettingOutlined />,
@@ -173,24 +164,26 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       collapsedWidth={80}
       className="admin-sidebar"
       style={{
-        overflow: 'auto',
+        overflow: 'hidden',
         height: '100vh',
         position: 'fixed',
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: 'var(--bg-primary)',
-        borderRight: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#ffffff',
+        borderRight: '1px solid #d9d9d9',
       }}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+      <div className="h-16 shrink-0 flex items-center justify-center border-b border-gray-200">
         <Link to="/admin" className="flex items-center gap-2">
           <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">E</span>
           </div>
           {!collapsed && (
-            <span className="text-xl font-bold text-gray-800 dark:text-white">
+            <span className="text-xl font-bold text-gray-800">
               EduNet
             </span>
           )}
@@ -199,7 +192,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
       {/* User Info */}
       {user && (
-        <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${collapsed ? 'text-center' : ''}`}>
+        <div className={`shrink-0 p-4 border-b border-gray-200 ${collapsed ? 'text-center' : ''}`}>
           <div className={`flex ${collapsed ? 'justify-center' : 'items-center gap-3'}`}>
             <Tooltip title={collapsed ? `${user.firstName} ${user.lastName}` : ''} placement="right">
               <Avatar 
@@ -210,7 +203,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             </Tooltip>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <Text strong className="block truncate text-gray-800 dark:text-white">
+                <Text strong className="block truncate text-gray-800">
                   {user.firstName} {user.lastName}
                 </Text>
                 <Text type="secondary" className="block text-xs truncate">
@@ -223,27 +216,29 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       )}
 
       {/* Menu */}
-      <Menu
-        mode="inline"
-        selectedKeys={getSelectedKey()}
-        openKeys={collapsed ? [] : openKeys}
-        onOpenChange={setOpenKeys}
-        style={{ 
-          border: 'none',
-          backgroundColor: 'transparent',
-        }}
-        items={menuItems.map(item => ({
-          ...item,
-          label: item.children ? item.label : <Link to={item.key}>{item.label}</Link>,
-          children: item.children?.map(child => ({
-            ...child,
-            label: <Link to={child.key}>{child.label}</Link>,
-          })),
-        }))}
-      />
+      <div className="flex-1 min-h-0 overflow-y-auto py-2">
+        <Menu
+          mode="inline"
+          selectedKeys={getSelectedKey()}
+          openKeys={collapsed ? [] : openKeys}
+          onOpenChange={setOpenKeys}
+          style={{ 
+            border: 'none',
+            backgroundColor: 'transparent',
+          }}
+          items={menuItems.map(item => ({
+            ...item,
+            label: item.children ? item.label : <Link to={item.key}>{item.label}</Link>,
+            children: item.children?.map(child => ({
+              ...child,
+              label: <Link to={child.key}>{child.label}</Link>,
+            })),
+          }))}
+        />
+      </div>
 
       {/* Collapse Button & Logout */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700">
+      <div className="shrink-0 border-t border-gray-200">
         <Menu
           mode="inline"
           selectable={false}

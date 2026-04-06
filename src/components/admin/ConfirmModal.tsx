@@ -84,7 +84,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {title || config.defaultTitle}
           </Text>
           {content && (
-            <Paragraph className="text-gray-500 dark:text-gray-400 mb-0">
+            <Paragraph className="text-gray-500 mb-0">
               {content}
             </Paragraph>
           )}
