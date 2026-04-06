@@ -7,11 +7,11 @@ import {
 import {
   UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, 
   CameraOutlined, SaveOutlined, BellOutlined, SecurityScanOutlined,
-  GlobalOutlined, MoonOutlined, SunOutlined, SettingOutlined,
+  GlobalOutlined, SettingOutlined,
   KeyOutlined, HistoryOutlined, LogoutOutlined, EditOutlined,
-  CheckCircleOutlined, SafetyOutlined
+  SafetyOutlined
 } from '@ant-design/icons';
-import { useAdminAuth, useTheme } from '../../../hooks';
+import { useAdminAuth } from '../../../hooks';
 import { PageHeader } from '../../../components/admin';
 import { formatDate, formatDateTime } from '../../../utils/format';
 
@@ -20,7 +20,6 @@ const { TextArea } = Input;
 
 const AdminProfile: React.FC = () => {
   const { admin, updateProfile, changePassword, logout, loginHistory } = useAdminAuth();
-  const { isDarkMode, toggleTheme, themeColor, setThemeColor } = useTheme();
   
   const [activeTab, setActiveTab] = useState('profile');
   const [editMode, setEditMode] = useState(false);
@@ -59,15 +58,6 @@ const AdminProfile: React.FC = () => {
       message.error('Đổi mật khẩu thất bại');
     }
   };
-
-  const themeColors = [
-    { name: 'Xanh dương', value: '#1890ff' },
-    { name: 'Xanh lá', value: '#52c41a' },
-    { name: 'Tím', value: '#722ed1' },
-    { name: 'Cam', value: '#fa8c16' },
-    { name: 'Đỏ', value: '#f5222d' },
-    { name: 'Hồng', value: '#eb2f96' },
-  ];
 
   const notificationSettings = [
     { key: 'email', label: 'Thông báo qua email', description: 'Nhận thông báo quan trọng qua email', enabled: true },
@@ -143,44 +133,6 @@ const AdminProfile: React.FC = () => {
       label: <span><SettingOutlined /> Giao diện</span>,
       children: (
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center gap-4">
-              {isDarkMode ? (
-                <MoonOutlined className="text-2xl text-blue-500" />
-              ) : (
-                <SunOutlined className="text-2xl text-yellow-500" />
-              )}
-              <div>
-                <Text strong className="block">Chế độ tối</Text>
-                <Text type="secondary">Giảm mỏi mắt khi làm việc trong môi trường ánh sáng yếu</Text>
-              </div>
-            </div>
-            <Switch 
-              checked={isDarkMode} 
-              onChange={toggleTheme}
-              checkedChildren={<MoonOutlined />}
-              unCheckedChildren={<SunOutlined />}
-            />
-          </div>
-
-          <div className="p-4 border rounded-lg">
-            <Text strong className="block mb-4">Màu chủ đề</Text>
-            <div className="flex gap-3 flex-wrap">
-              {themeColors.map((color) => (
-                <div
-                  key={color.value}
-                  className={`w-10 h-10 rounded-full cursor-pointer flex items-center justify-center transition-all
-                    ${themeColor === color.value ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : 'hover:scale-105'}`}
-                  style={{ backgroundColor: color.value }}
-                  onClick={() => setThemeColor(color.value)}
-                  title={color.name}
-                >
-                  {themeColor === color.value && <CheckCircleOutlined className="text-white" />}
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-center gap-4">
               <GlobalOutlined className="text-2xl text-blue-500" />

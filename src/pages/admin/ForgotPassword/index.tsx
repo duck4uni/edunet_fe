@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../hooks';
 
 const { Title, Text, Paragraph } = Typography;
+const MIN_ADMIN_WIDTH = 1024;
 
 interface ForgotPasswordForm {
   email: string;
@@ -23,9 +24,22 @@ interface ResetPasswordForm {
 const AdminForgotPassword: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [email, setEmail] = useState('');
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window === 'undefined' ? true : window.innerWidth >= MIN_ADMIN_WIDTH,
+  );
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { forgotPassword, resetPassword, loading } = useAdminAuth();
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= MIN_ADMIN_WIDTH);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const steps = [
     { title: 'Nhập Email', icon: <MailOutlined /> },
@@ -278,6 +292,23 @@ const AdminForgotPassword: React.FC = () => {
         return null;
     }
   };
+
+  if (!isDesktop) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <Result
+          status="warning"
+          title="Khu vực Admin chỉ hỗ trợ màn hình từ 1024px"
+          subTitle="Vui lòng dùng laptop hoặc desktop để truy cập trang quản trị."
+          extra={
+            <Link to="/">
+              <Button type="primary">Về trang chủ</Button>
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div 

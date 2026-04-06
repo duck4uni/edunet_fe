@@ -1,11 +1,12 @@
 // Admin Login Page
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Typography, Card, Divider } from 'antd';
+import { Form, Input, Button, Checkbox, Typography, Card, Divider, Result } from 'antd';
 import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '../../../hooks';
 
 const { Title, Text, Paragraph } = Typography;
+const MIN_ADMIN_WIDTH = 1024;
 
 interface LoginForm {
   email: string;
@@ -19,6 +20,9 @@ interface LocationState {
 
 const AdminLogin: React.FC = () => {
   const [form] = Form.useForm();
+  const [isDesktop, setIsDesktop] = React.useState(
+    typeof window === 'undefined' ? true : window.innerWidth >= MIN_ADMIN_WIDTH,
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const { login, loading, isAuthenticated } = useAdminAuth();
@@ -32,6 +36,16 @@ const AdminLogin: React.FC = () => {
     }
   }, [isAuthenticated, navigate, from]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= MIN_ADMIN_WIDTH);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const onFinish = async (values: LoginForm) => {
     const result = await login({
       email: values.email,
@@ -43,6 +57,23 @@ const AdminLogin: React.FC = () => {
       navigate(from, { replace: true });
     }
   };
+
+  if (!isDesktop) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <Result
+          status="warning"
+          title="Khu vực Admin chỉ hỗ trợ màn hình từ 1024px"
+          subTitle="Vui lòng dùng laptop hoặc desktop để truy cập trang quản trị."
+          extra={
+            <Link to="/">
+              <Button type="primary">Về trang chủ</Button>
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -153,7 +184,7 @@ const AdminLogin: React.FC = () => {
           </Text>
         </Divider>
 
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-center">
+        <div className="bg-gray-50 rounded-lg p-4 text-center">
           <Paragraph className="mb-0 text-sm">
             Chỉ tài khoản có vai trò <Text strong>admin</Text> mới được truy cập trang quản trị.
           </Paragraph>

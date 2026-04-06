@@ -1,10 +1,9 @@
 // Admin Dashboard Page
 import React from 'react';
-import { Row, Col, Card, Typography, Avatar, Table, Tag, Progress, List, Skeleton } from 'antd';
+import { Row, Col, Card, Typography, Avatar, Table, Tag, List, Skeleton } from 'antd';
 import {
   UserOutlined,
   BookOutlined,
-  DollarOutlined,
   TeamOutlined,
   ClockCircleOutlined,
   StarFilled,
@@ -12,7 +11,6 @@ import {
 import { Link } from 'react-router-dom';
 import { useDashboard } from '../../../hooks';
 import { StatsCard, PageHeader, StatusBadge, ChartCard } from '../../../components/admin';
-import { formatCurrency } from '../../../utils/format';
 
 const { Text } = Typography;
 
@@ -64,13 +62,6 @@ const AdminDashboard: React.FC = () => {
       key: 'students',
       width: 100,
       render: (val: number) => val.toLocaleString(),
-    },
-    {
-      title: 'Doanh thu',
-      dataIndex: 'revenue',
-      key: 'revenue',
-      width: 140,
-      render: (val: number) => formatCurrency(val),
     },
     {
       title: 'Đánh giá',
@@ -168,17 +159,6 @@ const AdminDashboard: React.FC = () => {
             formatter={(val) => Number(val).toLocaleString()}
           />
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <StatsCard
-            title="Tổng doanh thu"
-            value={stats?.totalRevenue || 0}
-            icon={<DollarOutlined />}
-            color="#fa8c16"
-            trend={stats?.revenueGrowth}
-            trendLabel="so với tháng trước"
-            formatter={(val) => formatCurrency(Number(val))}
-          />
-        </Col>
       </Row>
 
       {/* Quick Stats */}
@@ -215,36 +195,7 @@ const AdminDashboard: React.FC = () => {
 
       {/* Charts Row */}
       <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} lg={16}>
-          <ChartCard
-            title="Doanh thu"
-            subtitle="12 tháng gần nhất"
-            extra={<Link to="/admin/revenue">Xem chi tiết</Link>}
-            height={320}
-          >
-            <div className="flex flex-col gap-2">
-              {data?.revenueData.slice(-6).map((item, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <Text className="w-20">{item.date}</Text>
-                  <div className="flex-1">
-                    <Progress 
-                      percent={(item.revenue / 350000000) * 100} 
-                      showInfo={false}
-                      strokeColor={{
-                        '0%': '#1890ff',
-                        '100%': '#52c41a',
-                      }}
-                    />
-                  </div>
-                  <Text strong className="w-28 text-right">
-                    {formatCurrency(item.revenue)}
-                  </Text>
-                </div>
-              ))}
-            </div>
-          </ChartCard>
-        </Col>
-        <Col xs={24} lg={8}>
+        <Col xs={24} lg={24}>
           <ChartCard
             title="Phân bố khóa học"
             subtitle="Theo danh mục"
@@ -322,7 +273,6 @@ const AdminDashboard: React.FC = () => {
                       <div className="flex justify-between text-xs">
                         <span>{teacher.totalCourses || 0} khóa học</span>
                         <span>{(teacher.totalStudents || 0).toLocaleString()} học viên</span>
-                        <span className="text-green-500">{formatCurrency(teacher.earnings || 0)}</span>
                       </div>
                     }
                   />

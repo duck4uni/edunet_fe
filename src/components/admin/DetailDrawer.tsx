@@ -117,11 +117,11 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
         size="small"
         labelStyle={{ 
           fontWeight: 500,
-          backgroundColor: 'var(--bg-tertiary)',
+          backgroundColor: '#fafafa',
           width: '35%',
         }}
         contentStyle={{
-          backgroundColor: 'var(--bg-primary)',
+          backgroundColor: '#ffffff',
         }}
       >
         {items.map((item, index) => (

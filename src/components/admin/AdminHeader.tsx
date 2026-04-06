@@ -8,7 +8,6 @@ import {
   Dropdown, 
   Space, 
   Button,
-  Tooltip,
   Typography,
 } from 'antd';
 import { 
@@ -17,8 +16,6 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
-  MoonOutlined,
-  SunOutlined,
   CheckCircleOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -35,8 +32,6 @@ interface AdminHeaderProps {
     email: string;
     avatar?: string;
   };
-  isDark: boolean;
-  onToggleTheme: () => void;
   onLogout: () => void;
   notifications?: AdminNotification[];
   onNotificationClick?: (notification: AdminNotification) => void;
@@ -46,8 +41,6 @@ interface AdminHeaderProps {
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({
   user,
-  isDark,
-  onToggleTheme,
   onLogout,
   notifications = [],
   onNotificationClick,
@@ -67,8 +60,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   };
 
   const notificationContent = (
-    <div className="w-80 max-h-96 overflow-hidden bg-white dark:bg-gray-900">
-      <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
+    <div className="w-80 max-h-96 overflow-hidden bg-white">
+      <div className="flex items-center justify-between p-3 border-b border-gray-200">
         <Text strong>Thông báo</Text>
         {unreadCount > 0 && onMarkAllRead && (
           <Button type="link" size="small" onClick={onMarkAllRead}>
@@ -86,8 +79,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
             {notifications.slice(0, 5).map((item) => (
               <div
                 key={item.id}
-                className={`flex items-start gap-3 p-3 border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                  !item.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                className={`flex items-start gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+                  !item.isRead ? 'bg-blue-50' : ''
                 }`}
                 onClick={() => onNotificationClick?.(item)}
               >
@@ -95,10 +88,10 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
                   {getNotificationIcon(item.type)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+                  <div className="text-sm font-medium text-gray-900 mb-1">
                     {item.title}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                  <div className="text-xs text-gray-500 line-clamp-2">
                     {item.message}
                   </div>
                 </div>
@@ -107,7 +100,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           </div>
         )}
       </div>
-      <div className="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
+      <div className="p-2 border-t border-gray-200 text-center">
         <Link to="/admin/notifications" className="text-blue-500 text-sm hover:text-blue-600">
           Xem tất cả
         </Link>
@@ -143,8 +136,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
       className="admin-header"
       style={{
         padding: '0 24px',
-        backgroundColor: 'var(--bg-primary)',
-        borderBottom: '1px solid var(--border-color)',
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #d9d9d9',
         position: 'sticky',
         top: 0,
         zIndex: 100,
@@ -162,22 +155,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           placeholder="Tìm kiếm..."
           prefix={<SearchOutlined className="text-gray-400" />}
           className="rounded-lg"
-          style={{ backgroundColor: 'var(--bg-secondary)' }}
+          style={{ backgroundColor: '#f5f5f5' }}
         />
       </div>
 
       {/* Right Actions */}
       <Space size="middle">
-        {/* Theme Toggle */}
-        <Tooltip title={isDark ? 'Chế độ sáng' : 'Chế độ tối'}>
-          <Button
-            type="text"
-            icon={isDark ? <SunOutlined /> : <MoonOutlined />}
-            onClick={onToggleTheme}
-            className="flex items-center justify-center"
-          />
-        </Tooltip>
-
         {/* Notifications */}
         <Dropdown
           dropdownRender={() => notificationContent}
@@ -195,7 +178,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
 
         {/* User Menu */}
         <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
-          <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors">
+          <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded-lg px-2 py-1 transition-colors">
             <Avatar 
               src={user?.avatar} 
               icon={<UserOutlined />}

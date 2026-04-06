@@ -4,7 +4,7 @@ import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typ
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled, CheckOutlined, CloseOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTeacherManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
-import { formatCurrency, formatDate } from '../../../utils/format';
+import { formatDate } from '../../../utils/format';
 import type { Teacher } from '../../../types/admin';
 import { teacherStatuses } from '../../../constants/adminData';
 
@@ -95,7 +95,6 @@ const TeacherManagement: React.FC = () => {
     { title: 'Khóa học', dataIndex: 'totalCourses', key: 'courses', width: 90 },
     { title: 'Học viên', dataIndex: 'totalStudents', key: 'students', width: 100, render: (val: number) => val.toLocaleString() },
     { title: 'Đánh giá', dataIndex: 'rating', key: 'rating', width: 80, render: (r: number) => <span><StarFilled className="text-yellow-400" /> {r}</span> },
-    { title: 'Thu nhập', dataIndex: 'earnings', key: 'earnings', width: 120, render: (val: number) => formatCurrency(val) },
     { title: 'Trạng thái', dataIndex: 'status', key: 'status', width: 110, render: (s: string) => <StatusBadge status={s} /> },
     {
       title: '', key: 'actions', width: 50, fixed: 'right' as const,
@@ -120,7 +119,6 @@ const TeacherManagement: React.FC = () => {
     { label: 'Số khóa học', value: selectedTeacher.totalCourses },
     { label: 'Học viên', value: selectedTeacher.totalStudents.toLocaleString() },
     { label: 'Đánh giá', value: <span><StarFilled className="text-yellow-400" /> {selectedTeacher.rating}</span> },
-    { label: 'Thu nhập', value: formatCurrency(selectedTeacher.earnings) },
     { label: 'Chuyên môn', value: selectedTeacher.specialization.map((s: string) => <Tag key={s} color="blue">{s}</Tag>), span: 2 },
     ...(selectedTeacher.cvUrl ? [{
       label: 'CV',

@@ -1,21 +1,29 @@
 // Admin Layout Component
 import React, { useState, useEffect } from 'react';
-import { Layout, ConfigProvider, theme as antTheme, Spin } from 'antd';
+import { Layout, ConfigProvider, theme as antTheme, Spin, Result, Button } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
-import { useAdminAuth, useDashboard, useTheme } from '../../hooks';
+import { useAdminAuth, useDashboard } from '../../hooks';
 
 const { Content } = Layout;
+const MIN_ADMIN_WIDTH = 1024;
+
+const isDesktopWidth = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+  return window.innerWidth >= MIN_ADMIN_WIDTH;
+};
 
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(isDesktopWidth);
   const navigate = useNavigate();
   const location = useLocation();
   
   const { user, logout, isAuthenticated, isInitialized } = useAdminAuth();
   const { data: dashboardData, markNotificationRead, markAllNotificationsRead } = useDashboard();
-  const { isDark, toggleTheme } = useTheme();
 
   // Check authentication on mount and when auth state changes
   useEffect(() => {
@@ -28,6 +36,17 @@ const AdminLayout: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Block admin on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(isDesktopWidth());
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -43,16 +62,16 @@ const AdminLayout: React.FC = () => {
 
   // Ant Design theme configuration
   const themeConfig = {
-    algorithm: isDark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
+    algorithm: antTheme.defaultAlgorithm,
     token: {
       colorPrimary: '#1890ff',
       borderRadius: 6,
     },
     components: {
       Layout: {
-        siderBg: isDark ? '#141414' : '#ffffff',
-        headerBg: isDark ? '#141414' : '#ffffff',
-        bodyBg: isDark ? '#0a0a0a' : '#f5f5f5',
+        siderBg: '#ffffff',
+        headerBg: '#ffffff',
+        bodyBg: '#f5f5f5',
       },
       Menu: {
         itemBg: 'transparent',
@@ -60,6 +79,32 @@ const AdminLayout: React.FC = () => {
       },
     },
   };
+
+  if (!isDesktop) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px',
+          backgroundColor: '#f5f5f5',
+        }}
+      >
+        <Result
+          status="warning"
+          title="Khu vực Admin chỉ hỗ trợ màn hình từ 1024px"
+          subTitle="Vui lòng dùng laptop hoặc desktop để truy cập trang quản trị."
+          extra={
+            <Button className="text-black" onClick={() => navigate('/')}>
+              Về trang chủ
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
 
   // Show loading while checking authentication
   if (!isInitialized) {
@@ -69,7 +114,7 @@ const AdminLayout: React.FC = () => {
         justifyContent: 'center', 
         alignItems: 'center', 
         height: '100vh',
-        backgroundColor: isDark ? '#0a0a0a' : '#f5f5f5'
+        backgroundColor: '#f5f5f5'
       }}>
         <Spin size="large" />
       </div>
@@ -109,8 +154,6 @@ const AdminLayout: React.FC = () => {
               email: user.email,
               avatar: user.avatar,
             } : undefined}
-            isDark={isDark}
-            onToggleTheme={toggleTheme}
             onLogout={handleLogout}
             notifications={dashboardData?.notifications}
             onNotificationClick={handleNotificationClick}
@@ -123,7 +166,7 @@ const AdminLayout: React.FC = () => {
               margin: '24px',
               padding: '24px',
               minHeight: 'calc(100vh - 112px)',
-              backgroundColor: 'var(--bg-secondary)',
+              backgroundColor: '#f5f5f5',
               borderRadius: '8px',
             }}
           >

@@ -48,7 +48,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+            <span className="text-gray-500 text-sm font-medium">
               {title}
             </span>
             {tooltip && (
@@ -64,7 +64,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
             valueStyle={{ 
               fontSize: '28px', 
               fontWeight: 600,
-              color: 'var(--text-primary)',
+              color: 'rgba(0, 0, 0, 0.88)',
             }}
           />
           {trend !== undefined && (

@@ -111,7 +111,7 @@ const PermissionsManagement: React.FC = () => {
                 {roleGroups.map((r) => (
                   <div
                     key={r.id}
-                    className={`p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${selectedRole?.id === r.id ? 'bg-blue-50 dark:bg-blue-900' : ''}`}
+                    className={`p-2 rounded cursor-pointer hover:bg-gray-100 ${selectedRole?.id === r.id ? 'bg-blue-50' : ''}`}
                     onClick={() => handleRoleSelect(r)}
                   >
                     <Text strong>{r.name}</Text>

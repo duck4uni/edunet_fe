@@ -313,13 +313,6 @@ const CourseManagement: React.FC = () => {
       ),
     },
     {
-      title: 'Doanh thu',
-      key: 'revenue',
-      width: 130,
-      sorter: true,
-      render: (_: any, record: Course) => formatCurrency((record.price ?? 0) * (record.totalStudents ?? 0)),
-    },
-    {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
