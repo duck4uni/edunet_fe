@@ -49,27 +49,38 @@ const Schedule: React.FC = () => {
     isError,
   } = useSchedule();
 
+  const formatHourMinute = (time?: string) => {
+    if (!time) return '--:--';
+    const parts = time.split(':');
+    if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+    return time;
+  };
+
   const dateCellRender = (value: Dayjs) => {
     const events = getEventsForDate(value);
     return (
       <ul className="list-none p-0 m-0">
-        {events.slice(0, 3).map((event) => {
+        {events.slice(0, 2).map((event) => {
           const config = EVENT_TYPE_CONFIG[event.type as keyof typeof EVENT_TYPE_CONFIG];
           return (
             <li
               key={event.id}
-              className={`mb-1 text-xs truncate cursor-pointer rounded px-1 py-0.5 ${config.bgColor} ${config.textColor} hover:opacity-80 transition-opacity`}
+              className={`mb-1 text-xs cursor-pointer rounded px-1.5 py-1 ${config.bgColor} ${config.textColor} hover:opacity-80 transition-opacity`}
               onClick={(e) => {
                 e.stopPropagation();
                 openEventModal(event);
               }}
             >
-              {event.title}
+              <div className="font-medium leading-tight truncate">{event.title}</div>
+              <div className="leading-tight truncate opacity-85">{event.courseName || 'Chưa có môn'}</div>
+              <div className="leading-tight opacity-85">
+                {formatHourMinute(event.startTime)} - {formatHourMinute(event.endTime)}
+              </div>
             </li>
           );
         })}
-        {events.length > 3 && (
-          <li className="text-xs text-gray-400">+{events.length - 3} thêm</li>
+        {events.length > 2 && (
+          <li className="text-xs text-gray-400">+{events.length - 2} thêm</li>
         )}
       </ul>
     );

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Row, Col, Card, Table, Button, Space, Input, Modal, 
-  Typography, Avatar, Tooltip, Dropdown, Tag, Tabs, Image,
+  Typography, Avatar, Tooltip, Dropdown, Tabs, Image,
   Rate, Popconfirm, Badge, Form, Select, InputNumber
 } from 'antd';
 import {
@@ -11,9 +11,9 @@ import {
   UnlockOutlined, MoreOutlined, StarFilled,
   ExportOutlined, TeamOutlined, UserOutlined
 } from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCourseManagement } from '../../../hooks';
-import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
+import { PageHeader, StatusBadge, FilterBar } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
 import type { Course, Review, Enrollment } from '../../../services/courseApi';
 import { useGetCategoriesQuery, useGetTeachersQuery, useCreateCourseMutation } from '../../../services/courseApi';
@@ -25,6 +25,7 @@ const { Option } = Select;
 
 const CourseManagement: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const tabFromUrl = searchParams.get('tab');
   const {
@@ -66,7 +67,6 @@ const CourseManagement: React.FC = () => {
     if (tabFromUrl === 'reviews') return 'reviews';
     return 'all';
   });
-  const [detailOpen, setDetailOpen] = useState(false);
   const [rejectModal, setRejectModal] = useState<{ open: boolean; courseId: string | null }>({
     open: false,
     courseId: null,
@@ -108,8 +108,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleViewDetail = (course: Course) => {
-    setSelectedCourse(course);
-    setDetailOpen(true);
+    navigate(`/admin/courses/${course.id}`);
   };
 
   const handleReject = async () => {
@@ -491,25 +490,6 @@ const CourseManagement: React.FC = () => {
     { key: 'reviews', label: 'Đánh giá' },
   ];
 
-  const detailItems = selectedCourse ? [
-    { label: 'Mã khóa học', value: selectedCourse.id },
-    { label: 'Danh mục', value: selectedCourse.category?.name || '—' },
-    { label: 'Cấp độ', value: selectedCourse.level },
-    { label: 'Ngôn ngữ', value: selectedCourse.language || '—' },
-    { label: 'Thời lượng', value: selectedCourse.duration || '—' },
-    { label: 'Số bài học', value: selectedCourse.totalLessons },
-    { label: 'Giá gốc', value: formatCurrency(selectedCourse.price) },
-    { label: 'Giá khuyến mãi', value: selectedCourse.discountPrice ? formatCurrency(selectedCourse.discountPrice) : '—' },
-    { label: 'Học viên', value: (selectedCourse.totalStudents ?? 0).toLocaleString() },
-    { label: 'Đánh giá', value: `${selectedCourse.rating ?? 0} (${selectedCourse.totalReviews ?? 0} đánh giá)` },
-    { label: 'Ngày tạo', value: formatDate(selectedCourse.createdAt) },
-    { label: 'Cập nhật', value: formatDate(selectedCourse.updatedAt) },
-    { label: 'Xuất bản', value: selectedCourse.publishedAt ? formatDate(selectedCourse.publishedAt) : '—' },
-    ...(selectedCourse.rejectionReason ? [{ label: 'Lý do từ chối', value: selectedCourse.rejectionReason, span: 2 }] : []),
-    { label: 'Mô tả', value: selectedCourse.description, span: 2 },
-    { label: 'Thẻ', value: (selectedCourse.tags || []).map(t => <Tag key={t}>{t}</Tag>), span: 2 },
-  ] : [];
-
   return (
     <div>
       <PageHeader
@@ -594,17 +574,6 @@ const CourseManagement: React.FC = () => {
           scroll={{ x: 1400 }}
         />
       </Card>
-
-      {/* Detail Drawer */}
-      <DetailDrawer
-        open={detailOpen}
-        onClose={() => setDetailOpen(false)}
-        title={selectedCourse?.title || ''}
-        subtitle={selectedCourse ? getTeacherName(selectedCourse) : undefined}
-        avatar={selectedCourse?.thumbnail}
-        status={selectedCourse?.status}
-        items={detailItems}
-      />
 
       {/* Reject Modal */}
       <Modal

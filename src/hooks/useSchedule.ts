@@ -4,6 +4,31 @@ import { EVENT_TYPE_CONFIG } from '../constants/scheduleData';
 import type { ScheduleEvent, ApiSchedule } from '../types/schedule';
 import { useGetMySchedulesQuery, useGetUpcomingSchedulesQuery } from '../services/learningApi';
 
+type MaybePaginatedSchedules = {
+  rows?: ApiSchedule[];
+  count?: number;
+};
+
+const normalizeSchedules = (payload: unknown): ApiSchedule[] => {
+  if (!payload) return [];
+  if (Array.isArray(payload)) return payload as ApiSchedule[];
+
+  if (typeof payload === 'object' && payload !== null) {
+    const maybePaginated = payload as MaybePaginatedSchedules;
+    if (Array.isArray(maybePaginated.rows)) return maybePaginated.rows;
+  }
+
+  return [];
+};
+
+const dedupeEventsById = (events: ScheduleEvent[]): ScheduleEvent[] => {
+  const map = new Map<string, ScheduleEvent>();
+  for (const event of events) {
+    if (!map.has(event.id)) map.set(event.id, event);
+  }
+  return Array.from(map.values());
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Type mapping: backend enum → frontend display type
 // Backend:  class | exam | assignment | event
@@ -96,23 +121,29 @@ export const useSchedule = () => {
   // ── Derived data ───────────────────────────────────────────────────────────
   /** All schedule events mapped to the display model */
   const allEvents = useMemo<ScheduleEvent[]>(() => {
-    const rows = mySchedulesData?.data as ApiSchedule[] | undefined;
-    if (!rows) return [];
+    const rows = normalizeSchedules(mySchedulesData?.data);
     return rows.map(mapApiScheduleToEvent);
   }, [mySchedulesData]);
 
   /** Upcoming events (from the dedicated /upcoming endpoint) */
   const rawUpcomingEvents = useMemo<ScheduleEvent[]>(() => {
-    const items = upcomingData?.data as ApiSchedule[] | undefined;
-    if (!items) return [];
+    const items = normalizeSchedules(upcomingData?.data);
     return items.map(mapApiScheduleToEvent);
   }, [upcomingData]);
 
+  /**
+   * Unified event source for calendar rendering.
+   * Some environments return empty /schedules/my while /schedules/upcoming has data.
+   */
+  const calendarEvents = useMemo<ScheduleEvent[]>(() => {
+    return dedupeEventsById([...allEvents, ...rawUpcomingEvents]);
+  }, [allEvents, rawUpcomingEvents]);
+
   // ── Filtered views ─────────────────────────────────────────────────────────
   const filteredEvents = useMemo(() => {
-    if (filterType === 'all') return allEvents;
-    return allEvents.filter(e => e.type === filterType);
-  }, [allEvents, filterType]);
+    if (filterType === 'all') return calendarEvents;
+    return calendarEvents.filter(e => e.type === filterType);
+  }, [calendarEvents, filterType]);
 
   const getEventsForDate = useCallback(
     (date: Dayjs): ScheduleEvent[] => {
@@ -135,12 +166,12 @@ export const useSchedule = () => {
   /** Summary statistics from all loaded events (unfiltered) */
   const stats = useMemo(
     () => ({
-      total:       allEvents.length,
-      classes:     allEvents.filter(e => e.type === 'class').length,
-      assignments: allEvents.filter(e => e.type === 'assignment').length,
-      quizzes:     allEvents.filter(e => e.type === 'quiz').length,
+      total:       calendarEvents.length,
+      classes:     calendarEvents.filter(e => e.type === 'class').length,
+      assignments: calendarEvents.filter(e => e.type === 'assignment').length,
+      quizzes:     calendarEvents.filter(e => e.type === 'quiz').length,
     }),
-    [allEvents],
+    [calendarEvents],
   );
 
   // ── Event handlers ─────────────────────────────────────────────────────────

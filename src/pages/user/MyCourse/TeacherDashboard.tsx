@@ -600,7 +600,7 @@ const TeacherDashboard: React.FC = () => {
                         label="Giờ bắt đầu"
                         rules={[{ required: true, message: 'Chọn giờ bắt đầu' }]}
                       >
-                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} />
+                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} needConfirm={false} />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -609,7 +609,7 @@ const TeacherDashboard: React.FC = () => {
                         label="Giờ kết thúc"
                         rules={[{ required: true, message: 'Chọn giờ kết thúc' }]}
                       >
-                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} />
+                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} needConfirm={false} />
                       </Form.Item>
                     </Col>
                   </Row>

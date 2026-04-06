@@ -30,3 +30,75 @@
   width: 24px !important;
   border-radius: 4px !important;
 }
+
+/* Global overflow guards */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+/* Keep Ant Design form controls inside their container */
+.ant-form .ant-picker,
+.ant-form .ant-select,
+.ant-form .ant-cascader,
+.ant-form .ant-input-number,
+.ant-form .ant-input-affix-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Make long modal forms scroll internally instead of overflowing viewport */
+.ant-modal-root .ant-modal-wrap {
+  padding: 16px;
+}
+
+.ant-modal-root .ant-modal {
+  max-width: min(960px, calc(100vw - 32px)) !important;
+  margin: 0 auto;
+  top: 0;
+  padding-bottom: 0;
+}
+
+.ant-modal-root .ant-modal-content {
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-modal-root .ant-modal-header,
+.ant-modal-root .ant-modal-footer {
+  flex-shrink: 0;
+}
+
+.ant-modal-root .ant-modal-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .ant-modal-root .ant-modal-wrap {
+    padding: 8px;
+  }
+
+  .ant-modal-root .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .ant-modal-root .ant-modal-content {
+    max-height: calc(100vh - 16px);
+  }
+}

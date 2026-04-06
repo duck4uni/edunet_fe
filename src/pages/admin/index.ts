@@ -3,6 +3,7 @@ export { default as AdminLogin } from './Login';
 export { default as AdminForgotPassword } from './ForgotPassword';
 export { default as AdminDashboard } from './Dashboard';
 export { default as CourseManagement } from './Courses';
+export { default as AdminCourseDetail } from './Courses/Detail';
 export { default as TeacherManagement } from './Teachers';
 export { default as EmployeeManagement } from './Employees';
 export { default as RecruitmentManagement } from './Recruitment';

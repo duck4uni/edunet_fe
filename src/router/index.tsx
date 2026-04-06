@@ -27,6 +27,7 @@ import {
   AdminForgotPassword,
   AdminDashboard,
   CourseManagement,
+  AdminCourseDetail,
   TeacherManagement,
   TeacherRegistrationManagement,
   EmployeeManagement,
@@ -150,6 +151,10 @@ export const router = createBrowserRouter([
       {
         path: 'courses',
         element: <CourseManagement />,
+      },
+      {
+        path: 'courses/:id',
+        element: <AdminCourseDetail />,
       },
       {
         path: 'teachers',
