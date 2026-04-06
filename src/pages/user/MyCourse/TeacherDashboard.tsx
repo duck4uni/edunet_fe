@@ -1,14 +1,43 @@
 import React, { useState } from 'react';
-import { Card, Button, Typography, Row, Col, Spin, Empty, Tag, Modal, Form, Input, Select, InputNumber, DatePicker, message, Alert, Tooltip, Popconfirm } from 'antd';
+import { Card, Button, Typography, Row, Col, Spin, Empty, Tag, Modal, Form, Input, Select, InputNumber, DatePicker, TimePicker, Checkbox, Divider, message, Alert, Tooltip, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, EyeOutlined, SettingOutlined, SendOutlined, ExclamationCircleOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useGetProfileQuery } from '../../../services/authApi';
 import { useGetCoursesQuery, useCreateCourseMutation, useUpdateCourseMutation, useGetCategoriesQuery, useSubmitCourseForReviewMutation } from '../../../services/courseApi';
+import { useCreateRecurringScheduleMutation } from '../../../services/learningApi';
 import type { Course } from '../../../services/courseApi';
 import dayjs from 'dayjs';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
+
+type TeacherCourseFormValues = {
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  price?: number;
+  discountPrice?: number;
+  categoryId?: string;
+  level?: 'beginner' | 'intermediate' | 'advanced' | 'all';
+  duration?: string;
+  totalLessons?: number;
+  language?: string;
+  startDate?: dayjs.Dayjs;
+  tags?: string[];
+  goal?: string;
+  createTimetable?: boolean;
+  timetableTitle?: string;
+  timetableDescription?: string;
+  timetableType?: 'class' | 'exam' | 'assignment' | 'event';
+  recurrenceStartDate?: dayjs.Dayjs;
+  recurrenceEndDate?: dayjs.Dayjs;
+  weekDays?: number[];
+  scheduleStartTime?: dayjs.Dayjs;
+  scheduleEndTime?: dayjs.Dayjs;
+  isOnline?: boolean;
+  location?: string;
+  meetingLink?: string;
+};
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   draft: { label: 'Bản nháp', color: 'default', icon: <FileTextOutlined /> },
@@ -34,6 +63,7 @@ const TeacherDashboard: React.FC = () => {
 
   const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
   const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
+  const [createRecurringSchedule, { isLoading: isCreatingSchedule }] = useCreateRecurringScheduleMutation();
   const [submitForReview, { isLoading: isSubmitting }] = useSubmitCourseForReviewMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -49,10 +79,21 @@ const TeacherDashboard: React.FC = () => {
       form.setFieldsValue({
         ...record,
         startDate: record.startDate ? dayjs(record.startDate) : undefined,
+        createTimetable: false,
+        timetableType: 'class',
+        timetableTitle: `${record.title} - Lịch học`,
+        weekDays: [1, 3, 5],
+        isOnline: false,
       });
     } else {
       setEditingId(null);
       form.resetFields();
+      form.setFieldsValue({
+        createTimetable: false,
+        timetableType: 'class',
+        weekDays: [1, 3, 5],
+        isOnline: false,
+      });
     }
     setIsModalVisible(true);
   };
@@ -67,26 +108,83 @@ const TeacherDashboard: React.FC = () => {
     }
   };
 
-  const handleFinish = async (values: any) => {
+  const handleFinish = async (values: TeacherCourseFormValues) => {
     try {
+      const {
+        createTimetable,
+        timetableTitle,
+        timetableDescription,
+        timetableType,
+        recurrenceStartDate,
+        recurrenceEndDate,
+        weekDays,
+        scheduleStartTime,
+        scheduleEndTime,
+        isOnline,
+        location,
+        meetingLink,
+        ...courseValues
+      } = values;
+
+      if (createTimetable) {
+        if (!recurrenceStartDate || !recurrenceEndDate || !scheduleStartTime || !scheduleEndTime || !weekDays?.length) {
+          message.error('Vui lòng nhập đầy đủ thông tin thời khóa biểu');
+          return;
+        }
+
+        if (recurrenceEndDate.isBefore(recurrenceStartDate, 'day')) {
+          message.error('Ngày kết thúc lịch học phải sau hoặc bằng ngày bắt đầu');
+          return;
+        }
+
+        if (scheduleEndTime.isSame(scheduleStartTime) || scheduleEndTime.isBefore(scheduleStartTime)) {
+          message.error('Giờ kết thúc phải sau giờ bắt đầu');
+          return;
+        }
+      }
+
       const payload = {
-        ...values,
-        price: values.price ? Number(values.price) : 0,
-        discountPrice: values.discountPrice ? Number(values.discountPrice) : undefined,
-        totalLessons: values.totalLessons ? Number(values.totalLessons) : 0,
-        startDate: values.startDate ? values.startDate.toISOString() : undefined,
+        ...courseValues,
+        price: courseValues.price ? Number(courseValues.price) : 0,
+        discountPrice: courseValues.discountPrice ? Number(courseValues.discountPrice) : undefined,
+        totalLessons: courseValues.totalLessons ? Number(courseValues.totalLessons) : 0,
+        startDate: courseValues.startDate ? courseValues.startDate.toISOString() : undefined,
       };
+
+      let courseId = editingId;
 
       if (editingId) {
         await updateCourse({ id: editingId, data: payload }).unwrap();
         message.success('Cập nhật thành công');
       } else {
-        await createCourse({
+        const createdCourse = await createCourse({
           ...payload,
           teacherId: user?.id,
         }).unwrap();
+        courseId = createdCourse.data?.id;
         message.success('Tạo khóa học thành công — khóa học đang chờ xét duyệt');
       }
+
+      if (createTimetable && courseId) {
+        const recurringResult = await createRecurringSchedule({
+          title: timetableTitle?.trim() || `${payload.title} - Buổi học`,
+          type: timetableType || 'class',
+          description: timetableDescription?.trim() || undefined,
+          startDate: recurrenceStartDate!.format('YYYY-MM-DD'),
+          recurrenceEndDate: recurrenceEndDate!.format('YYYY-MM-DD'),
+          weekDays: weekDays!,
+          startTime: scheduleStartTime!.format('HH:mm'),
+          endTime: scheduleEndTime!.format('HH:mm'),
+          isOnline: !!isOnline,
+          location: isOnline ? undefined : location?.trim() || undefined,
+          meetingLink: isOnline ? meetingLink?.trim() || undefined : undefined,
+          courseId,
+          teacherId: user?.id,
+        }).unwrap();
+
+        message.success(`Đã tạo thời khóa biểu: ${recurringResult.data.count} buổi học`);
+      }
+
       setIsModalVisible(false);
       refetch();
     } catch (error) {
@@ -416,9 +514,137 @@ const TeacherDashboard: React.FC = () => {
           <Form.Item name="tags" label="Tags">
             <Select mode="tags" placeholder="Nhập tags..." />
           </Form.Item>
-          
-          <Form.Item name="schedule" label="Lịch học">
-            <Select mode="tags" placeholder="Nhập lịch học (vd: Thứ 2, Thứ 4)..." />
+
+          <Divider className="!my-4">Thời khóa biểu</Divider>
+
+          <Form.Item name="createTimetable" valuePropName="checked">
+            <Checkbox>{editingId ? 'Tạo thêm thời khóa biểu cho khóa học này' : 'Tạo thời khóa biểu ngay khi tạo khóa học'}</Checkbox>
+          </Form.Item>
+
+          <Form.Item noStyle dependencies={["createTimetable"]}>
+            {({ getFieldValue }) =>
+              getFieldValue('createTimetable') ? (
+                <>
+                  <Row gutter={16}>
+                    <Col span={12}>
+                      <Form.Item
+                        name="timetableTitle"
+                        label="Tên lịch học"
+                        rules={[{ required: true, message: 'Vui lòng nhập tên lịch học' }]}
+                      >
+                        <Input placeholder="Ví dụ: React Fundamentals - Morning" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name="timetableType"
+                        label="Loại lịch"
+                        initialValue="class"
+                        rules={[{ required: true }]}
+                      >
+                        <Select>
+                          <Option value="class">Lớp học</Option>
+                          <Option value="exam">Kiểm tra</Option>
+                          <Option value="assignment">Bài tập</Option>
+                          <Option value="event">Sự kiện</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Form.Item name="timetableDescription" label="Mô tả lịch học">
+                    <Input.TextArea rows={2} placeholder="Mô tả ngắn cho chuỗi buổi học" />
+                  </Form.Item>
+
+                  <Row gutter={16}>
+                    <Col span={12}>
+                      <Form.Item
+                        name="recurrenceStartDate"
+                        label="Ngày bắt đầu lịch"
+                        rules={[{ required: true, message: 'Chọn ngày bắt đầu lịch' }]}
+                      >
+                        <DatePicker className="w-full" format="DD/MM/YYYY" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name="recurrenceEndDate"
+                        label="Ngày kết thúc lịch"
+                        rules={[{ required: true, message: 'Chọn ngày kết thúc lịch' }]}
+                      >
+                        <DatePicker className="w-full" format="DD/MM/YYYY" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Form.Item
+                    name="weekDays"
+                    label="Các ngày học trong tuần"
+                    rules={[{ required: true, message: 'Chọn ít nhất 1 ngày học' }]}
+                  >
+                    <Select mode="multiple" placeholder="Chọn thứ học">
+                      <Option value={1}>Thứ 2</Option>
+                      <Option value={2}>Thứ 3</Option>
+                      <Option value={3}>Thứ 4</Option>
+                      <Option value={4}>Thứ 5</Option>
+                      <Option value={5}>Thứ 6</Option>
+                      <Option value={6}>Thứ 7</Option>
+                      <Option value={0}>Chủ nhật</Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Row gutter={16}>
+                    <Col span={12}>
+                      <Form.Item
+                        name="scheduleStartTime"
+                        label="Giờ bắt đầu"
+                        rules={[{ required: true, message: 'Chọn giờ bắt đầu' }]}
+                      >
+                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name="scheduleEndTime"
+                        label="Giờ kết thúc"
+                        rules={[{ required: true, message: 'Chọn giờ kết thúc' }]}
+                      >
+                        <TimePicker className="w-full" format="HH:mm" minuteStep={5} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Form.Item name="isOnline" label="Hình thức" initialValue={false}>
+                    <Select>
+                      <Option value={false}>Học trực tiếp</Option>
+                      <Option value={true}>Học online</Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item noStyle dependencies={["isOnline"]}>
+                    {({ getFieldValue: getFieldValueOnline }) =>
+                      getFieldValueOnline('isOnline') ? (
+                        <Form.Item
+                          name="meetingLink"
+                          label="Link học online"
+                          rules={[{ required: true, message: 'Vui lòng nhập link phòng học online' }]}
+                        >
+                          <Input placeholder="https://meet.google.com/..." />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name="location"
+                          label="Địa điểm học"
+                          rules={[{ required: true, message: 'Vui lòng nhập địa điểm học' }]}
+                        >
+                          <Input placeholder="Phòng 201, Cơ sở A" />
+                        </Form.Item>
+                      )
+                    }
+                  </Form.Item>
+                </>
+              ) : null
+            }
           </Form.Item>
           
           <Form.Item name="goal" label="Mục tiêu khóa học">
@@ -426,7 +652,7 @@ const TeacherDashboard: React.FC = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full !bg-[#012643]" loading={isCreating || isUpdating}>
+            <Button type="primary" htmlType="submit" className="w-full !bg-[#012643]" loading={isCreating || isUpdating || isCreatingSchedule}>
               {editingId ? 'Cập nhật khóa học' : 'Tạo khóa học'}
             </Button>
           </Form.Item>
