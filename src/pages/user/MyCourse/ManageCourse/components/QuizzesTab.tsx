@@ -8,7 +8,6 @@ import {
   useUpdateQuizMutation,
   useDeleteQuizMutation 
 } from '../../../../../services/learningApi';
-import dayjs from 'dayjs';
 
 interface QuizzesTabProps {
   courseId: string;

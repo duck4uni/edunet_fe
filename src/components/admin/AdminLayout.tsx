@@ -24,6 +24,11 @@ const AdminLayout: React.FC = () => {
     }
   }, [isAuthenticated, isInitialized, navigate, location]);
 
+  // Scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
     navigate('/admin/login');

@@ -23,6 +23,7 @@ export interface Course {
   schedule?: string[];
   startDate?: string;
   publishedAt?: string;
+  rejectionReason?: string;
   categoryId?: string;
   category?: Category;
   teacherId: string;
@@ -66,6 +67,8 @@ export interface Teacher {
   totalStudents?: number;
   status?: string;
   bio?: string;
+  cvUrl?: string;
+  rejectionReason?: string;
   socialLinks?: {
     linkedin?: string;
     twitter?: string;
@@ -97,7 +100,7 @@ export interface Enrollment {
   id: string;
   courseId: string;
   userId: string;
-  status: 'active' | 'completed' | 'dropped' | 'expired';
+  status: 'pending' | 'active' | 'completed' | 'dropped' | 'rejected' | 'expired';
   progress: number;
   completedAt?: string;
   lastAccessedAt?: string;
@@ -252,7 +255,59 @@ export const courseApi = createApi({
       providesTags: (_result, _error, id) => [{ type: 'Teachers', id }],
     }),
 
+    createTeacher: builder.mutation<ApiResponse<Teacher>, { userId: string; specialization?: string[]; qualification?: string; experience?: number; status?: string; bio?: string; socialLinks?: { linkedin?: string; twitter?: string; website?: string } }>({
+      query: (data) => ({
+        url: '/teachers',
+        method: 'post',
+        data,
+      }),
+      invalidatesTags: ['Teachers'],
+    }),
+
+    updateTeacher: builder.mutation<ApiResponse<Teacher>, { id: string; data: Partial<Teacher> }>({
+      query: ({ id, data }) => ({
+        url: `/teachers/${id}`,
+        method: 'patch',
+        data,
+      }),
+      invalidatesTags: ['Teachers'],
+    }),
+
+    approveTeacher: builder.mutation<ApiResponse<Teacher>, string>({
+      query: (id) => ({
+        url: `/teachers/${id}/approve`,
+        method: 'patch',
+      }),
+      invalidatesTags: ['Teachers'],
+    }),
+
+    rejectTeacher: builder.mutation<ApiResponse<Teacher>, { id: string; rejectionReason: string }>({
+      query: ({ id, rejectionReason }) => ({
+        url: `/teachers/${id}/reject`,
+        method: 'patch',
+        data: { rejectionReason },
+      }),
+      invalidatesTags: ['Teachers'],
+    }),
+
+    deleteTeacher: builder.mutation<ApiResponse<null>, string>({
+      query: (id) => ({
+        url: `/teachers/${id}`,
+        method: 'delete',
+      }),
+      invalidatesTags: ['Teachers'],
+    }),
+
     // ============ LESSONS ============
+    getLessons: builder.query<PaginatedResponse<Lesson>, QueryParams | void>({
+      query: (params) => ({
+        url: '/lessons',
+        method: 'get',
+        params: params || {},
+      }),
+      providesTags: ['Lessons'],
+    }),
+
     getLessonsByCourse: builder.query<ApiResponse<Lesson[]>, string>({
       query: (courseId) => ({
         url: `/lessons/course/${courseId}`,
@@ -332,7 +387,7 @@ export const courseApi = createApi({
     }),
 
     /** Check if current user is enrolled in a course */
-    checkEnrollment: builder.query<ApiResponse<{ enrolled: boolean; enrollment: Enrollment | null }>, string>({
+    checkEnrollment: builder.query<ApiResponse<{ enrolled: boolean; isPending: boolean; enrollment: Enrollment | null }>, string>({
       query: (courseId) => ({
         url: `/enrollments/check/${courseId}`,
         method: 'get',
@@ -375,6 +430,40 @@ export const courseApi = createApi({
         data: { progress },
       }),
       invalidatesTags: ['Enrollments'],
+    }),
+
+    getEnrollmentById: builder.query<ApiResponse<Enrollment>, string>({
+      query: (id) => ({
+        url: `/enrollments/${id}`,
+        method: 'get',
+      }),
+      providesTags: (_result, _error, id) => [{ type: 'Enrollments', id }],
+    }),
+
+    deleteEnrollment: builder.mutation<ApiResponse<null>, string>({
+      query: (id) => ({
+        url: `/enrollments/${id}`,
+        method: 'delete',
+      }),
+      invalidatesTags: ['Enrollments'],
+    }),
+
+    /** Approve a pending enrollment (admin/teacher only) */
+    approveEnrollment: builder.mutation<ApiResponse<Enrollment>, string>({
+      query: (id) => ({
+        url: `/enrollments/${id}/approve`,
+        method: 'patch',
+      }),
+      invalidatesTags: (_result, _error, id) => ['Enrollments', { type: 'Enrollments', id }],
+    }),
+
+    /** Reject a pending enrollment (admin/teacher only) */
+    rejectEnrollment: builder.mutation<ApiResponse<Enrollment>, string>({
+      query: (id) => ({
+        url: `/enrollments/${id}/reject`,
+        method: 'patch',
+      }),
+      invalidatesTags: (_result, _error, id) => ['Enrollments', { type: 'Enrollments', id }],
     }),
 
     // ============ REVIEWS ============
@@ -436,6 +525,35 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ['Reviews'],
     }),
+
+    // ============ COURSE APPROVAL FLOW ============
+    /** Teacher: submit draft/rejected course for admin review */
+    submitCourseForReview: builder.mutation<ApiResponse<Course>, string>({
+      query: (id) => ({
+        url: `/courses/${id}/submit`,
+        method: 'patch',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Courses', id }, { type: 'Courses', id: 'LIST' }],
+    }),
+
+    /** Admin: approve or reject a pending course */
+    reviewCourse: builder.mutation<ApiResponse<Course>, { id: string; status: 'approved' | 'rejected'; rejectionReason?: string }>({
+      query: ({ id, status, rejectionReason }) => ({
+        url: `/courses/${id}/review`,
+        method: 'patch',
+        data: { status, ...(rejectionReason ? { rejectionReason } : {}) },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Courses', id }, { type: 'Courses', id: 'LIST' }],
+    }),
+
+    /** Admin: publish an approved course */
+    publishCourseById: builder.mutation<ApiResponse<Course>, string>({
+      query: (id) => ({
+        url: `/courses/${id}/publish`,
+        method: 'patch',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Courses', id }, { type: 'Courses', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -455,7 +573,13 @@ export const {
   // Teachers
   useGetTeachersQuery,
   useGetTeacherByIdQuery,
+  useCreateTeacherMutation,
+  useApproveTeacherMutation,
+  useRejectTeacherMutation,
+  useUpdateTeacherMutation,
+  useDeleteTeacherMutation,
   // Lessons
+  useGetLessonsQuery,
   useGetLessonsByCourseQuery,
   useGetLessonByIdQuery,
   useCreateLessonMutation,
@@ -471,6 +595,10 @@ export const {
   useEnrollCourseMutation,
   useUpdateEnrollmentMutation,
   useUpdateEnrollmentProgressMutation,
+  useGetEnrollmentByIdQuery,
+  useDeleteEnrollmentMutation,
+  useApproveEnrollmentMutation,
+  useRejectEnrollmentMutation,
   // Reviews
   useGetReviewsQuery,
   useGetReviewsByCourseQuery,
@@ -479,4 +607,8 @@ export const {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
   useToggleReviewVisibilityMutation,
+  // Course Approval Flow
+  useSubmitCourseForReviewMutation,
+  useReviewCourseMutation,
+  usePublishCourseByIdMutation,
 } = courseApi;

@@ -4,10 +4,15 @@ import { message } from 'antd';
 import {
   useGetCoursesQuery,
   useGetReviewsQuery,
+  useGetEnrollmentsByCourseQuery,
   useUpdateCourseMutation,
   useDeleteCourseMutation,
   useDeleteReviewMutation,
   useToggleReviewVisibilityMutation,
+  useApproveEnrollmentMutation,
+  useRejectEnrollmentMutation,
+  useReviewCourseMutation,
+  usePublishCourseByIdMutation,
 } from '../services/courseApi';
 import type { Course, QueryParams } from '../services/courseApi';
 
@@ -30,6 +35,7 @@ export const useCourseManagement = () => {
     pageSize: 10,
   });
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [enrollmentCourseId, setEnrollmentCourseId] = useState<string | undefined>();
 
   // Build query params from filters
   const courseQueryParams: QueryParams = useMemo(() => {
@@ -64,6 +70,21 @@ export const useCourseManagement = () => {
   const [deleteCourseApi] = useDeleteCourseMutation();
   const [deleteReviewApi] = useDeleteReviewMutation();
   const [toggleVisibility] = useToggleReviewVisibilityMutation();
+  const [approveEnrollmentApi] = useApproveEnrollmentMutation();
+  const [rejectEnrollmentApi] = useRejectEnrollmentMutation();
+  const [reviewCourseApi] = useReviewCourseMutation();
+  const [publishCourseByIdApi] = usePublishCourseByIdMutation();
+
+  // Enrollments for a specific course (used in enrollment management modal)
+  const {
+    data: enrollmentsByCourseData,
+    isLoading: isEnrollmentsLoading,
+    refetch: refetchEnrollments,
+  } = useGetEnrollmentsByCourseQuery(enrollmentCourseId!, {
+    skip: !enrollmentCourseId,
+  });
+
+  const courseEnrollments = enrollmentsByCourseData?.data || [];
 
   const courses = coursesData?.data?.rows || [];
   const totalCourses = coursesData?.data?.count || 0;
@@ -88,36 +109,36 @@ export const useCourseManagement = () => {
 
   const approveCourse = useCallback(async (courseId: string) => {
     try {
-      await updateCourse({ id: courseId, data: { status: 'approved' } }).unwrap();
+      await reviewCourseApi({ id: courseId, status: 'approved' }).unwrap();
       message.success('Đã duyệt khóa học');
       return { success: true };
     } catch {
       message.error('Không thể duyệt khóa học');
       return { success: false };
     }
-  }, [updateCourse]);
+  }, [reviewCourseApi]);
 
-  const rejectCourse = useCallback(async (courseId: string, _reason: string) => {
+  const rejectCourse = useCallback(async (courseId: string, reason: string) => {
     try {
-      await updateCourse({ id: courseId, data: { status: 'rejected' } }).unwrap();
+      await reviewCourseApi({ id: courseId, status: 'rejected', rejectionReason: reason }).unwrap();
       message.success('Đã từ chối khóa học');
       return { success: true };
     } catch {
       message.error('Không thể từ chối khóa học');
       return { success: false };
     }
-  }, [updateCourse]);
+  }, [reviewCourseApi]);
 
   const publishCourse = useCallback(async (courseId: string) => {
     try {
-      await updateCourse({ id: courseId, data: { status: 'published' } }).unwrap();
+      await publishCourseByIdApi(courseId).unwrap();
       message.success('Đã xuất bản khóa học');
       return { success: true };
     } catch {
       message.error('Không thể xuất bản khóa học');
       return { success: false };
     }
-  }, [updateCourse]);
+  }, [publishCourseByIdApi]);
 
   const toggleCourseLock = useCallback(async (courseId: string) => {
     try {
@@ -176,10 +197,37 @@ export const useCourseManagement = () => {
     }
   }, [deleteReviewApi]);
 
+  const openEnrollmentManagement = useCallback((courseId: string) => {
+    setEnrollmentCourseId(courseId);
+  }, []);
+
+  const approveEnrollment = useCallback(async (enrollmentId: string) => {
+    try {
+      await approveEnrollmentApi(enrollmentId).unwrap();
+      message.success('Đã phê duyệt học viên');
+      return { success: true };
+    } catch {
+      message.error('Không thể phê duyệt học viên');
+      return { success: false };
+    }
+  }, [approveEnrollmentApi]);
+
+  const rejectEnrollment = useCallback(async (enrollmentId: string) => {
+    try {
+      await rejectEnrollmentApi(enrollmentId).unwrap();
+      message.success('Đã từ chối học viên');
+      return { success: true };
+    } catch {
+      message.error('Không thể từ chối học viên');
+      return { success: false };
+    }
+  }, [rejectEnrollmentApi]);
+
   const statistics = useMemo(() => ({
     total: totalCourses,
     published: courses.filter(c => c.status === 'published').length,
     pending: courses.filter(c => c.status === 'pending').length,
+    approved: courses.filter(c => c.status === 'approved').length,
     rejected: courses.filter(c => c.status === 'rejected').length,
     archived: courses.filter(c => c.status === 'archived').length,
     totalRevenue: 0,
@@ -210,5 +258,13 @@ export const useCourseManagement = () => {
     hideReview,
     showReview,
     deleteReview,
+    // Enrollment management
+    courseEnrollments,
+    enrollmentCourseId,
+    isEnrollmentsLoading,
+    openEnrollmentManagement,
+    approveEnrollment,
+    rejectEnrollment,
+    refetchEnrollments,
   };
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Image, Tag, Modal, Form, Input, Select, message, Tooltip, Typography, Avatar, Spin } from 'antd';
-import { ClockCircleOutlined, CalendarOutlined, FacebookOutlined, TwitterOutlined, YoutubeOutlined, InstagramOutlined, FlagOutlined, HeartOutlined, HeartFilled, ShareAltOutlined, SafetyCertificateOutlined, CheckCircleOutlined, ExclamationCircleOutlined, BookOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, CalendarOutlined, FacebookOutlined, TwitterOutlined, YoutubeOutlined, InstagramOutlined, FlagOutlined, HeartOutlined, HeartFilled, ShareAltOutlined, SafetyCertificateOutlined, CheckCircleOutlined, ExclamationCircleOutlined, BookOutlined, HourglassOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../utils/format';
 import { useCheckEnrollmentQuery, useEnrollMeMutation } from '../../services/courseApi';
@@ -39,6 +39,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
   const [enrollMe, { isLoading: isEnrolling }] = useEnrollMeMutation();
 
   const isEnrolled = enrollmentCheck?.data?.enrolled ?? false;
+  const isPending = enrollmentCheck?.data?.isPending ?? false;
 
   const handleEnroll = async () => {
     if (!isLoggedIn) {
@@ -145,6 +146,22 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
             <Text className="block text-center text-green-600 text-sm">
               <CheckCircleOutlined className="mr-1" />
               Bạn đã đăng ký khóa học này
+            </Text>
+          </>
+        ) : isPending ? (
+          <>
+            <Button 
+              size="large" 
+              block 
+              disabled
+              icon={<HourglassOutlined />}
+              className="!h-14 !text-lg !font-semibold !rounded-xl"
+            >
+              Đang chờ phê duyệt
+            </Button>
+            <Text className="block text-center text-orange-500 text-sm">
+              <HourglassOutlined className="mr-1" />
+              Yêu cầu đăng ký đang chờ giảng viên phê duyệt
             </Text>
           </>
         ) : (

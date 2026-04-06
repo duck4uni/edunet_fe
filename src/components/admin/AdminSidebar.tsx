@@ -46,14 +46,18 @@ const menuItems = [
     label: 'Quản lý khóa học',
     children: [
       { key: '/admin/courses', label: 'Danh sách khóa học' },
-      { key: '/admin/courses/pending', label: 'Chờ duyệt' },
-      { key: '/admin/courses/reviews', label: 'Đánh giá' },
+      { key: '/admin/courses?tab=pending', label: 'Chờ duyệt' },
+      { key: '/admin/courses?tab=reviews', label: 'Đánh giá' },
     ],
   },
   {
-    key: '/admin/teachers',
+    key: 'teachers',
     icon: <IdcardOutlined />,
     label: 'Quản lý giáo viên',
+    children: [
+      { key: '/admin/teachers', label: 'Danh sách giáo viên' },
+      { key: '/admin/teacher-registrations', label: 'Đăng ký giáo viên' },
+    ],
   },
   {
     key: '/admin/employees',
@@ -100,14 +104,26 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const location = useLocation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
+  // Current full path including query string
+  const fullPath = location.pathname + location.search;
+
   // Find the current active menu key
   const getSelectedKey = () => {
     const path = location.pathname;
-    // Find exact match or parent path
+    // First try exact match with query (for query-param based items)
     for (const item of menuItems) {
       if (item.children) {
         for (const child of item.children) {
-          if (path.startsWith(child.key)) {
+          if (child.key.includes('?') && fullPath === child.key) return [child.key];
+        }
+      }
+    }
+    // Then try path-based match
+    for (const item of menuItems) {
+      if (item.children) {
+        for (const child of item.children) {
+          const childPath = child.key.split('?')[0];
+          if (!child.key.includes('?') && path.startsWith(childPath)) {
             return [child.key];
           }
         }
@@ -123,7 +139,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     for (const item of menuItems) {
       if (item.children) {
         for (const child of item.children) {
-          if (path.startsWith(child.key)) {
+          const childPath = child.key.split('?')[0];
+          if (path.startsWith(childPath)) {
             return [item.key];
           }
         }

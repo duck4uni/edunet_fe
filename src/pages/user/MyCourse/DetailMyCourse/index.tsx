@@ -12,6 +12,7 @@ import {
   TrophyOutlined,
   CalendarOutlined,
   ArrowRightOutlined,
+  HourglassOutlined,
 } from '@ant-design/icons';
 import { useGetCourseByIdQuery, useCheckEnrollmentQuery } from '../../../../services/courseApi';
 import { useGetProfileQuery } from '../../../../services/authApi';
@@ -29,7 +30,7 @@ const DetailMyCourse: React.FC = () => {
     { id: courseId!, include: 'teacher,lessons,category' },
     { skip: !courseId }
   );
-  const { data: enrollmentData } = useCheckEnrollmentQuery(courseId!, { skip: !courseId });
+  const { data: enrollmentData, isLoading: enrollmentLoading } = useCheckEnrollmentQuery(courseId!, { skip: !courseId });
   const { data: membersData } = useGetEnrollmentsByCourseQuery(courseId!, { skip: !courseId });
   const { data: materialsData } = useGetMaterialsByCourseQuery(courseId!, { skip: !courseId });
   const { data: assignmentsData } = useGetAssignmentsByCourseQuery(courseId!, { skip: !courseId });
@@ -46,10 +47,37 @@ const DetailMyCourse: React.FC = () => {
   const completedLessons = totalLessons > 0 ? Math.round((progressValue / 100) * totalLessons) : 0;
   const teacherName = course?.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : '';
 
-  if (courseLoading) {
+  if (courseLoading || enrollmentLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Spin size="large" />
+      </div>
+    );
+  }
+
+  // Access guard: students need an active/completed enrollment
+  const enrollmentStatus = enrollmentData?.data?.enrollment?.status;
+  const hasAccess =
+    userRole === 'teacher' ||
+    enrollmentStatus === 'active' ||
+    enrollmentStatus === 'completed';
+
+  if (!hasAccess) {
+    const isPending = enrollmentData?.data?.isPending;
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen gap-4 text-center px-6">
+        <HourglassOutlined style={{ fontSize: 64, color: '#faad14' }} />
+        <h2 className="text-2xl font-bold text-[#012643]">
+          {isPending ? 'Yêu cầu đăng ký đang chờ phê duyệt' : 'Bạn chưa có quyền truy cập khóa học này'}
+        </h2>
+        <p className="text-gray-500 max-w-md">
+          {isPending
+            ? 'Giảng viên chưa phê duyệt yêu cầu đăng ký của bạn. Vui lòng chờ xét duyệt.'
+            : 'Vui lòng đăng ký khóa học và chờ phê duyệt từ giảng viên.'}
+        </p>
+        <Link to="/my-course">
+          <Button type="primary">Quay lại Khóa học của tôi</Button>
+        </Link>
       </div>
     );
   }

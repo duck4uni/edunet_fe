@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Button, Form, Input, Select, Popconfirm, message, Space, Card, Divider } from 'antd';
+import { Drawer, Button, Input, Select, Popconfirm, message, Space, Card, Divider } from 'antd';
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import { useUpdateQuizMutation } from '../../../../../services/learningApi';
 
@@ -149,7 +149,7 @@ const QuizQuestionManager: React.FC<QuizQuestionManagerProps> = ({ visible, onCl
             />
           </div>
 
-          <Divider orientation="left" plain>Các Lựa chọn</Divider>
+          <Divider plain>Các Lựa chọn</Divider>
           
           {q.options.map((opt, optIdx) => (
             <div key={optIdx} className="flex gap-2 items-center mb-2">

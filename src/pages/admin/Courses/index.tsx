@@ -1,26 +1,32 @@
 // Course Management Page
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Row, Col, Card, Table, Button, Space, Input, Modal, 
   Typography, Avatar, Tooltip, Dropdown, Tag, Tabs, Image,
-  Rate, Popconfirm
+  Rate, Popconfirm, Badge, Form, Select, InputNumber
 } from 'antd';
 import {
   PlusOutlined, EyeOutlined,
   DeleteOutlined, CheckOutlined, CloseOutlined, LockOutlined,
   UnlockOutlined, MoreOutlined, StarFilled,
-  ExportOutlined
+  ExportOutlined, TeamOutlined, UserOutlined
 } from '@ant-design/icons';
+import { useLocation } from 'react-router-dom';
 import { useCourseManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
-import type { Course, Review } from '../../../services/courseApi';
-import { useGetCategoriesQuery } from '../../../services/courseApi';
+import type { Course, Review, Enrollment } from '../../../services/courseApi';
+import { useGetCategoriesQuery, useGetTeachersQuery, useCreateCourseMutation } from '../../../services/courseApi';
+import { message } from 'antd';
 
 const { Text, Paragraph } = Typography;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const CourseManagement: React.FC = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tabFromUrl = searchParams.get('tab');
   const {
     courses,
     reviews,
@@ -43,12 +49,23 @@ const CourseManagement: React.FC = () => {
     hideReview,
     showReview,
     deleteReview,
+    courseEnrollments,
+    isEnrollmentsLoading,
+    openEnrollmentManagement,
+    approveEnrollment,
+    rejectEnrollment,
   } = useCourseManagement();
 
   // Fetch real categories from API
   const { data: categoriesData } = useGetCategoriesQuery({ size: 'unlimited' });
+  const { data: teachersData } = useGetTeachersQuery({ size: 'unlimited', include: 'user' });
+  const [createCourseApi, { isLoading: isCreating }] = useCreateCourseMutation();
 
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabFromUrl === 'pending') return 'pending';
+    if (tabFromUrl === 'reviews') return 'reviews';
+    return 'all';
+  });
   const [detailOpen, setDetailOpen] = useState(false);
   const [rejectModal, setRejectModal] = useState<{ open: boolean; courseId: string | null }>({
     open: false,
@@ -56,9 +73,29 @@ const CourseManagement: React.FC = () => {
   });
   const [rejectReason, setRejectReason] = useState('');
   const [reviewsModalOpen, setReviewsModalOpen] = useState(false);
+  const [enrollmentsModalOpen, setEnrollmentsModalOpen] = useState(false);
+  const [enrollmentTab, setEnrollmentTab] = useState('pending');
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createForm] = Form.useForm();
+
+  // Sync tab from URL query param when navigation changes
+  useEffect(() => {
+    const p = new URLSearchParams(location.search).get('tab');
+    if (p === 'pending' || p === 'reviews') {
+      setActiveTab(p);
+      if (p !== 'reviews') setFilters({ ...filters, status: p });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const handleTabChange = (key: string) => {
     setActiveTab(key);
+    if (key === 'reviews') {
+      setSelectedCourse(null);
+      fetchReviews(undefined);
+      setReviewsModalOpen(true);
+      return;
+    }
     if (key === 'all') {
       setFilters({ ...filters, status: undefined });
     } else {
@@ -83,10 +120,36 @@ const CourseManagement: React.FC = () => {
     }
   };
 
+  const handleCreateCourse = async (values: any) => {
+    try {
+      await createCourseApi({
+        ...values,
+        price: Number(values.price ?? 0),
+        discountPrice: values.discountPrice ? Number(values.discountPrice) : undefined,
+        totalLessons: values.totalLessons ? Number(values.totalLessons) : 0,
+        startDate: values.startDate ? values.startDate.toISOString() : undefined,
+        // Admin create → backend sets status = published automatically
+      }).unwrap();
+      message.success('Tạo khóa học thành công — đã xuất bản ngay lập tức');
+      setCreateModalOpen(false);
+      createForm.resetFields();
+      fetchCourses();
+    } catch {
+      message.error('Không thể tạo khóa học, vui lòng thử lại');
+    }
+  };
+
   const handleViewReviews = (course: Course) => {
     setSelectedCourse(course);
     fetchReviews(course.id);
     setReviewsModalOpen(true);
+  };
+
+  const handleViewEnrollments = (course: Course) => {
+    setSelectedCourse(course);
+    openEnrollmentManagement(course.id);
+    setEnrollmentTab('pending');
+    setEnrollmentsModalOpen(true);
   };
 
   // Helper to get teacher display name
@@ -110,6 +173,12 @@ const CourseManagement: React.FC = () => {
         icon: <StarFilled />,
         label: 'Xem đánh giá',
         onClick: () => handleViewReviews(record),
+      },
+      {
+        key: 'enrollments',
+        icon: <TeamOutlined />,
+        label: 'Quản lý học viên',
+        onClick: () => handleViewEnrollments(record),
       },
       { type: 'divider' as const },
       ...(record.status === 'pending' ? [
@@ -333,6 +402,76 @@ const CourseManagement: React.FC = () => {
   ];
 
   const categories = categoriesData?.data?.rows || categoriesData?.data || [];
+
+  const filteredEnrollments = (courseEnrollments as Enrollment[]).filter(e => {
+    if (enrollmentTab === 'all') return true;
+    return e.status === enrollmentTab;
+  });
+
+  const enrollmentColumns = [
+    {
+      title: 'Học viên',
+      key: 'user',
+      render: (_: any, record: Enrollment) => (
+        <div className="flex items-center gap-2">
+          <Avatar src={record.user?.avatar} icon={<UserOutlined />} size="small" />
+          <span>{record.user ? `${record.user.firstName} ${record.user.lastName}` : '—'}</span>
+        </div>
+      ),
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      width: 150,
+      render: (status: string) => <StatusBadge status={status} />,
+    },
+    {
+      title: 'Tiến độ',
+      dataIndex: 'progress',
+      key: 'progress',
+      width: 90,
+      render: (p: number) => `${p ?? 0}%`,
+    },
+    {
+      title: 'Đăng ký lúc',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 130,
+      render: (d: string) => formatDate(d),
+    },
+    {
+      title: 'Thao tác',
+      key: 'actions',
+      width: 160,
+      render: (_: any, record: Enrollment) => (
+        <Space size="small">
+          {record.status === 'pending' && (
+            <>
+              <Popconfirm
+                title="Phê duyệt học viên này?"
+                onConfirm={() => approveEnrollment(record.id)}
+                okText="Duyệt"
+                cancelText="Hủy"
+              >
+                <Button size="small" type="primary" icon={<CheckOutlined />}>Duyệt</Button>
+              </Popconfirm>
+              <Popconfirm
+                title="Từ chối học viên này?"
+                onConfirm={() => rejectEnrollment(record.id)}
+                okText="Từ chối"
+                okType="danger"
+                cancelText="Hủy"
+              >
+                <Button size="small" danger icon={<CloseOutlined />}>Từ chối</Button>
+              </Popconfirm>
+            </>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
   const filterFields = [
     {
       type: 'search' as const,
@@ -352,9 +491,11 @@ const CourseManagement: React.FC = () => {
   const tabItems = [
     { key: 'all', label: `Tất cả (${statistics.total})` },
     { key: 'pending', label: `Chờ duyệt (${statistics.pending})` },
+    { key: 'approved', label: `Đã duyệt (${statistics.approved ?? 0})` },
     { key: 'published', label: `Đã xuất bản (${statistics.published})` },
     { key: 'rejected', label: `Từ chối (${statistics.rejected})` },
     { key: 'archived', label: `Lưu trữ (${statistics.archived})` },
+    { key: 'reviews', label: 'Đánh giá' },
   ];
 
   const detailItems = selectedCourse ? [
@@ -371,6 +512,7 @@ const CourseManagement: React.FC = () => {
     { label: 'Ngày tạo', value: formatDate(selectedCourse.createdAt) },
     { label: 'Cập nhật', value: formatDate(selectedCourse.updatedAt) },
     { label: 'Xuất bản', value: selectedCourse.publishedAt ? formatDate(selectedCourse.publishedAt) : '—' },
+    ...(selectedCourse.rejectionReason ? [{ label: 'Lý do từ chối', value: selectedCourse.rejectionReason, span: 2 }] : []),
     { label: 'Mô tả', value: selectedCourse.description, span: 2 },
     { label: 'Thẻ', value: (selectedCourse.tags || []).map(t => <Tag key={t}>{t}</Tag>), span: 2 },
   ] : [];
@@ -384,7 +526,9 @@ const CourseManagement: React.FC = () => {
         extra={
           <Space>
             <Button icon={<ExportOutlined />}>Xuất Excel</Button>
-            <Button type="primary" icon={<PlusOutlined />}>Thêm khóa học</Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
+              Thêm khóa học
+            </Button>
           </Space>
         }
       />
@@ -506,6 +650,152 @@ const CourseManagement: React.FC = () => {
           pagination={{ pageSize: 5 }}
           size="small"
         />
+      </Modal>
+
+      {/* Enrollment Management Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <TeamOutlined />
+            <span>Quản lý học viên: {selectedCourse?.title}</span>
+          </div>
+        }
+        open={enrollmentsModalOpen}
+        onCancel={() => setEnrollmentsModalOpen(false)}
+        footer={null}
+        width={900}
+      >
+        <Tabs
+          activeKey={enrollmentTab}
+          onChange={setEnrollmentTab}
+          className="mb-4"
+          items={[
+            {
+              key: 'pending',
+              label: (
+                <Badge
+                  count={(courseEnrollments as Enrollment[]).filter(e => e.status === 'pending').length}
+                  size="small"
+                  offset={[6, 0]}
+                >
+                  Chờ phê duyệt
+                </Badge>
+              ),
+            },
+            { key: 'active', label: 'Đang học' },
+            { key: 'completed', label: 'Hoàn thành' },
+            { key: 'rejected', label: 'Đã từ chối' },
+            { key: 'all', label: 'Tất cả' },
+          ]}
+        />
+        <Table
+          columns={enrollmentColumns}
+          dataSource={filteredEnrollments}
+          rowKey="id"
+          loading={isEnrollmentsLoading}
+          pagination={{ pageSize: 10 }}
+          size="small"
+          locale={{ emptyText: 'Không có học viên nào' }}
+        />
+      </Modal>
+      {/* Create Course Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <PlusOutlined className="text-blue-500" />
+            <span>Tạo khóa học mới</span>
+          </div>
+        }
+        open={createModalOpen}
+        onCancel={() => { setCreateModalOpen(false); createForm.resetFields(); }}
+        footer={null}
+        width={760}
+        destroyOnClose
+      >
+        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100 text-sm text-blue-700">
+          Khóa học do admin tạo sẽ được <strong>xuất bản ngay lập tức</strong> mà không cần qua quy trình phê duyệt.
+        </div>
+        <Form form={createForm} layout="vertical" onFinish={handleCreateCourse}>
+          <Form.Item name="title" label="Tên khóa học" rules={[{ required: true, message: 'Vui lòng nhập tên khóa học' }]}>
+            <Input placeholder="Nhập tên khóa học" size="large" />
+          </Form.Item>
+          <Form.Item name="description" label="Mô tả">
+            <TextArea rows={3} placeholder="Mô tả nội dung khóa học..." />
+          </Form.Item>
+          <Form.Item name="thumbnail" label="URL Ảnh đại diện">
+            <Input placeholder="https://example.com/image.png" />
+          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="teacherId" label="Giảng viên (tuỳ chọn)">
+                <Select placeholder="Chọn giảng viên" allowClear showSearch optionFilterProp="label">
+                  {teachersData?.data?.rows?.map(t => (
+                    <Option key={t.id} value={t.userId} label={t.user ? `${t.user.firstName} ${t.user.lastName}` : t.id}>
+                      <div className="flex items-center gap-2">
+                        <Avatar src={t.user?.avatar} size="small" icon={<UserOutlined />} />
+                        {t.user ? `${t.user.firstName} ${t.user.lastName}` : t.id}
+                      </div>
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="categoryId" label="Danh mục">
+                <Select placeholder="Chọn danh mục" allowClear>
+                  {(categories as any[]).map((c: any) => (
+                    <Option key={c.id} value={c.id}>{c.name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="price" label="Giá (VNĐ)" initialValue={0} rules={[{ required: true }]}>
+                <InputNumber className="w-full" min={0} formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="discountPrice" label="Giá khuyến mãi">
+                <InputNumber className="w-full" min={0} formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="level" label="Cấp độ" initialValue="beginner">
+                <Select>
+                  <Option value="beginner">Mới bắt đầu</Option>
+                  <Option value="intermediate">Trung bình</Option>
+                  <Option value="advanced">Nâng cao</Option>
+                  <Option value="all">Tất cả</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="duration" label="Thời lượng">
+                <Input placeholder="Ví dụ: 20 giờ" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="language" label="Ngôn ngữ" initialValue="Vietnamese">
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item name="tags" label="Tags">
+            <Select mode="tags" placeholder="Nhập tags và nhấn Enter..." />
+          </Form.Item>
+          <Form.Item className="mb-0 text-right">
+            <Space>
+              <Button onClick={() => { setCreateModalOpen(false); createForm.resetFields(); }}>Hủy</Button>
+              <Button type="primary" htmlType="submit" loading={isCreating} icon={<PlusOutlined />}>
+                Tạo và Xuất bản
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

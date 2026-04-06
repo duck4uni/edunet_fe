@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { EVENT_TYPE_CONFIG } from '../constants/scheduleData';
 import type { ScheduleEvent, ApiSchedule } from '../types/schedule';
-import { useGetSchedulesQuery, useGetUpcomingSchedulesQuery } from '../services/learningApi';
+import { useGetMySchedulesQuery, useGetUpcomingSchedulesQuery } from '../services/learningApi';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Type mapping: backend enum → frontend display type
@@ -21,8 +21,14 @@ const mapBackendType = (
   }
 };
 
-/** Derive a display status from the event date */
-const deriveStatus = (dateStr: string, startTime: string, endTime: string): ScheduleEvent['status'] => {
+/** Derive a display status from the event date and backend status */
+const deriveStatus = (
+  dateStr: string,
+  startTime: string,
+  endTime: string,
+  backendStatus?: string,
+): ScheduleEvent['status'] => {
+  if (backendStatus === 'cancelled' || backendStatus === 'postponed') return 'cancelled';
   const now = dayjs();
   const eventDate = dayjs(dateStr);
   const start = dayjs(`${eventDate.format('YYYY-MM-DD')} ${startTime}`);
@@ -56,7 +62,7 @@ export const mapApiScheduleToEvent = (s: ApiSchedule): ScheduleEvent => {
     location: s.location,
     meetingLink: s.meetingLink,
     isOnline: s.isOnline,
-    status: deriveStatus(s.date, s.startTime, s.endTime),
+    status: deriveStatus(s.date, s.startTime, s.endTime, s.status),
     color: config?.color,
   };
 };
@@ -71,15 +77,12 @@ export const useSchedule = () => {
   const [filterType, setFilterType]     = useState<string>('all');
 
   // ── API calls ──────────────────────────────────────────────────────────────
-  // Fetch all schedules including course relation for course names
+  // Fetch personal schedules for courses the user is enrolled in
   const {
-    data: schedulesData,
+    data: mySchedulesData,
     isLoading: isSchedulesLoading,
     isError: isSchedulesError,
-  } = useGetSchedulesQuery({
-    size: 'unlimited',  // backend PaginationParams handles 'unlimited' → no limit
-    include: 'course',  // backend supports ?include=course
-  });
+  } = useGetMySchedulesQuery();
 
   // Fetch next 30 days for the sidebar upcoming panel
   const {
@@ -93,10 +96,10 @@ export const useSchedule = () => {
   // ── Derived data ───────────────────────────────────────────────────────────
   /** All schedule events mapped to the display model */
   const allEvents = useMemo<ScheduleEvent[]>(() => {
-    const rows = schedulesData?.data?.rows as ApiSchedule[] | undefined;
+    const rows = mySchedulesData?.data as ApiSchedule[] | undefined;
     if (!rows) return [];
     return rows.map(mapApiScheduleToEvent);
-  }, [schedulesData]);
+  }, [mySchedulesData]);
 
   /** Upcoming events (from the dedicated /upcoming endpoint) */
   const rawUpcomingEvents = useMemo<ScheduleEvent[]>(() => {

@@ -22,6 +22,9 @@ export interface ScheduleFilter {
   course: string[];
 }
 
+/** Backend schedule status */
+export type ApiScheduleStatus = 'scheduled' | 'cancelled' | 'postponed';
+
 /** Raw shape returned by the backend Schedule entity (with optional relation includes) */
 export interface ApiSchedule {
   id: string;
@@ -29,6 +32,9 @@ export interface ApiSchedule {
   description?: string;
   /** Backend enum: 'class' | 'exam' | 'assignment' | 'event' */
   type: string;
+  /** Backend status */
+  status?: ApiScheduleStatus;
+  cancelReason?: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -46,4 +52,43 @@ export interface ApiSchedule {
       lastName?: string;
     };
   };
+}
+
+/** Response shape for GET /schedules/weekly */
+export interface WeeklyScheduleResponse {
+  weekStart: string;
+  weekEnd: string;
+  byDay: Record<string, ApiSchedule[]>;
+}
+
+/** Body for POST /schedules/recurring */
+export interface RecurringScheduleRequest {
+  title: string;
+  type?: string;
+  description?: string;
+  startDate: string;
+  recurrenceEndDate: string;
+  /** 0=Sunday … 6=Saturday */
+  weekDays: number[];
+  startTime: string;
+  endTime: string;
+  isOnline?: boolean;
+  location?: string;
+  meetingLink?: string;
+  courseId: string;
+  teacherId?: string;
+}
+
+/** Response shape for POST /schedules/recurring */
+export interface RecurringScheduleResponse {
+  count: number;
+  sessions: ApiSchedule[];
+}
+
+/** Body for PATCH /schedules/:id/postpone */
+export interface PostponeScheduleRequest {
+  newDate: string;
+  newStartTime: string;
+  newEndTime: string;
+  notes?: string;
 }

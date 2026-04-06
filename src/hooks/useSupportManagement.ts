@@ -1,8 +1,17 @@
-// Support Ticket Management Hook
-import { useState, useEffect, useCallback, useMemo } from 'react';
+// Support Ticket Management Hook — connected to real API
+import { useState, useCallback, useMemo } from 'react';
 import { message } from 'antd';
 import type { AdminSupportTicket, TicketResponse, TableParams } from '../types/admin';
-import { supportTickets as mockTickets, currentAdminUser } from '../constants/adminData';
+import {
+  useGetTicketsQuery,
+  useGetTicketStatsQuery,
+  useUpdateTicketMutation,
+  useRespondToTicketMutation,
+  useResolveTicketMutation,
+  useCloseTicketMutation,
+} from '../services/supportApi';
+import { useGetProfileQuery } from '../services/authApi';
+import type { QueryParams } from '../services/supportApi';
 
 interface TicketFilters {
   status?: string;
@@ -13,8 +22,6 @@ interface TicketFilters {
 }
 
 export const useSupportManagement = () => {
-  const [tickets, setTickets] = useState<AdminSupportTicket[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<AdminSupportTicket | null>(null);
   const [filters, setFilters] = useState<TicketFilters>({});
   const [tableParams, setTableParams] = useState<TableParams>({
@@ -22,187 +29,139 @@ export const useSupportManagement = () => {
     pageSize: 10,
   });
 
-  // Fetch tickets
-  const fetchTickets = useCallback(async () => {
-    setLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setTickets(mockTickets);
-    } catch (error) {
-      message.error('Không thể tải danh sách ticket');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: profileData } = useGetProfileQuery();
 
-  // Filter tickets
-  const filteredTickets = useMemo(() => {
-    let result = [...tickets];
+  // Build query params
+  const queryParams: QueryParams = useMemo(() => {
+    const filterParts: string[] = [];
+    if (filters.status) filterParts.push(`status:eq:${filters.status}`);
+    if (filters.category) filterParts.push(`category:eq:${filters.category}`);
+    if (filters.priority) filterParts.push(`priority:eq:${filters.priority}`);
+    if (filters.search) filterParts.push(`subject:like:${filters.search}`);
+    return {
+      page: tableParams.page,
+      size: tableParams.pageSize,
+      include: 'user|assignedTo',
+      ...(filterParts.length > 0 && { filter: filterParts.join('&&') }),
+      sort: 'createdAt:desc',
+    };
+  }, [filters, tableParams]);
 
-    if (filters.status) {
-      result = result.filter(t => t.status === filters.status);
-    }
+  const {
+    data: ticketsData,
+    isLoading: loading,
+    refetch: fetchTickets,
+  } = useGetTicketsQuery(queryParams);
 
-    if (filters.category) {
-      result = result.filter(t => t.category === filters.category);
-    }
+  const { data: statsData } = useGetTicketStatsQuery();
 
-    if (filters.priority) {
-      result = result.filter(t => t.priority === filters.priority);
-    }
+  const [updateTicketApi] = useUpdateTicketMutation();
+  const [respondToTicketApi] = useRespondToTicketMutation();
+  const [resolveTicketApi] = useResolveTicketMutation();
+  const [closeTicketApi] = useCloseTicketMutation();
 
-    if (filters.assignedTo) {
-      result = result.filter(t => t.assignedTo === filters.assignedTo);
-    }
+  const apiRows = ticketsData?.data?.rows || [];
+  const total = ticketsData?.data?.count || 0;
 
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(
-        t =>
-          t.ticketId.toLowerCase().includes(searchLower) ||
-          t.subject.toLowerCase().includes(searchLower) ||
-          t.userName.toLowerCase().includes(searchLower) ||
-          t.userEmail.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Sort by priority and date
-    const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
-    result.sort((a, b) => {
-      const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
-      if (priorityDiff !== 0) return priorityDiff;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-
-    return result;
-  }, [tickets, filters]);
-
-  // Paginated tickets
-  const paginatedTickets = useMemo(() => {
-    const { page, pageSize } = tableParams;
-    const start = (page - 1) * pageSize;
-    return filteredTickets.slice(start, start + pageSize);
-  }, [filteredTickets, tableParams]);
+  // Map API rows → AdminSupportTicket shape
+  const tickets: AdminSupportTicket[] = useMemo(() =>
+    apiRows.map(t => ({
+      id: t.id,
+      ticketId: t.id.slice(0, 8).toUpperCase(),
+      userId: t.userId,
+      userName: t.user ? `${t.user.firstName} ${t.user.lastName}` : '',
+      userEmail: t.user?.email || '',
+      userAvatar: t.user?.avatar,
+      subject: t.subject,
+      description: t.message,
+      category: t.category,
+      priority: t.priority,
+      status: t.status === 'in_progress' ? 'in_progress' as const : t.status,
+      assignedTo: t.assignedToId,
+      assignedName: t.assignedTo ? `${t.assignedTo.firstName} ${t.assignedTo.lastName}` : undefined,
+      responses: [] as TicketResponse[],
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    })),
+    [apiRows],
+  );
 
   // Assign ticket
-  const assignTicket = useCallback(async (ticketId: string, assignedTo: string, assignedName: string) => {
+  const assignTicket = useCallback(async (ticketId: string, assignedTo: string, _assignedName: string) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setTickets(prev =>
-        prev.map(t =>
-          t.id === ticketId
-            ? {
-                ...t,
-                assignedTo,
-                assignedName,
-                status: t.status === 'open' ? 'in_progress' as const : t.status,
-                updatedAt: new Date().toISOString(),
-              }
-            : t
-        )
-      );
-      
+      await updateTicketApi({
+        id: ticketId,
+        data: { assignedToId: assignedTo, status: 'in_progress' } as any,
+      }).unwrap();
       message.success('Đã phân công ticket');
       return { success: true };
-    } catch (error) {
+    } catch {
       message.error('Không thể phân công ticket');
       return { success: false };
     }
-  }, []);
+  }, [updateTicketApi]);
 
   // Update ticket status
   const updateTicketStatus = useCallback(async (ticketId: string, status: AdminSupportTicket['status']) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setTickets(prev =>
-        prev.map(t =>
-          t.id === ticketId
-            ? {
-                ...t,
-                status,
-                updatedAt: new Date().toISOString(),
-                resolvedAt: status === 'resolved' || status === 'closed' ? new Date().toISOString() : t.resolvedAt,
-              }
-            : t
-        )
-      );
-      
+      if (status === 'resolved') {
+        await resolveTicketApi(ticketId).unwrap();
+      } else if (status === 'closed') {
+        await closeTicketApi(ticketId).unwrap();
+      } else {
+        await updateTicketApi({ id: ticketId, data: { status } as any }).unwrap();
+      }
       message.success('Đã cập nhật trạng thái ticket');
       return { success: true };
-    } catch (error) {
+    } catch {
       message.error('Không thể cập nhật trạng thái');
       return { success: false };
     }
-  }, []);
+  }, [updateTicketApi, resolveTicketApi, closeTicketApi]);
 
   // Update ticket priority
   const updateTicketPriority = useCallback(async (ticketId: string, priority: AdminSupportTicket['priority']) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setTickets(prev =>
-        prev.map(t =>
-          t.id === ticketId
-            ? { ...t, priority, updatedAt: new Date().toISOString() }
-            : t
-        )
-      );
-      
+      await updateTicketApi({ id: ticketId, data: { priority } as any }).unwrap();
       message.success('Đã cập nhật độ ưu tiên');
       return { success: true };
-    } catch (error) {
+    } catch {
       message.error('Không thể cập nhật độ ưu tiên');
       return { success: false };
     }
-  }, []);
+  }, [updateTicketApi]);
 
   // Add response to ticket
-  const addResponse = useCallback(async (ticketId: string, messageText: string, attachments?: string[]) => {
+  const addResponse = useCallback(async (ticketId: string, messageText: string, _attachments?: string[]) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const newResponse: TicketResponse = {
-        id: `resp-${Date.now()}`,
-        message: messageText,
-        authorId: currentAdminUser.id,
-        authorName: `${currentAdminUser.firstName} ${currentAdminUser.lastName}`,
-        authorAvatar: currentAdminUser.avatar,
-        isStaff: true,
-        attachments,
-        createdAt: new Date().toISOString(),
-      };
-      
-      setTickets(prev =>
-        prev.map(t =>
-          t.id === ticketId
-            ? {
-                ...t,
-                responses: [...t.responses, newResponse],
-                status: t.status === 'open' ? 'in_progress' as const : t.status,
-                updatedAt: new Date().toISOString(),
-              }
-            : t
-        )
-      );
-      
-      // Update selected ticket if viewing
-      if (selectedTicket?.id === ticketId) {
-        setSelectedTicket(prev => prev ? {
-          ...prev,
-          responses: [...prev.responses, newResponse],
-          updatedAt: new Date().toISOString(),
-        } : null);
+      const currentUser = profileData?.data;
+      await respondToTicketApi({ id: ticketId, response: messageText }).unwrap();
+
+      // Optimistically update selectedTicket with new response
+      if (selectedTicket?.id === ticketId && currentUser) {
+        const newResponse: TicketResponse = {
+          id: `resp-${Date.now()}`,
+          message: messageText,
+          authorId: currentUser.id,
+          authorName: `${currentUser.firstName} ${currentUser.lastName}`,
+          authorAvatar: currentUser.avatar,
+          isStaff: true,
+          createdAt: new Date().toISOString(),
+        };
+        setSelectedTicket(prev =>
+          prev
+            ? { ...prev, responses: [...prev.responses, newResponse], updatedAt: new Date().toISOString() }
+            : null,
+        );
       }
-      
+
       message.success('Đã gửi phản hồi');
       return { success: true };
-    } catch (error) {
+    } catch {
       message.error('Không thể gửi phản hồi');
       return { success: false };
     }
-  }, [selectedTicket]);
+  }, [respondToTicketApi, profileData, selectedTicket]);
 
   // Close ticket
   const closeTicket = useCallback(async (ticketId: string) => {
@@ -224,30 +183,29 @@ export const useSupportManagement = () => {
     return tickets.find(t => t.id === ticketId) || null;
   }, [tickets]);
 
-  useEffect(() => {
-    fetchTickets();
-  }, [fetchTickets]);
-
-  // Statistics
-  const statistics = useMemo(() => ({
-    total: tickets.length,
-    open: tickets.filter(t => t.status === 'open').length,
-    inProgress: tickets.filter(t => t.status === 'in_progress').length,
-    waiting: tickets.filter(t => t.status === 'waiting').length,
-    resolved: tickets.filter(t => t.status === 'resolved').length,
-    closed: tickets.filter(t => t.status === 'closed').length,
-    urgent: tickets.filter(t => t.priority === 'urgent' && t.status !== 'closed' && t.status !== 'resolved').length,
-    high: tickets.filter(t => t.priority === 'high' && t.status !== 'closed' && t.status !== 'resolved').length,
-    byCategory: tickets.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    avgResponseTime: '2.5 giờ', // Mock data
-  }), [tickets]);
+  // Statistics from real API
+  const statistics = useMemo(() => {
+    const stats = statsData?.data;
+    return {
+      total: total,
+      open: stats?.open ?? 0,
+      inProgress: stats?.inProgress ?? 0,
+      waiting: 0,
+      resolved: stats?.resolved ?? 0,
+      closed: stats?.closed ?? 0,
+      urgent: tickets.filter(t => t.priority === 'urgent' && t.status !== 'closed' && t.status !== 'resolved').length,
+      high: tickets.filter(t => t.priority === 'high' && t.status !== 'closed' && t.status !== 'resolved').length,
+      byCategory: tickets.reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      avgResponseTime: '-',
+    };
+  }, [statsData, tickets, total]);
 
   return {
-    tickets: paginatedTickets,
-    allTickets: filteredTickets,
+    tickets,
+    allTickets: tickets,
     loading,
     selectedTicket,
     setSelectedTicket,
@@ -256,7 +214,7 @@ export const useSupportManagement = () => {
     tableParams,
     setTableParams,
     statistics,
-    total: filteredTickets.length,
+    total,
     fetchTickets,
     assignTicket,
     updateTicketStatus,

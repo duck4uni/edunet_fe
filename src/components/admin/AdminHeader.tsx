@@ -10,7 +10,6 @@ import {
   Button,
   Tooltip,
   Typography,
-  List,
 } from 'antd';
 import { 
   SearchOutlined, 
@@ -68,7 +67,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   };
 
   const notificationContent = (
-    <div className="w-80 max-h-96 overflow-hidden">
+    <div className="w-80 max-h-96 overflow-hidden bg-white dark:bg-gray-900">
       <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
         <Text strong>Thông báo</Text>
         {unreadCount > 0 && onMarkAllRead && (
@@ -83,31 +82,33 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
             Không có thông báo mới
           </div>
         ) : (
-          <List
-            dataSource={notifications.slice(0, 5)}
-            renderItem={(item) => (
-              <List.Item
-                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 px-3 ${
+          <div>
+            {notifications.slice(0, 5).map((item) => (
+              <div
+                key={item.id}
+                className={`flex items-start gap-3 p-3 border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
                   !item.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                 }`}
                 onClick={() => onNotificationClick?.(item)}
               >
-                <List.Item.Meta
-                  avatar={getNotificationIcon(item.type)}
-                  title={<Text className="text-sm">{item.title}</Text>}
-                  description={
-                    <Text type="secondary" className="text-xs line-clamp-2">
-                      {item.message}
-                    </Text>
-                  }
-                />
-              </List.Item>
-            )}
-          />
+                <div className="flex-shrink-0 mt-1">
+                  {getNotificationIcon(item.type)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    {item.title}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                    {item.message}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       <div className="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
-        <Link to="/admin/notifications" className="text-blue-500 text-sm">
+        <Link to="/admin/notifications" className="text-blue-500 text-sm hover:text-blue-600">
           Xem tất cả
         </Link>
       </div>

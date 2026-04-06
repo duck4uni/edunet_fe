@@ -17,12 +17,13 @@ export interface MyCourseItem {
   completedDate?: string;
   startDate?: string;
   level?: string;
+  enrolledAt?: string;
 }
 
-/** Map backend enrollment status to UI status */
+/** Map backend enrollment status to UI status (only called for active/completed enrollments) */
 const mapEnrollmentStatus = (enrollment: Enrollment): 'learning' | 'completed' | 'pending' => {
   if (enrollment.status === 'completed') return 'completed';
-  if (enrollment.progress > 0) return 'learning';
+  if (enrollment.status === 'active' && enrollment.progress > 0) return 'learning';
   return 'pending';
 };
 
@@ -47,6 +48,7 @@ const mapEnrollmentToCourse = (enrollment: Enrollment): MyCourseItem => {
     completedDate: enrollment.completedAt,
     startDate: course?.startDate,
     level: course?.level,
+    enrolledAt: enrollment.createdAt,
   };
 };
 
@@ -62,7 +64,16 @@ export const useMyCourse = () => {
 
   const courses = useMemo<MyCourseItem[]>(() => {
     if (!data?.data) return [];
-    return data.data.map(mapEnrollmentToCourse);
+    return data.data
+      .filter(e => e.status === 'active' || e.status === 'completed')
+      .map(mapEnrollmentToCourse);
+  }, [data]);
+
+  const pendingCourses = useMemo<MyCourseItem[]>(() => {
+    if (!data?.data) return [];
+    return data.data
+      .filter(e => e.status === 'pending')
+      .map(mapEnrollmentToCourse);
   }, [data]);
 
   const filteredCourses = useMemo(() => {
@@ -101,6 +112,7 @@ export const useMyCourse = () => {
     searchText,
     setSearchText,
     filteredCourses,
+    pendingCourses,
     stats,
     getStatusConfig,
     isLoading,

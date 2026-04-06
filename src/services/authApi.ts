@@ -88,6 +88,15 @@ export const authApi = createApi({
       }),
     }),
 
+    // Register Teacher (multipart/form-data — CV PDF required)
+    registerTeacher: builder.mutation<ApiResponse<{ message: string }>, FormData>({
+      query: (formData) => ({
+        url: '/auth/register/teacher',
+        method: 'post',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }),
+    }),
     // Get Profile
     getProfile: builder.query<ApiResponse<User>, void>({
       query: () => ({
@@ -148,6 +157,7 @@ export const authApi = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useRegisterTeacherMutation,
   useGetProfileQuery,
   useRefreshTokenMutation,
   useLogoutMutation,

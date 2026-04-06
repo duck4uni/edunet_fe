@@ -51,8 +51,10 @@ export interface Teacher {
   rating: number;
   totalCourses: number;
   totalStudents: number;
-  status: 'active' | 'inactive' | 'pending' | 'suspended';
+  status: 'active' | 'inactive' | 'pending' | 'suspended' | 'rejected';
   bio?: string;
+  cvUrl?: string;
+  rejectionReason?: string;
   socialLinks?: {
     linkedin?: string;
     twitter?: string;

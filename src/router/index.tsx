@@ -28,6 +28,7 @@ import {
   AdminDashboard,
   CourseManagement,
   TeacherManagement,
+  TeacherRegistrationManagement,
   EmployeeManagement,
   RecruitmentManagement,
   SupportManagement,
@@ -153,6 +154,10 @@ export const router = createBrowserRouter([
       {
         path: 'teachers',
         element: <TeacherManagement />,
+      },
+      {
+        path: 'teacher-registrations',
+        element: <TeacherRegistrationManagement />,
       },
       {
         path: 'employees',

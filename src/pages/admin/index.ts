@@ -10,3 +10,4 @@ export { default as SupportManagement } from './Support';
 export { default as PermissionManagement } from './Permissions';
 export { default as RevenueManagement } from './Revenue';
 export { default as AdminProfile } from './Profile';
+export { default as TeacherRegistrationManagement } from './TeacherRegistrations';

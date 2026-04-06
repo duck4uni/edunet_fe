@@ -1,7 +1,7 @@
 // Teacher Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography } from 'antd';
-import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled } from '@ant-design/icons';
+import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography, Input } from 'antd';
+import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled, CheckOutlined, CloseOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTeacherManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
@@ -9,19 +9,39 @@ import type { Teacher } from '../../../types/admin';
 import { teacherStatuses } from '../../../constants/adminData';
 
 const { Text } = Typography;
+const { TextArea } = Input;
 
 const TeacherManagement: React.FC = () => {
   const {
     teachers, loading, selectedTeacher, setSelectedTeacher, filters, setFilters,
     tableParams, setTableParams, statistics, total, allSpecializations, fetchTeachers,
-    approveTeacher, suspendTeacher, activateTeacher, deleteTeacher,
+    approveTeacher, rejectTeacher, suspendTeacher, activateTeacher, deleteTeacher,
   } = useTeacherManagement();
 
   const [detailOpen, setDetailOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<Teacher | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectLoading, setRejectLoading] = useState(false);
 
   const handleViewDetail = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
     setDetailOpen(true);
+  };
+
+  const openRejectModal = (teacher: Teacher) => {
+    setRejectTarget(teacher);
+    setRejectReason('');
+    setRejectModalOpen(true);
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!rejectTarget || !rejectReason.trim()) return;
+    setRejectLoading(true);
+    await rejectTeacher(rejectTarget.id, rejectReason.trim());
+    setRejectLoading(false);
+    setRejectModalOpen(false);
+    setRejectTarget(null);
   };
 
   const handleFilterChange = (key: string, value: string | number | undefined) => {
@@ -33,7 +53,10 @@ const TeacherManagement: React.FC = () => {
       { key: 'view', icon: <EyeOutlined />, label: 'Xem chi tiết', onClick: () => handleViewDetail(record) },
       { key: 'edit', icon: <EditOutlined />, label: 'Chỉnh sửa' },
       { type: 'divider' as const },
-      ...(record.status === 'pending' ? [{ key: 'approve', label: 'Duyệt', onClick: () => approveTeacher(record.id) }] : []),
+      ...(record.status === 'pending' ? [
+        { key: 'approve', icon: <CheckOutlined />, label: 'Phê duyệt', onClick: () => approveTeacher(record.id) },
+        { key: 'reject', icon: <CloseOutlined />, label: 'Từ chối', danger: true, onClick: () => openRejectModal(record) },
+      ] : []),
       ...(record.status === 'active' ? [{ key: 'suspend', label: 'Tạm ngưng', danger: true, onClick: () => suspendTeacher(record.id) }] : []),
       ...(record.status === 'suspended' ? [{ key: 'activate', label: 'Kích hoạt', onClick: () => activateTeacher(record.id) }] : []),
       { type: 'divider' as const },
@@ -99,6 +122,24 @@ const TeacherManagement: React.FC = () => {
     { label: 'Đánh giá', value: <span><StarFilled className="text-yellow-400" /> {selectedTeacher.rating}</span> },
     { label: 'Thu nhập', value: formatCurrency(selectedTeacher.earnings) },
     { label: 'Chuyên môn', value: selectedTeacher.specialization.map((s: string) => <Tag key={s} color="blue">{s}</Tag>), span: 2 },
+    ...(selectedTeacher.cvUrl ? [{
+      label: 'CV',
+      value: (
+        <a
+          href={`http://localhost:3000${selectedTeacher.cvUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 text-blue-500 hover:text-blue-600"
+        >
+          <FilePdfOutlined /> Xem CV (PDF)
+        </a>
+      ),
+    }] : []),
+    ...(selectedTeacher.rejectionReason ? [{
+      label: 'Lý do từ chối',
+      value: <Text type="danger">{selectedTeacher.rejectionReason}</Text>,
+      span: 2,
+    }] : []),
   ] : [];
 
   return (
@@ -128,6 +169,35 @@ const TeacherManagement: React.FC = () => {
       </Card>
 
       <DetailDrawer open={detailOpen} onClose={() => setDetailOpen(false)} title={selectedTeacher ? `${selectedTeacher.firstName} ${selectedTeacher.lastName}` : ''} subtitle={selectedTeacher?.email} avatar={selectedTeacher?.avatar} status={selectedTeacher?.status} items={detailItems} />
+
+      {/* Reject Teacher Modal */}
+      <Modal
+        title="Từ chối đăng ký giáo viên"
+        open={rejectModalOpen}
+        onCancel={() => setRejectModalOpen(false)}
+        onOk={handleRejectConfirm}
+        okText="Xác nhận từ chối"
+        okButtonProps={{ danger: true, loading: rejectLoading, disabled: !rejectReason.trim() }}
+        cancelText="Hủy"
+      >
+        {rejectTarget && (
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+            <Text strong>{rejectTarget.firstName} {rejectTarget.lastName}</Text>
+            <Text type="secondary" className="block text-sm">{rejectTarget.email}</Text>
+          </div>
+        )}
+        <div className="mb-2">
+          <Text strong>Lý do từ chối <span className="text-red-500">*</span></Text>
+        </div>
+        <TextArea
+          rows={4}
+          placeholder="VD: CV không đúng yêu cầu, bằng cấp chưa được xác minh..."
+          value={rejectReason}
+          onChange={e => setRejectReason(e.target.value)}
+          maxLength={500}
+          showCount
+        />
+      </Modal>
     </div>
   );
 };

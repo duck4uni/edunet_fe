@@ -37,6 +37,10 @@ export {
   useDeleteCourseMutation,
   useGetTeachersQuery,
   useGetTeacherByIdQuery,
+  useCreateTeacherMutation,
+  useUpdateTeacherMutation,
+  useDeleteTeacherMutation,
+  useGetLessonsQuery,
   useGetLessonsByCourseQuery,
   useGetLessonByIdQuery,
   useCreateLessonMutation,
@@ -51,6 +55,10 @@ export {
   useEnrollCourseMutation,
   useUpdateEnrollmentMutation,
   useUpdateEnrollmentProgressMutation,
+  useGetEnrollmentByIdQuery,
+  useDeleteEnrollmentMutation,
+  useApproveEnrollmentMutation,
+  useRejectEnrollmentMutation,
   useGetReviewsQuery,
   useGetReviewsByCourseQuery,
   useGetCourseReviewStatsQuery,
@@ -74,10 +82,13 @@ export type {
 // Learning API
 export {
   learningApi,
+  useGetMaterialsQuery,
   useGetMaterialsByCourseQuery,
   useGetMaterialByIdQuery,
   useCreateMaterialMutation,
   useDeleteMaterialMutation,
+  useUpdateMaterialMutation,
+  useGetAssignmentsQuery,
   useGetAssignmentsByCourseQuery,
   useGetMyAssignmentsQuery,
   useGetAssignmentByIdQuery,
@@ -85,6 +96,8 @@ export {
   useCreateAssignmentMutation,
   useUpdateAssignmentMutation,
   useDeleteAssignmentMutation,
+  useGradeAssignmentMutation,
+  useGetQuizzesQuery,
   useGetQuizzesByCourseQuery,
   useGetQuizByIdQuery,
   useCreateQuizMutation,
@@ -99,6 +112,16 @@ export {
   useGetUpcomingSchedulesQuery,
   useGetSchedulesByDateRangeQuery,
   useGetSchedulesByCourseQuery,
+  useGetScheduleByIdQuery,
+  useGetSchedulesByTeacherQuery,
+  useCreateScheduleMutation,
+  useUpdateScheduleMutation,
+  useDeleteScheduleMutation,
+  useGetMySchedulesQuery,
+  useGetWeeklySchedulesQuery,
+  useCancelScheduleMutation,
+  usePostponeScheduleMutation,
+  useCreateRecurringScheduleMutation,
 } from './learningApi';
 
 export type {
@@ -140,3 +163,21 @@ export {
   setTokens,
   clearTokens,
 } from './axiosBaseQuery';
+
+// User API
+export {
+  userApi,
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useGetStudentsQuery,
+  useGetStudentByIdQuery,
+  useCreateStudentMutation,
+  useUpdateStudentMutation,
+  useDeleteStudentMutation,
+} from './userApi';
+
+export type {
+  Student,
+} from './userApi';

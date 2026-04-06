@@ -149,16 +149,13 @@ const AdminLogin: React.FC = () => {
 
         <Divider plain>
           <Text type="secondary" className="text-xs">
-            Thông tin đăng nhập demo
+            Lưu ý phân quyền
           </Text>
         </Divider>
 
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-center">
-          <Paragraph className="mb-1 text-sm">
-            <Text strong>Email:</Text> admin@edunet.com
-          </Paragraph>
           <Paragraph className="mb-0 text-sm">
-            <Text strong>Mật khẩu:</Text> admin123
+            Chỉ tài khoản có vai trò <Text strong>admin</Text> mới được truy cập trang quản trị.
           </Paragraph>
         </div>
 

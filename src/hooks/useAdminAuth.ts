@@ -1,8 +1,10 @@
 // Admin Authentication Hook
 import { useState, useCallback } from 'react';
 import { message } from 'antd';
+import { useLoginMutation } from '../services/authApi';
+import { setTokens, clearTokens } from '../services/axiosBaseQuery';
+import type { User } from '../services/authApi';
 import type { AdminUser } from '../types/admin';
-import { currentAdminUser } from '../constants/adminData';
 
 interface LoginCredentials {
   email: string;
@@ -30,6 +32,111 @@ interface LoginHistoryItem {
   status: 'success' | 'failed';
   isCurrent: boolean;
 }
+
+const ADMIN_USER_STORAGE_KEY = 'adminUser';
+
+const isAdminRole = (role: unknown): role is AdminUser['role'] => {
+  return role === 'admin' || role === 'super_admin';
+};
+
+const clearStoredAdminUser = (): void => {
+  localStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+  sessionStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+};
+
+const persistAdminUser = (user: AdminUser, remember?: boolean): void => {
+  if (remember) {
+    localStorage.setItem(ADMIN_USER_STORAGE_KEY, JSON.stringify(user));
+    sessionStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+    return;
+  }
+
+  sessionStorage.setItem(ADMIN_USER_STORAGE_KEY, JSON.stringify(user));
+  localStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+};
+
+const syncStoredAdminUser = (user: AdminUser): void => {
+  if (localStorage.getItem(ADMIN_USER_STORAGE_KEY)) {
+    localStorage.setItem(ADMIN_USER_STORAGE_KEY, JSON.stringify(user));
+  }
+
+  if (sessionStorage.getItem(ADMIN_USER_STORAGE_KEY)) {
+    sessionStorage.setItem(ADMIN_USER_STORAGE_KEY, JSON.stringify(user));
+  }
+};
+
+const getStoredAdminUser = (): AdminUser | null => {
+  const savedUser = localStorage.getItem(ADMIN_USER_STORAGE_KEY) || sessionStorage.getItem(ADMIN_USER_STORAGE_KEY);
+
+  if (!savedUser) {
+    return null;
+  }
+
+  try {
+    const parsedUser = JSON.parse(savedUser) as Partial<AdminUser>;
+
+    if (!isAdminRole(parsedUser.role)) {
+      clearStoredAdminUser();
+      return null;
+    }
+
+    return {
+      id: parsedUser.id || '',
+      email: parsedUser.email || '',
+      firstName: parsedUser.firstName || '',
+      lastName: parsedUser.lastName || '',
+      avatar: parsedUser.avatar,
+      role: parsedUser.role,
+      permissions: Array.isArray(parsedUser.permissions) ? parsedUser.permissions : ['all'],
+      status: parsedUser.status || 'active',
+      lastLogin: parsedUser.lastLogin,
+      createdAt: parsedUser.createdAt || new Date().toISOString(),
+    };
+  } catch {
+    clearStoredAdminUser();
+    return null;
+  }
+};
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (typeof error === 'object' && error !== null) {
+    const typedError = error as {
+      data?: { message?: string } | string;
+      message?: string;
+    };
+
+    if (typeof typedError.data === 'string') {
+      return typedError.data;
+    }
+
+    if (typedError.data && typeof typedError.data === 'object' && typedError.data.message) {
+      return typedError.data.message;
+    }
+
+    if (typedError.message) {
+      return typedError.message;
+    }
+  }
+
+  return fallback;
+};
+
+type ApiAuthUser = User & {
+  lastLogin?: string | null;
+};
+
+const mapApiUserToAdmin = (user: ApiAuthUser): AdminUser => ({
+  id: user.id,
+  email: user.email,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  avatar: user.avatar || undefined,
+  role: 'admin',
+  permissions: ['all'],
+  status: user.isActive ? 'active' : 'inactive',
+  lastLogin: user.lastLogin || undefined,
+  createdAt: user.createdAt,
+});
 
 const mockLoginHistory: LoginHistoryItem[] = [
   {
@@ -65,11 +172,8 @@ const mockLoginHistory: LoginHistoryItem[] = [
 ];
 
 export const useAdminAuth = () => {
-  const [admin, setAdmin] = useState<AdminUser | null>(() => {
-    // Chỉ lấy user từ storage, không dùng mock data
-    const savedUser = localStorage.getItem('adminUser') || sessionStorage.getItem('adminUser');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [admin, setAdmin] = useState<AdminUser | null>(getStoredAdminUser);
+  const [loginMutation] = useLoginMutation();
   const [loading, setLoading] = useState(false);
   const [isInitialized] = useState(true); // Đã khởi tạo xong
   const [error, setError] = useState<string | null>(null);
@@ -80,43 +184,45 @@ export const useAdminAuth = () => {
     setError(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock validation
-      if (credentials.email === 'admin@edunet.com' && credentials.password === 'admin123') {
-        const loggedInUser = {
-          ...currentAdminUser,
-          lastLogin: new Date().toISOString(),
-        };
-        
-        setAdmin(loggedInUser);
-        
-        if (credentials.remember) {
-          localStorage.setItem('adminUser', JSON.stringify(loggedInUser));
-        } else {
-          sessionStorage.setItem('adminUser', JSON.stringify(loggedInUser));
-        }
-        
-        message.success('Đăng nhập thành công!');
-        return { success: true, user: loggedInUser };
-      } else {
-        throw new Error('Email hoặc mật khẩu không chính xác');
+      const response = await loginMutation({
+        email: credentials.email,
+        password: credentials.password,
+      }).unwrap();
+
+      if (!response.success || !response.data?.user) {
+        throw new Error('Đăng nhập thất bại');
       }
+
+      const apiUser = response.data.user as ApiAuthUser;
+
+      if (apiUser.role !== 'admin') {
+        clearTokens();
+        clearStoredAdminUser();
+        throw new Error('Bạn không có quyền truy cập trang quản trị');
+      }
+
+      const loggedInUser = mapApiUserToAdmin(apiUser);
+
+      setTokens(response.data.accessToken, response.data.refreshToken);
+      setAdmin(loggedInUser);
+      persistAdminUser(loggedInUser, credentials.remember);
+
+      message.success('Đăng nhập thành công!');
+      return { success: true, user: loggedInUser };
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Đăng nhập thất bại';
+      const errorMessage = getErrorMessage(err, 'Đăng nhập thất bại');
       setError(errorMessage);
       message.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loginMutation]);
 
   const logout = useCallback(() => {
     setAdmin(null);
-    localStorage.removeItem('adminUser');
-    sessionStorage.removeItem('adminUser');
+    clearTokens();
+    clearStoredAdminUser();
     message.success('Đã đăng xuất');
   }, []);
 
@@ -126,7 +232,7 @@ export const useAdminAuth = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const updatedUser = { ...admin, ...data } as AdminUser;
       setAdmin(updatedUser);
-      localStorage.setItem('adminUser', JSON.stringify(updatedUser));
+      syncStoredAdminUser(updatedUser);
       return { success: true };
     } catch (err) {
       return { success: false };
@@ -208,21 +314,24 @@ export const useAdminAuth = () => {
   }, []);
 
   const checkAuth = useCallback(() => {
-    const savedUser = localStorage.getItem('adminUser') || sessionStorage.getItem('adminUser');
-    if (savedUser) {
-      setAdmin(JSON.parse(savedUser));
+    const savedAdmin = getStoredAdminUser();
+
+    if (savedAdmin) {
+      setAdmin(savedAdmin);
       return true;
     }
+
+    setAdmin(null);
     return false;
   }, []);
 
   const hasPermission = useCallback((permissionCode: string) => {
     if (!admin) return false;
     if (admin.role === 'super_admin') return true;
-    return admin.permissions.includes(permissionCode) || admin.permissions.includes('all');
+    return (admin.permissions || []).includes(permissionCode) || (admin.permissions || []).includes('all');
   }, [admin]);
 
-  const isAuthenticated = !!admin;
+  const isAuthenticated = !!admin && isAdminRole(admin.role);
 
   return {
     admin,

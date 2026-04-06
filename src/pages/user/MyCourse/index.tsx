@@ -11,7 +11,8 @@ import {
   TrophyOutlined,
   BookOutlined,
   CalendarOutlined,
-  UserOutlined
+  UserOutlined,
+  HourglassOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useMyCourse } from '../../../hooks';
@@ -38,6 +39,7 @@ const MyCourse: React.FC = () => {
     searchText,
     setSearchText,
     filteredCourses,
+    pendingCourses,
     stats,
     getStatusConfig,
     isLoading,
@@ -297,6 +299,73 @@ const MyCourse: React.FC = () => {
             </Card>
           </Col>
         </Row>
+
+        {/* Pending Enrollments */}
+        {pendingCourses.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <HourglassOutlined className="text-orange-500 text-xl" />
+              <Title level={4} className="!text-[#012643] !mb-0">Chờ phê duyệt</Title>
+              <Tag color="orange" className="!rounded-full">{pendingCourses.length}</Tag>
+            </div>
+            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-2">
+              <Text className="text-orange-700 text-sm">
+                Các khóa học dưới đây đang chờ giảng viên phê duyệt yêu cầu đăng ký. Bạn sẽ được thông báo khi được chấp thuận.
+              </Text>
+            </div>
+            <Row gutter={[16, 16]}>
+              {pendingCourses.map(course => (
+                <Col xs={24} sm={12} lg={8} xl={6} key={course.key}>
+                  <Card
+                    className="rounded-2xl overflow-hidden border border-orange-200 shadow-sm hover:shadow-md transition-all duration-300 bg-orange-50/30"
+                    cover={
+                      <div className="relative h-36 overflow-hidden">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="w-full h-full object-cover opacity-80"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                        <Tag
+                          icon={<HourglassOutlined />}
+                          color="orange"
+                          className="!absolute top-3 left-3 !rounded-full !px-3 !py-1 !border-0"
+                        >
+                          Chờ phê duyệt
+                        </Tag>
+                      </div>
+                    }
+                    bodyStyle={{ padding: '14px' }}
+                  >
+                    <Tag color="blue" className="!rounded-full !text-xs !mb-2">{course.category}</Tag>
+                    <Title level={5} className="!text-[#012643] !mb-1 !line-clamp-2 !leading-tight">
+                      {course.title}
+                    </Title>
+                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
+                      <UserOutlined />
+                      <span>{course.teacher}</span>
+                    </div>
+                    {course.enrolledAt && (
+                      <div className="text-xs text-orange-600 flex items-center gap-1 mb-3">
+                        <CalendarOutlined />
+                        Đăng ký: {dayjs(course.enrolledAt).format('DD/MM/YYYY')}
+                      </div>
+                    )}
+                    <Link to={`/courses/${course.id}`}>
+                      <Button
+                        block
+                        icon={<EyeOutlined />}
+                        className="!rounded-lg !border-orange-400 !text-orange-600 hover:!bg-orange-500 hover:!text-white"
+                      >
+                        Xem khóa học
+                      </Button>
+                    </Link>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        )}
 
         {/* Filters */}
         <Card className="rounded-2xl border-0 shadow-md mb-6">

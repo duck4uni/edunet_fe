@@ -7,7 +7,6 @@ import {
   useUpdateLessonMutation,
   useDeleteLessonMutation 
 } from '../../../../../services/courseApi';
-import dayjs from 'dayjs';
 
 const { Option } = Select;
 
@@ -153,7 +152,7 @@ const ClassroomTab: React.FC<ClassroomTabProps> = ({ courseId }) => {
             </Form.Item>
           </div>
           <Form.Item name="isFree" label="Miễn phí trải nghiệm">
-            <Select initialValue={false}>
+            <Select defaultValue={false}>
               <Option value={true}>Có</Option>
               <Option value={false}>Không</Option>
             </Select>
