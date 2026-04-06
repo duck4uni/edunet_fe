@@ -2,7 +2,13 @@ import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 import axios, { type AxiosRequestConfig, AxiosError } from 'axios';
 
 // Token storage utilities
-export const API_BASE_URL = 'http://localhost:3000/api';
+const DEFAULT_API_BASE_URL = 'http://localhost:3000/api';
+const envApiBaseUrl =
+  typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL
+    ? String(import.meta.env.VITE_API_BASE_URL)
+    : '';
+
+export const API_BASE_URL = (envApiBaseUrl.trim() || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
 
 const TOKEN_KEY = 'edunet_access_token';
 const REFRESH_TOKEN_KEY = 'edunet_refresh_token';

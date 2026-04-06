@@ -23,12 +23,19 @@ import {
   useApproveTeacherMutation,
   useRejectTeacherMutation,
 } from '../../../services/courseApi';
+import { API_BASE_URL } from '../../../services/axiosBaseQuery';
 import type { Teacher } from '../../../services/courseApi';
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
 
-const CV_BASE_URL = 'http://localhost:3000';
+const CV_BASE_URL = (() => {
+  try {
+    return new URL(API_BASE_URL).origin;
+  } catch {
+    return API_BASE_URL;
+  }
+})();
 
 const TeacherRegistrations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
