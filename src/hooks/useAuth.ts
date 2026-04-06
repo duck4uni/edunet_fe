@@ -39,6 +39,14 @@ export const useAuth = (): UseAuthReturn => {
   const [forgotPasswordMutation] = useForgotPasswordMutation();
   const [resetPasswordMutation] = useResetPasswordMutation();
 
+  const tryRefetchProfile = useCallback(async (): Promise<void> => {
+    try {
+      await refetch();
+    } catch {
+      // Query may still be skipped right after storing token; ignore this transient error.
+    }
+  }, [refetch]);
+
   const user = profileData?.data || null;
   const isAuthenticated = !!user;
   const isLoading = isProfileLoading || isLoginLoading || isRegisterLoading;
@@ -50,7 +58,7 @@ export const useAuth = (): UseAuthReturn => {
       
       if (result.success && result.data) {
         setTokens(result.data.accessToken, result.data.refreshToken);
-        await refetch();
+        await tryRefetchProfile();
         return true;
       }
       
@@ -61,7 +69,7 @@ export const useAuth = (): UseAuthReturn => {
       setError(errorMessage);
       return false;
     }
-  }, [loginMutation, refetch]);
+  }, [loginMutation, tryRefetchProfile]);
 
   const register = useCallback(async (data: RegisterRequest): Promise<boolean> => {
     try {
@@ -70,7 +78,7 @@ export const useAuth = (): UseAuthReturn => {
       
       if (result.success && result.data) {
         setTokens(result.data.accessToken, result.data.refreshToken);
-        await refetch();
+        await tryRefetchProfile();
         return true;
       }
       
@@ -81,7 +89,7 @@ export const useAuth = (): UseAuthReturn => {
       setError(errorMessage);
       return false;
     }
-  }, [registerMutation, refetch]);
+  }, [registerMutation, tryRefetchProfile]);
 
   const logout = useCallback(async (): Promise<void> => {
     try {

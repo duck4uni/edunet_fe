@@ -4,12 +4,21 @@ import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typ
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled, CheckOutlined, CloseOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTeacherManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
+import { API_BASE_URL } from '../../../services/axiosBaseQuery';
 import { formatDate } from '../../../utils/format';
 import type { Teacher } from '../../../types/admin';
 import { teacherStatuses } from '../../../constants/adminData';
 
 const { Text } = Typography;
 const { TextArea } = Input;
+
+const CV_BASE_URL = (() => {
+  try {
+    return new URL(API_BASE_URL).origin;
+  } catch {
+    return API_BASE_URL;
+  }
+})();
 
 const TeacherManagement: React.FC = () => {
   const {
@@ -124,7 +133,7 @@ const TeacherManagement: React.FC = () => {
       label: 'CV',
       value: (
         <a
-          href={`http://localhost:3000${selectedTeacher.cvUrl}`}
+          href={`${CV_BASE_URL}${selectedTeacher.cvUrl}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 text-blue-500 hover:text-blue-600"
