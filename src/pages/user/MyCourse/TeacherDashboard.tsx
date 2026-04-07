@@ -453,12 +453,22 @@ const TeacherDashboard: React.FC = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="price" label="Giá (VNĐ)" initialValue={0} rules={[{ required: true }]}>
-                <InputNumber className="w-full" min={0} />
+                <InputNumber 
+                  className="w-full" 
+                  min={0} 
+                  formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} 
+                  parser={(v: string | undefined) => (v?.replace(/\./g, '') || '') as any}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="discountPrice" label="Giá KM (VNĐ)">
-                <InputNumber className="w-full" min={0} />
+                <InputNumber 
+                  className="w-full" 
+                  min={0} 
+                  formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} 
+                  parser={(v: string | undefined) => (v?.replace(/\./g, '') || '') as any}
+                />
               </Form.Item>
             </Col>
           </Row>

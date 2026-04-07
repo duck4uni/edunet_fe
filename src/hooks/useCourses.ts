@@ -25,7 +25,7 @@ export const useCourses = (options: UseCoursesOptions = {}): UseCoursesReturn =>
   const { page = 1, size = 10, categoryId, search, level, sort, include } = options;
 
   const queryParams: QueryParams = useMemo(() => {
-    const filters: string[] = [];
+    const filters: string[] = ['status:eq:published'];
     if (categoryId) filters.push(`categoryId:eq:${categoryId}`);
     if (search) filters.push(`title:like:${search}`);
     if (level && level !== 'all') filters.push(`level:eq:${level}`);
