@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, InputNumber, Tag, Popconfirm, message } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, InputNumber, Tag, Popconfirm, message, Switch } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { 
   useGetLessonsByCourseQuery, 
@@ -63,6 +63,16 @@ const ClassroomTab: React.FC<ClassroomTabProps> = ({ courseId }) => {
     }
   };
 
+  const handleToggleVisibility = async (lesson: any) => {
+    try {
+      await updateLesson({ id: lesson.id, data: { isVisible: !lesson.isVisible } }).unwrap();
+      message.success(lesson.isVisible ? 'Đã ẩn bài học' : 'Đã hiện bài học');
+      refetch();
+    } catch {
+      message.error('Không thể cập nhật trạng thái hiển thị');
+    }
+  };
+
   const columns = [
     { title: 'Thứ tự', dataIndex: 'order', key: 'order', width: 80 },
     { title: 'Tên bài học', dataIndex: 'title', key: 'title' },
@@ -81,6 +91,20 @@ const ClassroomTab: React.FC<ClassroomTabProps> = ({ courseId }) => {
       dataIndex: 'isFree', 
       key: 'isFree',
       render: (isFree: boolean) => isFree ? <Tag color="success">Có</Tag> : <Tag color="default">Không</Tag>
+    },
+    {
+      title: 'Hiển thị',
+      dataIndex: 'isVisible',
+      key: 'isVisible',
+      width: 100,
+      render: (_: any, record: any) => (
+        <Switch
+          checked={record.isVisible}
+          onChange={() => handleToggleVisibility(record)}
+          checkedChildren="Hiện"
+          unCheckedChildren="Ẩn"
+        />
+      ),
     },
     {
       title: 'Hành động',
@@ -156,6 +180,9 @@ const ClassroomTab: React.FC<ClassroomTabProps> = ({ courseId }) => {
               <Option value={true}>Có</Option>
               <Option value={false}>Không</Option>
             </Select>
+          </Form.Item>
+          <Form.Item name="isVisible" label="Hiển thị cho học viên" valuePropName="checked" initialValue={true}>
+            <Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" />
           </Form.Item>
           
           <Button type="primary" htmlType="submit" className="w-full !bg-[#012643]" loading={isCreating || isUpdating}>

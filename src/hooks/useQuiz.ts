@@ -7,6 +7,7 @@ import {
   useUpdateQuizMutation,
   useDeleteQuizMutation,
   useStartQuizAttemptMutation,
+  useGetMyQuizProgressQuery,
 } from '../services/learningApi';
 import { useGetProfileQuery } from '../services/authApi';
 import type { QuizItem } from '../types/myCourse';
@@ -19,6 +20,9 @@ export const useQuiz = (courseId: string) => {
   const { data: quizzesData, isLoading } = useGetQuizzesByCourseQuery(courseId, {
     skip: !courseId,
   });
+  const { data: progressData } = useGetMyQuizProgressQuery(courseId, {
+    skip: !courseId || userRole !== 'student',
+  });
   const [createQuiz] = useCreateQuizMutation();
   const [updateQuiz] = useUpdateQuizMutation();
   const [deleteQuiz] = useDeleteQuizMutation();
@@ -27,17 +31,22 @@ export const useQuiz = (courseId: string) => {
   const quizzes: QuizItem[] = useMemo(() => {
     const raw = quizzesData?.data;
     if (!raw) return [];
-    return raw.map((q) => ({
-      id: q.id,
-      title: q.title,
-      description: q.description || '',
-      duration: q.duration,
-      questions: q.totalQuestions,
-      attempts: 0,
-      maxAttempts: q.maxAttempts,
-      status: 'not-started' as const,
-    }));
-  }, [quizzesData]);
+    const progressMap = progressData?.data || {};
+    return raw.map((q) => {
+      const progress = progressMap[q.id];
+      return {
+        id: q.id,
+        title: q.title,
+        description: q.description || '',
+        duration: q.duration,
+        questions: q.totalQuestions,
+        attempts: progress?.attempts || 0,
+        maxAttempts: q.maxAttempts,
+        bestScore: progress?.bestScore,
+        status: (progress?.status || 'not-started') as 'not-started' | 'in-progress' | 'completed',
+      };
+    });
+  }, [quizzesData, progressData]);
 
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');

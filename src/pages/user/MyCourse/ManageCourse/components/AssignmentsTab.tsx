@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, Popconfirm, message, DatePicker } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, Popconfirm, message, DatePicker, Switch } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { 
   useGetAssignmentsByCourseQuery, 
@@ -70,6 +70,16 @@ const AssignmentsTab: React.FC<AssignmentsTabProps> = ({ courseId }) => {
     }
   };
 
+  const handleToggleVisibility = async (assignment: any) => {
+    try {
+      await updateAssignment({ id: assignment.id, data: { isVisible: !assignment.isVisible } }).unwrap();
+      message.success(assignment.isVisible ? 'Đã ẩn bài tập' : 'Đã hiện bài tập');
+      refetch();
+    } catch {
+      message.error('Không thể cập nhật trạng thái hiển thị');
+    }
+  };
+
   const columns = [
     { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
     { 
@@ -79,6 +89,20 @@ const AssignmentsTab: React.FC<AssignmentsTabProps> = ({ courseId }) => {
       render: (date: string) => date ? dayjs(date).format('DD/MM/YYYY HH:mm') : 'N/A'
     },
     { title: 'Điểm tối đa', dataIndex: 'maxGrade', key: 'maxGrade' },
+    {
+      title: 'Hiển thị',
+      dataIndex: 'isVisible',
+      key: 'isVisible',
+      width: 100,
+      render: (_: any, record: any) => (
+        <Switch
+          checked={record.isVisible}
+          onChange={() => handleToggleVisibility(record)}
+          checkedChildren="Hiện"
+          unCheckedChildren="Ẩn"
+        />
+      ),
+    },
     {
       title: 'Hành động',
       key: 'action',

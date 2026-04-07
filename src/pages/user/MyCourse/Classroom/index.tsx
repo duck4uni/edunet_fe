@@ -31,7 +31,9 @@ import {
   CrownOutlined,
   MoreOutlined,
   ExportOutlined,
-  UserAddOutlined
+  UserAddOutlined,
+  CheckOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
 import { useClassroom } from '../../../../hooks';
@@ -58,6 +60,8 @@ const Classroom: React.FC = () => {
     handleAddMember,
     handleEditMember,
     handleDeleteMember,
+    handleApproveMember,
+    handleRejectMember,
     handleSubmit,
     closeModal,
   } = useClassroom(id!);
@@ -136,8 +140,8 @@ const Classroom: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={status === 'active' ? 'success' : 'default'} className="!rounded-full">
-          {status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+        <Tag color={status === 'active' ? 'success' : status === 'pending' ? 'warning' : 'default'} className="!rounded-full">
+          {status === 'active' ? 'Hoạt động' : status === 'pending' ? 'Chờ duyệt' : 'Không hoạt động'}
         </Tag>
       ),
     },
@@ -154,33 +158,56 @@ const Classroom: React.FC = () => {
       key: 'actions',
       render: (_: any, record: ClassMember) => (
         <Space>
-          <Tooltip title="Chỉnh sửa">
-            <Button 
-              type="text" 
-              icon={<EditOutlined />} 
-              onClick={() => onEditMember(record)}
-              className="!text-blue-500"
-            />
-          </Tooltip>
-          <Tooltip title="Gửi Email">
-            <Button 
-              type="text" 
-              icon={<MailOutlined />} 
-              className="!text-green-500"
-            />
-          </Tooltip>
-          {record.role !== 'teacher' && (
-            <Popconfirm
-              title="Xóa thành viên này?"
-              description="Hành động này không thể hoàn tác."
-              onConfirm={() => handleDeleteMember(record.id)}
-              okText="Có"
-              cancelText="Không"
-            >
-              <Tooltip title="Xóa">
-                <Button type="text" icon={<DeleteOutlined />} className="!text-red-500" />
+          {record.status === 'pending' ? (
+            <>
+              <Tooltip title="Duyệt">
+                <Button 
+                  type="text" 
+                  icon={<CheckOutlined />} 
+                  onClick={() => handleApproveMember(record.id)}
+                  className="!text-green-500"
+                />
               </Tooltip>
-            </Popconfirm>
+              <Tooltip title="Từ chối">
+                <Button 
+                  type="text" 
+                  icon={<CloseOutlined />} 
+                  onClick={() => handleRejectMember(record.id)}
+                  className="!text-red-500"
+                />
+              </Tooltip>
+            </>
+          ) : (
+            <>
+              <Tooltip title="Chỉnh sửa">
+                <Button 
+                  type="text" 
+                  icon={<EditOutlined />} 
+                  onClick={() => onEditMember(record)}
+                  className="!text-blue-500"
+                />
+              </Tooltip>
+              <Tooltip title="Gửi Email">
+                <Button 
+                  type="text" 
+                  icon={<MailOutlined />} 
+                  className="!text-green-500"
+                />
+              </Tooltip>
+              {record.role !== 'teacher' && (
+                <Popconfirm
+                  title="Xóa thành viên này?"
+                  description="Hành động này không thể hoàn tác."
+                  onConfirm={() => handleDeleteMember(record.id)}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Tooltip title="Xóa">
+                    <Button type="text" icon={<DeleteOutlined />} className="!text-red-500" />
+                  </Tooltip>
+                </Popconfirm>
+              )}
+            </>
           )}
         </Space>
       ),

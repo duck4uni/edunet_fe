@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Popconfirm, message, Tag } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, Popconfirm, message, Tag, Switch } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { 
   useGetMaterialsByCourseQuery, 
   useCreateMaterialMutation, 
-  useDeleteMaterialMutation 
+  useDeleteMaterialMutation,
+  useUpdateMaterialMutation 
 } from '../../../../../services/learningApi';
 import dayjs from 'dayjs';
 
@@ -18,6 +19,7 @@ const MaterialsTab: React.FC<MaterialsTabProps> = ({ courseId }) => {
   const { data: materialsData, isLoading, refetch } = useGetMaterialsByCourseQuery(courseId);
   const [createMaterial, { isLoading: isCreating }] = useCreateMaterialMutation();
   const [deleteMaterial] = useDeleteMaterialMutation();
+  const [updateMaterial] = useUpdateMaterialMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -46,6 +48,16 @@ const MaterialsTab: React.FC<MaterialsTabProps> = ({ courseId }) => {
     }
   };
 
+  const handleToggleVisibility = async (material: any) => {
+    try {
+      await updateMaterial({ id: material.id, data: { isVisible: !material.isVisible } }).unwrap();
+      message.success(material.isVisible ? 'Đã ẩn tài liệu' : 'Đã hiện tài liệu');
+      refetch();
+    } catch {
+      message.error('Không thể cập nhật trạng thái hiển thị');
+    }
+  };
+
   const columns = [
     { title: 'Tên tài liệu', dataIndex: 'title', key: 'title' },
     { 
@@ -60,6 +72,20 @@ const MaterialsTab: React.FC<MaterialsTabProps> = ({ courseId }) => {
       dataIndex: 'createdAt', 
       key: 'createdAt',
       render: (date: string) => dayjs(date).format('DD/MM/YYYY HH:mm')
+    },
+    {
+      title: 'Hiển thị',
+      dataIndex: 'isVisible',
+      key: 'isVisible',
+      width: 100,
+      render: (_: any, record: any) => (
+        <Switch
+          checked={record.isVisible}
+          onChange={() => handleToggleVisibility(record)}
+          checkedChildren="Hiện"
+          unCheckedChildren="Ẩn"
+        />
+      ),
     },
     {
       title: 'Hành động',

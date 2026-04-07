@@ -6,7 +6,7 @@ export interface ClassMember {
   avatar: string;
   role: 'student' | 'teacher' | 'assistant';
   joinedAt: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'pending';
   progress?: number;
 }
 

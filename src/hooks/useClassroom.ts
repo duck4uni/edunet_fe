@@ -1,6 +1,12 @@
 import { useState, useMemo } from 'react';
 import { message } from 'antd';
-import { useGetEnrollmentsByCourseQuery } from '../services/courseApi';
+import { 
+  useGetEnrollmentsByCourseQuery,
+  useApproveEnrollmentMutation,
+  useRejectEnrollmentMutation,
+  useDeleteEnrollmentMutation,
+  useUpdateEnrollmentProgressMutation,
+} from '../services/courseApi';
 import { useGetProfileQuery } from '../services/authApi';
 import type { ClassMember } from '../types/myCourse';
 
@@ -11,6 +17,10 @@ export const useClassroom = (courseId: string) => {
   const { data: enrollmentsData, isLoading, refetch } = useGetEnrollmentsByCourseQuery(courseId, {
     skip: !courseId,
   });
+  const [approveEnrollment] = useApproveEnrollmentMutation();
+  const [rejectEnrollment] = useRejectEnrollmentMutation();
+  const [deleteEnrollment] = useDeleteEnrollmentMutation();
+  const [updateProgress] = useUpdateEnrollmentProgressMutation();
 
   const members: ClassMember[] = useMemo(() => {
     const enrollments = enrollmentsData?.data;
@@ -24,7 +34,7 @@ export const useClassroom = (courseId: string) => {
         avatar: user?.avatar || '',
         role: 'student' as const,
         joinedAt: enrollment.createdAt,
-        status: (enrollment.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
+        status: (enrollment.status === 'active' ? 'active' : enrollment.status === 'pending' ? 'pending' : 'inactive') as 'active' | 'inactive' | 'pending',
         progress: enrollment.progress,
       };
     });
@@ -73,9 +83,44 @@ export const useClassroom = (courseId: string) => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteMember = (_memberId: string) => {
-    message.success('Đã xóa thành viên');
-    refetch();
+  const handleDeleteMember = async (memberId: string) => {
+    try {
+      await deleteEnrollment(memberId).unwrap();
+      message.success('Đã xóa thành viên');
+      refetch();
+    } catch {
+      message.error('Không thể xóa thành viên');
+    }
+  };
+
+  const handleApproveMember = async (memberId: string) => {
+    try {
+      await approveEnrollment(memberId).unwrap();
+      message.success('Đã duyệt thành viên');
+      refetch();
+    } catch {
+      message.error('Không thể duyệt thành viên');
+    }
+  };
+
+  const handleRejectMember = async (memberId: string) => {
+    try {
+      await rejectEnrollment(memberId).unwrap();
+      message.success('Đã từ chối thành viên');
+      refetch();
+    } catch {
+      message.error('Không thể từ chối thành viên');
+    }
+  };
+
+  const handleUpdateProgress = async (memberId: string, progress: number) => {
+    try {
+      await updateProgress({ id: memberId, progress }).unwrap();
+      message.success('Đã cập nhật tiến độ');
+      refetch();
+    } catch {
+      message.error('Không thể cập nhật tiến độ');
+    }
   };
 
   const handleSubmit = (_values: Record<string, unknown>) => {
@@ -108,6 +153,9 @@ export const useClassroom = (courseId: string) => {
     handleAddMember,
     handleEditMember,
     handleDeleteMember,
+    handleApproveMember,
+    handleRejectMember,
+    handleUpdateProgress,
     handleSubmit,
     closeModal,
   };

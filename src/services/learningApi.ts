@@ -16,6 +16,7 @@ export interface Material {
   type: 'pdf' | 'video' | 'document' | 'link' | 'image';
   downloadUrl: string;
   size?: string;
+  isVisible: boolean;
   courseId: string;
   createdAt: string;
 }
@@ -33,6 +34,7 @@ export interface Assignment {
   feedback?: string;
   submissionUrl?: string;
   submittedAt?: string;
+  isVisible: boolean;
   courseId: string;
   studentId?: string;
   createdAt: string;
@@ -50,6 +52,7 @@ export interface Quiz {
   passingScore: number;
   shuffleQuestions: boolean;
   showCorrectAnswers: boolean;
+  isVisible: boolean;
   courseId: string;
   createdAt: string;
 }
@@ -327,6 +330,14 @@ export const learningApi = createApi({
       providesTags: ['QuizAttempts'],
     }),
 
+    getMyQuizProgress: builder.query<ApiResponse<Record<string, { attempts: number; bestScore: number; status: string }>>, string>({
+      query: (courseId) => ({
+        url: `/quizzes/course/${courseId}/my-progress`,
+        method: 'get',
+      }),
+      providesTags: ['QuizAttempts'],
+    }),
+
     // ============ SCHEDULES ============
     getSchedules: builder.query<PaginatedResponse<Schedule>, QueryParams | void>({
       query: (params) => ({
@@ -481,6 +492,7 @@ export const {
   useGetQuizAttemptsQuery,
   useGetQuizAttemptByIdQuery,
   useGetQuizBestScoreQuery,
+  useGetMyQuizProgressQuery,
   // Schedules
   useGetSchedulesQuery,
   useGetUpcomingSchedulesQuery,

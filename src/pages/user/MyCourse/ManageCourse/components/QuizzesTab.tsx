@@ -65,11 +65,35 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
     }
   };
 
+  const handleToggleVisibility = async (quiz: any) => {
+    try {
+      await updateQuiz({ id: quiz.id, data: { isVisible: !quiz.isVisible } }).unwrap();
+      message.success(quiz.isVisible ? 'Đã ẩn Quiz' : 'Đã hiện Quiz');
+      refetch();
+    } catch {
+      message.error('Không thể cập nhật trạng thái hiển thị');
+    }
+  };
+
   const columns = [
     { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
     { title: 'Thời gian (phút)', dataIndex: 'duration', key: 'duration' },
     { title: 'Số câu hỏi', dataIndex: 'totalQuestions', key: 'totalQuestions' },
     { title: 'Điểm qua môn', dataIndex: 'passingScore', key: 'passingScore' },
+    {
+      title: 'Hiển thị',
+      dataIndex: 'isVisible',
+      key: 'isVisible',
+      width: 100,
+      render: (_: any, record: any) => (
+        <Switch
+          checked={record.isVisible}
+          onChange={() => handleToggleVisibility(record)}
+          checkedChildren="Hiện"
+          unCheckedChildren="Ẩn"
+        />
+      ),
+    },
     {
       title: 'Hành động',
       key: 'action',

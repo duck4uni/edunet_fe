@@ -91,6 +91,7 @@ export interface Lesson {
   order: number;
   videoUrl?: string;
   isFree: boolean;
+  isVisible: boolean;
   courseId: string;
   createdAt?: string;
   updatedAt?: string;
