@@ -1,8 +1,8 @@
 // Admin Authentication Hook
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { message } from 'antd';
-import { useLoginMutation } from '../services/authApi';
-import { setTokens, clearTokens } from '../services/axiosBaseQuery';
+import { useLoginMutation, useGetProfileQuery } from '../services/authApi';
+import { setTokens, clearTokens, getAccessToken } from '../services/axiosBaseQuery';
 import type { User } from '../services/authApi';
 import type { AdminUser } from '../types/admin';
 
@@ -175,9 +175,51 @@ export const useAdminAuth = () => {
   const [admin, setAdmin] = useState<AdminUser | null>(getStoredAdminUser);
   const [loginMutation] = useLoginMutation();
   const [loading, setLoading] = useState(false);
-  const [isInitialized] = useState(true); // Đã khởi tạo xong
   const [error, setError] = useState<string | null>(null);
   const [loginHistory] = useState<LoginHistoryItem[]>(mockLoginHistory);
+
+  const hasToken = !!getAccessToken();
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+    error: profileError,
+  } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const isInitialized = !hasToken || !isProfileLoading;
+
+  useEffect(() => {
+    if (!hasToken) {
+      clearStoredAdminUser();
+      setAdmin(null);
+      return;
+    }
+
+    const status = (profileError as { status?: number } | undefined)?.status;
+    if (status === 401 || status === 403) {
+      clearTokens();
+      clearStoredAdminUser();
+      setAdmin(null);
+      return;
+    }
+
+    const apiUser = profileData?.data as ApiAuthUser | undefined;
+    if (!apiUser) {
+      return;
+    }
+
+    if (apiUser.role !== 'admin') {
+      clearStoredAdminUser();
+      setAdmin(null);
+      return;
+    }
+
+    const syncedAdmin = mapApiUserToAdmin(apiUser);
+    setAdmin(syncedAdmin);
+    syncStoredAdminUser(syncedAdmin);
+  }, [hasToken, profileData, profileError]);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     setLoading(true);
@@ -314,6 +356,12 @@ export const useAdminAuth = () => {
   }, []);
 
   const checkAuth = useCallback(() => {
+    if (!getAccessToken()) {
+      clearStoredAdminUser();
+      setAdmin(null);
+      return false;
+    }
+
     const savedAdmin = getStoredAdminUser();
 
     if (savedAdmin) {
@@ -331,7 +379,7 @@ export const useAdminAuth = () => {
     return (admin.permissions || []).includes(permissionCode) || (admin.permissions || []).includes('all');
   }, [admin]);
 
-  const isAuthenticated = !!admin && isAdminRole(admin.role);
+  const isAuthenticated = !!admin && hasToken && isAdminRole(admin.role);
 
   return {
     admin,

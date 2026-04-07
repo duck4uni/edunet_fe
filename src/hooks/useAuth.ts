@@ -11,6 +11,13 @@ import {
 import { setTokens, clearTokens, getAccessToken } from '../services/axiosBaseQuery';
 import type { User, LoginRequest, RegisterRequest } from '../services/authApi';
 
+const ADMIN_USER_STORAGE_KEY = 'adminUser';
+
+const clearAdminAuthStorage = (): void => {
+  localStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+  sessionStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+};
+
 interface UseAuthReturn {
   user: User | null;
   isAuthenticated: boolean;
@@ -31,6 +38,7 @@ export const useAuth = (): UseAuthReturn => {
   
   const { data: profileData, isLoading: isProfileLoading, refetch } = useGetProfileQuery(undefined, {
     skip: !hasToken,
+    refetchOnMountOrArgChange: true,
   });
   
   const [loginMutation, { isLoading: isLoginLoading }] = useLoginMutation();
@@ -57,6 +65,7 @@ export const useAuth = (): UseAuthReturn => {
       const result = await loginMutation(credentials).unwrap();
       
       if (result.success && result.data) {
+        clearAdminAuthStorage();
         setTokens(result.data.accessToken, result.data.refreshToken);
         await tryRefetchProfile();
         return true;
@@ -77,6 +86,7 @@ export const useAuth = (): UseAuthReturn => {
       const result = await registerMutation(data).unwrap();
       
       if (result.success && result.data) {
+        clearAdminAuthStorage();
         setTokens(result.data.accessToken, result.data.refreshToken);
         await tryRefetchProfile();
         return true;
@@ -97,8 +107,9 @@ export const useAuth = (): UseAuthReturn => {
     } catch {
       // Ignore logout errors
     } finally {
+      clearAdminAuthStorage();
       clearTokens();
-      navigate('/login');
+      navigate('/auth/login');
     }
   }, [logoutMutation, navigate]);
 
@@ -140,12 +151,13 @@ export const useAuth = (): UseAuthReturn => {
 };
 
 // Hook to protect routes
-export const useRequireAuth = (redirectTo: string = '/login'): { isAuthenticated: boolean; isLoading: boolean } => {
+export const useRequireAuth = (redirectTo: string = '/auth/login'): { isAuthenticated: boolean; isLoading: boolean } => {
   const navigate = useNavigate();
   const hasToken = !!getAccessToken();
   
   const { data, isLoading } = useGetProfileQuery(undefined, {
     skip: !hasToken,
+    refetchOnMountOrArgChange: true,
   });
   
   const isAuthenticated = !!data?.data;

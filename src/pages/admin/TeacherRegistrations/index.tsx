@@ -193,7 +193,7 @@ const TeacherRegistrations: React.FC = () => {
                   size="small"
                   loading={approving}
                   onClick={() => setApproveConfirmTarget(record)}
-                  className="!bg-green-500 !border-green-500 hover:!bg-green-600"
+                  className="approval-action-btn approval-action-btn-approve"
                 />
               </Tooltip>
               <Tooltip title="Từ chối">
@@ -203,6 +203,7 @@ const TeacherRegistrations: React.FC = () => {
                   icon={<CloseOutlined />}
                   size="small"
                   onClick={() => openRejectModal(record)}
+                  className="approval-action-btn approval-action-btn-reject"
                 />
               </Tooltip>
             </>

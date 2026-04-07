@@ -297,10 +297,16 @@ const AdminCourseDetail: React.FC = () => {
               icon={<CheckOutlined />}
               loading={isReviewing}
               onClick={handleApprove}
+              className="approval-action-btn approval-action-btn-approve"
             >
               Duyệt khóa học
             </Button>
-            <Button danger icon={<CloseOutlined />} onClick={() => setRejectOpen(true)}>
+            <Button
+              danger
+              icon={<CloseOutlined />}
+              onClick={() => setRejectOpen(true)}
+              className="approval-action-btn approval-action-btn-reject"
+            >
               Từ chối
             </Button>
           </>

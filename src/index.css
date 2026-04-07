@@ -102,3 +102,28 @@ iframe {
     max-height: calc(100vh - 16px);
   }
 }
+
+/* Keep approval/rejection buttons visible without hover-dependent colors */
+.approval-action-btn {
+  transition: none !important;
+}
+
+.approval-action-btn-approve,
+.approval-action-btn-approve:hover,
+.approval-action-btn-approve:focus,
+.approval-action-btn-approve:active {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.approval-action-btn-reject,
+.approval-action-btn-reject:hover,
+.approval-action-btn-reject:focus,
+.approval-action-btn-reject:active {
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}

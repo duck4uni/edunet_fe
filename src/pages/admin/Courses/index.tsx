@@ -435,7 +435,7 @@ const CourseManagement: React.FC = () => {
     {
       title: 'Thao tác',
       key: 'actions',
-      width: 160,
+      width: 190,
       render: (_: any, record: Enrollment) => (
         <Space size="small">
           {record.status === 'pending' && (
@@ -446,7 +446,14 @@ const CourseManagement: React.FC = () => {
                 okText="Duyệt"
                 cancelText="Hủy"
               >
-                <Button size="small" type="primary" icon={<CheckOutlined />}>Duyệt</Button>
+                <Button
+                  size="small"
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  className="approval-action-btn approval-action-btn-approve"
+                >
+                  Duyệt
+                </Button>
               </Popconfirm>
               <Popconfirm
                 title="Từ chối học viên này?"
@@ -455,7 +462,14 @@ const CourseManagement: React.FC = () => {
                 okType="danger"
                 cancelText="Hủy"
               >
-                <Button size="small" danger icon={<CloseOutlined />}>Từ chối</Button>
+                <Button
+                  size="small"
+                  danger
+                  icon={<CloseOutlined />}
+                  className="approval-action-btn approval-action-btn-reject"
+                >
+                  Từ chối
+                </Button>
               </Popconfirm>
             </>
           )}

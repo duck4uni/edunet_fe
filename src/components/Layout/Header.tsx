@@ -20,13 +20,18 @@ import { useLogoutMutation } from '../../services/authApi';
 
 import Logo from '../../assets/images/Logo.png';
 
+const ADMIN_USER_STORAGE_KEY = 'adminUser';
+
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const hasToken = !!getAccessToken();
-  const { data: profileData } = useGetProfileQuery(undefined, { skip: !hasToken });
+  const { data: profileData } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+    refetchOnMountOrArgChange: true,
+  });
   const [logoutMutation] = useLogoutMutation();
   const user = profileData?.data || null;
   const isLoggedIn = !!user;
@@ -47,6 +52,8 @@ const Header: React.FC = () => {
     } catch {
       // Ignore logout errors
     } finally {
+      localStorage.removeItem(ADMIN_USER_STORAGE_KEY);
+      sessionStorage.removeItem(ADMIN_USER_STORAGE_KEY);
       clearTokens();
       navigate('/auth/login');
     }
