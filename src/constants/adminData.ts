@@ -781,7 +781,7 @@ export const adminNotifications: AdminNotification[] = [
     type: 'info',
     category: 'course',
     isRead: false,
-    link: '/admin/courses?status=pending',
+    link: '/admin/courses/pending',
     createdAt: '2024-12-01T08:00:00Z',
   },
   {
@@ -811,7 +811,7 @@ export const adminNotifications: AdminNotification[] = [
     type: 'error',
     category: 'course',
     isRead: false,
-    link: '/admin/courses/reviews?status=flagged',
+    link: '/admin/reviews?status=flagged',
     createdAt: '2024-11-30T14:20:00Z',
   },
 ];

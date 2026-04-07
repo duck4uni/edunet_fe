@@ -10,7 +10,8 @@ import {
   LogoutOutlined,
   MenuOutlined,
   PlusOutlined,
-  SettingOutlined
+  SettingOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 import { Avatar, Button, Drawer, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
@@ -19,8 +20,6 @@ import { getAccessToken, clearTokens } from '../../services/axiosBaseQuery';
 import { useLogoutMutation } from '../../services/authApi';
 
 import Logo from '../../assets/images/Logo.png';
-
-const ADMIN_USER_STORAGE_KEY = 'adminUser';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -52,14 +51,23 @@ const Header: React.FC = () => {
     } catch {
       // Ignore logout errors
     } finally {
-      localStorage.removeItem(ADMIN_USER_STORAGE_KEY);
-      sessionStorage.removeItem(ADMIN_USER_STORAGE_KEY);
       clearTokens();
       navigate('/auth/login');
     }
   };
 
   const userMenuItems: MenuProps['items'] = [
+    ...(user?.role === 'admin'
+      ? [
+          {
+            key: 'admin',
+            icon: <SafetyCertificateOutlined />,
+            label: 'Quản lý website',
+            onClick: () => navigate('/admin'),
+          },
+          { type: 'divider' as const },
+        ]
+      : []),
     {
       key: 'profile',
       icon: <UserOutlined />,
@@ -229,6 +237,16 @@ const Header: React.FC = () => {
                   <UserOutlined />
                   <span>Hồ sơ cá nhân</span>
                 </Link>
+                {user?.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 text-[#012643] font-medium py-2"
+                  >
+                    <SafetyCertificateOutlined />
+                    <span>Quản lý website</span>
+                  </Link>
+                )}
                 <button 
                   onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
                   className="flex items-center gap-2 text-red-500 font-medium py-2 w-full text-left"

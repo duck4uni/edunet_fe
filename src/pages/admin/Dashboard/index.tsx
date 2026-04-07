@@ -177,7 +177,7 @@ const AdminDashboard: React.FC = () => {
         </Col>
         <Col xs={12} sm={6}>
           <Card className="text-center hover:shadow-md transition-shadow">
-            <Link to="/admin/courses?status=pending">
+            <Link to="/admin/courses/pending">
               <div className="text-3xl font-bold text-orange-500">{stats?.pendingApprovals || 0}</div>
               <Text type="secondary">Chờ duyệt</Text>
             </Link>

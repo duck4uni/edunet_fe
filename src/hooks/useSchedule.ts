@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { EVENT_TYPE_CONFIG } from '../constants/scheduleData';
 import type { ScheduleEvent, ApiSchedule } from '../types/schedule';
-import { useGetMySchedulesQuery, useGetUpcomingSchedulesQuery } from '../services/learningApi';
+import { useGetMySchedulesQuery } from '../services/learningApi';
 
 type MaybePaginatedSchedules = {
   rows?: ApiSchedule[];
@@ -19,14 +19,6 @@ const normalizeSchedules = (payload: unknown): ApiSchedule[] => {
   }
 
   return [];
-};
-
-const dedupeEventsById = (events: ScheduleEvent[]): ScheduleEvent[] => {
-  const map = new Map<string, ScheduleEvent>();
-  for (const event of events) {
-    if (!map.has(event.id)) map.set(event.id, event);
-  }
-  return Array.from(map.values());
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -109,13 +101,7 @@ export const useSchedule = () => {
     isError: isSchedulesError,
   } = useGetMySchedulesQuery();
 
-  // Fetch next 30 days for the sidebar upcoming panel
-  const {
-    data: upcomingData,
-    isLoading: isUpcomingLoading,
-  } = useGetUpcomingSchedulesQuery(30);
-
-  const isLoading = isSchedulesLoading || isUpcomingLoading;
+  const isLoading = isSchedulesLoading;
   const isError   = isSchedulesError;
 
   // ── Derived data ───────────────────────────────────────────────────────────
@@ -125,19 +111,8 @@ export const useSchedule = () => {
     return rows.map(mapApiScheduleToEvent);
   }, [mySchedulesData]);
 
-  /** Upcoming events (from the dedicated /upcoming endpoint) */
-  const rawUpcomingEvents = useMemo<ScheduleEvent[]>(() => {
-    const items = normalizeSchedules(upcomingData?.data);
-    return items.map(mapApiScheduleToEvent);
-  }, [upcomingData]);
-
-  /**
-   * Unified event source for calendar rendering.
-   * Some environments return empty /schedules/my while /schedules/upcoming has data.
-   */
-  const calendarEvents = useMemo<ScheduleEvent[]>(() => {
-    return dedupeEventsById([...allEvents, ...rawUpcomingEvents]);
-  }, [allEvents, rawUpcomingEvents]);
+  /** Personalized event source for calendar rendering */
+  const calendarEvents = useMemo<ScheduleEvent[]>(() => allEvents, [allEvents]);
 
   // ── Filtered views ─────────────────────────────────────────────────────────
   const filteredEvents = useMemo(() => {
@@ -157,11 +132,11 @@ export const useSchedule = () => {
   const todayEvents = useMemo(() => getEventsForDate(dayjs()), [getEventsForDate]);
 
   const upcomingEvents = useMemo(() => {
-    return rawUpcomingEvents
+    return calendarEvents
       .filter(e => filterType === 'all' || e.type === filterType)
       .sort((a, b) => dayjs(a.date).diff(dayjs(b.date)))
       .slice(0, 5);
-  }, [rawUpcomingEvents, filterType]);
+  }, [calendarEvents, filterType]);
 
   /** Summary statistics from all loaded events (unfiltered) */
   const stats = useMemo(

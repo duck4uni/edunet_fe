@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import AppLayout from '../components/Layout';
 import Home from '../pages/user/Home';
 import ListCourse from '../pages/user/ListCourse';
@@ -23,10 +23,11 @@ import RegisterTeacher from '../pages/auth/Register/Teacher';
 // Admin imports
 import { AdminLayout } from '../components/admin';
 import {
-  AdminLogin,
   AdminForgotPassword,
   AdminDashboard,
   CourseManagement,
+  PendingCourseManagement,
+  RejectedCourseManagement,
   AdminCourseDetail,
   TeacherManagement,
   TeacherRegistrationManagement,
@@ -35,6 +36,7 @@ import {
   SupportManagement,
   PermissionManagement,
   RevenueManagement,
+  ReviewManagement,
   AdminProfile,
 } from '../pages/admin';
 
@@ -129,7 +131,7 @@ export const router = createBrowserRouter([
   // Admin Auth Routes (without layout)
   {
     path: '/admin/login',
-    element: <AdminLogin />,
+    element: <Navigate to="/auth/login" replace />,
   },
   {
     path: '/admin/forgot-password',
@@ -151,6 +153,14 @@ export const router = createBrowserRouter([
       {
         path: 'courses',
         element: <CourseManagement />,
+      },
+      {
+        path: 'courses/pending',
+        element: <PendingCourseManagement />,
+      },
+      {
+        path: 'courses/rejected',
+        element: <RejectedCourseManagement />,
       },
       {
         path: 'courses/:id',
@@ -175,6 +185,10 @@ export const router = createBrowserRouter([
       {
         path: 'support',
         element: <SupportManagement />,
+      },
+      {
+        path: 'reviews',
+        element: <ReviewManagement />,
       },
       {
         path: 'permissions',
