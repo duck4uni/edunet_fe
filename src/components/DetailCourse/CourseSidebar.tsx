@@ -257,16 +257,16 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
       {/* Social Share */}
       <div className="flex justify-center gap-3 pt-6 border-t border-gray-100 mt-4">
         <Tooltip title="Chia sẻ trên Facebook">
-          <Button shape="circle" icon={<FacebookOutlined />} className="!text-blue-600 !border-blue-100 hover:!bg-blue-50" />
+          <Button shape="circle" icon={<FacebookOutlined />} className="!text-blue-600 !border-blue-100 !bg-blue-50" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên Twitter">
-          <Button shape="circle" icon={<TwitterOutlined />} className="!text-sky-500 !border-sky-100 hover:!bg-sky-50" />
+          <Button shape="circle" icon={<TwitterOutlined />} className="!text-sky-500 !border-sky-100 !bg-sky-50" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên YouTube">
-          <Button shape="circle" icon={<YoutubeOutlined />} className="!text-red-600 !border-red-100 hover:!bg-red-50" />
+          <Button shape="circle" icon={<YoutubeOutlined />} className="!text-red-600 !border-red-100 !bg-red-50" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên Instagram">
-          <Button shape="circle" icon={<InstagramOutlined />} className="!text-pink-600 !border-pink-100 hover:!bg-pink-50" />
+          <Button shape="circle" icon={<InstagramOutlined />} className="!text-pink-600 !border-pink-100 !bg-pink-50" />
         </Tooltip>
       </div>
 

@@ -57,7 +57,7 @@ const CTASection: React.FC = () => {
                   <Button 
                     type="primary" 
                     size="large" 
-                    className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-gradient-to-r from-[#e5698e] to-[#d64d72] !border-none hover:!opacity-90 shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-gradient-to-r from-[#e5698e] to-[#d64d72] !border-none shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2"
                   >
                     Bắt đầu miễn phí <ArrowRightOutlined />
                   </Button>
@@ -65,7 +65,7 @@ const CTASection: React.FC = () => {
                 <Link to="/auth/register/teacher">
                   <Button 
                     size="large" 
-                    className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-white/10 !backdrop-blur-sm !border-2 !border-white/30 !text-white hover:!bg-white hover:!text-[#012643] transition-all duration-300"
+                    className="w-full sm:w-auto !h-14 !px-10 !text-lg !font-semibold !rounded-xl !bg-white/10 !backdrop-blur-sm !border-2 !border-white/30 !text-white"
                     icon={<PlayCircleOutlined />}
                   >
                     Trở thành giảng viên

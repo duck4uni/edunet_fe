@@ -91,7 +91,7 @@ const HeroSection: React.FC = () => {
                 <Button 
                   type="primary" 
                   size="large" 
-                  className="w-full md:w-auto !h-12 !px-8 !rounded-xl !bg-gradient-to-r from-[#17EAD9] to-[#6078EA] !border-none hover:!opacity-90 shadow-md font-semibold"
+                  className="w-full md:w-auto !h-12 !px-8 !rounded-xl !bg-gradient-to-r from-[#17EAD9] to-[#6078EA] !border-none shadow-md font-semibold"
                 >
                   Tìm kiếm
                 </Button>

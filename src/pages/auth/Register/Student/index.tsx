@@ -225,7 +225,7 @@ const RegisterStudent: React.FC = () => {
               )}
               {current === 0 && <div></div>}
               
-              <Button type="primary" htmlType="submit" loading={isLoading} className="!bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-lg !px-8">
+              <Button type="primary" htmlType="submit" loading={isLoading} className="!bg-[#023e6d] !border-[#023e6d] !rounded-lg !px-8">
                 {current === 2 ? 'Tạo tài khoản' : 'Tiếp tục'}
               </Button>
             </div>

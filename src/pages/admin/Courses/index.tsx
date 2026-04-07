@@ -471,7 +471,7 @@ const CourseManagement: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="Danh sách khóa học đã duyệt"
+        title="Danh sách khóa học"
         subtitle={`${total} khóa học`}
         breadcrumb={[{ title: 'Khóa học đã duyệt' }]}
         extra={
@@ -485,32 +485,12 @@ const CourseManagement: React.FC = () => {
       />
 
       {/* Stats Summary */}
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={12} sm={6}>
-          <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-blue-500">{total}</div>
-            <Text type="secondary" className="text-xs">Khóa học đã duyệt</Text>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-orange-500">{lifecycleStats.upcoming}</div>
-            <Text type="secondary" className="text-xs">Sắp bắt đầu</Text>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-purple-500">{lifecycleStats.ended}</div>
-            <Text type="secondary" className="text-xs">Đã kết thúc</Text>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-green-500">{(statistics.totalStudents ?? 0).toLocaleString()}</div>
-            <Text type="secondary" className="text-xs">Tổng học viên</Text>
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-indigo-500">{total}</div><p className="text-xs text-gray-500 mt-1 m-0">Khóa học đã duyệt</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-amber-500">{lifecycleStats.upcoming}</div><p className="text-xs text-gray-500 mt-1 m-0">Sắp bắt đầu</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-purple-500">{lifecycleStats.ended}</div><p className="text-xs text-gray-500 mt-1 m-0">Đã kết thúc</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-emerald-500">{(statistics.totalStudents ?? 0).toLocaleString()}</div><p className="text-xs text-gray-500 mt-1 m-0">Tổng học viên</p></div>
+      </div>
 
       {/* Filters */}
       <FilterBar

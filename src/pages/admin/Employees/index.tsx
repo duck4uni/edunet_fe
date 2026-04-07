@@ -108,12 +108,12 @@ const EmployeeManagement: React.FC = () => {
       <PageHeader title="Quản lý nhân viên" subtitle={`${total} nhân viên`} breadcrumb={[{ title: 'Nhân viên' }]}
         extra={<Space><Button icon={<ExportOutlined />}>Xuất Excel</Button><Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Thêm</Button></Space>} />
 
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-blue-500">{statistics.total}</div><Text type="secondary" className="text-xs">Tổng</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-green-500">{statistics.active}</div><Text type="secondary" className="text-xs">Hoạt động</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-purple-500">{statistics.byDepartment.length}</div><Text type="secondary" className="text-xs">Phòng ban</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-orange-500">{formatCurrency(statistics.totalSalary / (statistics.total || 1))}</div><Text type="secondary" className="text-xs">Lương TB</Text></Card></Col>
-      </Row>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-indigo-500">{statistics.total}</div><p className="text-xs text-gray-500 mt-1 m-0">Tổng</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-emerald-500">{statistics.active}</div><p className="text-xs text-gray-500 mt-1 m-0">Hoạt động</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-purple-500">{statistics.byDepartment.length}</div><p className="text-xs text-gray-500 mt-1 m-0">Phòng ban</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-amber-500">{formatCurrency(statistics.totalSalary / (statistics.total || 1))}</div><p className="text-xs text-gray-500 mt-1 m-0">Lương TB</p></div>
+      </div>
 
       <FilterBar filters={filters} onFilterChange={handleFilterChange} onReset={() => setFilters({})} onRefresh={fetchEmployees} fields={filterFields} loading={loading} />
 

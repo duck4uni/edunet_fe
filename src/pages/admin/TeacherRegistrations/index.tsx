@@ -1,7 +1,7 @@
 // Teacher Registration Approvals Page
 import React, { useState, useMemo } from 'react';
 import {
-  Row, Col, Card, Table, Button, Space, Avatar, Modal, message,
+  Card, Table, Button, Space, Avatar, Modal, message,
   Typography, Input, Tooltip, Badge, Tabs,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -260,26 +260,11 @@ const TeacherRegistrations: React.FC = () => {
       />
 
       {/* Stats */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={8}>
-          <Card className="rounded-xl border-0 shadow-sm text-center">
-            <div className="text-3xl font-bold text-orange-500">{pending.length}</div>
-            <Text className="text-sm font-semibold">Chờ duyệt</Text>
-          </Card>
-        </Col>
-        <Col xs={8}>
-          <Card className="rounded-xl border-0 shadow-sm text-center">
-            <div className="text-3xl font-bold text-green-500">{approved.length}</div>
-            <Text className="text-sm font-semibold">Đã duyệt</Text>
-          </Card>
-        </Col>
-        <Col xs={8}>
-          <Card className="rounded-xl border-0 shadow-sm text-center">
-            <div className="text-3xl font-bold text-red-400">{rejected.length}</div>
-            <Text className="text-sm font-semibold">Đã từ chối</Text>
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-3xl font-bold text-amber-500">{pending.length}</div><p className="text-sm font-semibold text-gray-600 mt-1 m-0">Chờ duyệt</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-3xl font-bold text-emerald-500">{approved.length}</div><p className="text-sm font-semibold text-gray-600 mt-1 m-0">Đã duyệt</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-3xl font-bold text-red-500">{rejected.length}</div><p className="text-sm font-semibold text-gray-600 mt-1 m-0">Đã từ chối</p></div>
+      </div>
 
       {/* Table */}
       <Card className="rounded-xl shadow-sm">

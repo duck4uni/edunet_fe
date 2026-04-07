@@ -19,6 +19,8 @@ import Profile from '../pages/user/Profile';
 import Login from '../pages/auth/Login';
 import RegisterStudent from '../pages/auth/Register/Student';
 import RegisterTeacher from '../pages/auth/Register/Teacher';
+import NotFound from '../pages/NotFound';
+import AdminNotFound from '../pages/NotFound/AdminNotFound';
 
 // Admin imports
 import { AdminLayout } from '../components/admin';
@@ -26,8 +28,7 @@ import {
   AdminForgotPassword,
   AdminDashboard,
   CourseManagement,
-  PendingCourseManagement,
-  RejectedCourseManagement,
+  PendingRejectedManagement,
   AdminCourseDetail,
   TeacherManagement,
   TeacherRegistrationManagement,
@@ -38,6 +39,7 @@ import {
   RevenueManagement,
   ReviewManagement,
   AdminProfile,
+  ChatbotManagement,
 } from '../pages/admin';
 
 export const router = createBrowserRouter([
@@ -114,6 +116,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: '*',
+        element: <NotFound />,
+      },
     ],
   },
   {
@@ -155,12 +161,8 @@ export const router = createBrowserRouter([
         element: <CourseManagement />,
       },
       {
-        path: 'courses/pending',
-        element: <PendingCourseManagement />,
-      },
-      {
-        path: 'courses/rejected',
-        element: <RejectedCourseManagement />,
+        path: 'courses/review',
+        element: <PendingRejectedManagement />,
       },
       {
         path: 'courses/:id',
@@ -187,6 +189,10 @@ export const router = createBrowserRouter([
         element: <SupportManagement />,
       },
       {
+        path: 'chatbot',
+        element: <ChatbotManagement />,
+      },
+      {
         path: 'reviews',
         element: <ReviewManagement />,
       },
@@ -206,10 +212,10 @@ export const router = createBrowserRouter([
         path: 'settings',
         element: <AdminProfile />,
       },
+      {
+        path: '*',
+        element: <AdminNotFound />,
+      },
     ],
-  },
-  {
-    path: '*',
-    element: <div>404 Not Found</div>,
   },
 ]);

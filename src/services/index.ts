@@ -1,5 +1,13 @@
 // Export all API services and hooks
 
+// Chatbot API
+export {
+  chatbotApi,
+  useAskChatbotMutation,
+} from './chatbotApi';
+
+export type { ChatData, AskChatbotRequest, AskChatbotResponse } from './chatbotApi';
+
 // Auth API
 export {
   authApi,

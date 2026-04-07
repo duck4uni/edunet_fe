@@ -194,7 +194,7 @@ const Login: React.FC = () => {
                   type="primary" 
                   htmlType="submit" 
                   loading={isLoading}
-                  className="w-full !bg-gradient-to-r from-[#012643] to-[#01385f] !border-none !h-10 !text-sm !font-semibold hover:!opacity-90 !rounded-xl shadow-lg shadow-blue-900/20 transition-all"
+                  className="w-full !bg-gradient-to-r from-[#012643] to-[#01385f] !border-none !h-10 !text-sm !font-semibold !rounded-xl shadow-lg shadow-blue-900/20"
                 >
                   Đăng nhập
                 </Button>

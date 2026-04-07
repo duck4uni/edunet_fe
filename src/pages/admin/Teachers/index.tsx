@@ -1,6 +1,6 @@
 // Teacher Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography, Input } from 'antd';
+import { Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography, Input } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled, CheckOutlined, CloseOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTeacherManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
@@ -158,12 +158,12 @@ const TeacherManagement: React.FC = () => {
         extra={<Space><Button icon={<ExportOutlined />}>Xuất Excel</Button><Button type="primary" icon={<PlusOutlined />}>Thêm</Button></Space>}
       />
 
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-blue-500">{statistics.total}</div><Text type="secondary" className="text-xs">Tổng</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-green-500">{statistics.active}</div><Text type="secondary" className="text-xs">Hoạt động</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-orange-500">{statistics.pending}</div><Text type="secondary" className="text-xs">Chờ duyệt</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-yellow-500">{statistics.averageRating.toFixed(1)}</div><Text type="secondary" className="text-xs">Đánh giá TB</Text></Card></Col>
-      </Row>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-indigo-500">{statistics.total}</div><p className="text-xs text-gray-500 mt-1 m-0">Tổng</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-emerald-500">{statistics.active}</div><p className="text-xs text-gray-500 mt-1 m-0">Hoạt động</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-amber-500">{statistics.pending}</div><p className="text-xs text-gray-500 mt-1 m-0">Chờ duyệt</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-yellow-500">{statistics.averageRating.toFixed(1)}</div><p className="text-xs text-gray-500 mt-1 m-0">Đánh giá TB</p></div>
+      </div>
 
       <FilterBar filters={filters} onFilterChange={handleFilterChange} onReset={() => setFilters({})} onRefresh={fetchTeachers} fields={filterFields} loading={loading} />
 

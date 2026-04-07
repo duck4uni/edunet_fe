@@ -247,7 +247,7 @@ const Profile: React.FC = () => {
                     type="primary" 
                     icon={<EditOutlined />}
                     onClick={onEditProfile}
-                    className="!bg-white !text-[#012643] !border-0 hover:!bg-gray-100"
+                    className="!bg-white !text-[#012643] !border-0"
                   >
                     Sửa hồ sơ
                   </Button>

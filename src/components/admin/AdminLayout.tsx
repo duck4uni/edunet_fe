@@ -1,191 +1,143 @@
-// Admin Layout Component
 import React, { useState, useEffect } from 'react';
-import { Layout, ConfigProvider, theme as antTheme, Spin, Result, Button } from 'antd';
+import { ConfigProvider, Spin, Button, Result } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { useAuth, useDashboard } from '../../hooks';
 
-const { Content } = Layout;
 const MIN_ADMIN_WIDTH = 1024;
-
-const isDesktopWidth = () => {
-  if (typeof window === 'undefined') {
-    return true;
-  }
-  return window.innerWidth >= MIN_ADMIN_WIDTH;
-};
+const isDesktopWidth = () =>
+  typeof window === 'undefined' ? true : window.innerWidth >= MIN_ADMIN_WIDTH;
 
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isDesktop, setIsDesktop] = useState(isDesktopWidth);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { user, logout, isAuthenticated, isLoading } = useAuth();
   const { data: dashboardData, markNotificationRead, markAllNotificationsRead } = useDashboard();
   const isAdmin = user?.role === 'admin';
   const isInitialized = !isLoading;
 
-  // Check authentication on mount and when auth state changes
   useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-
+    if (!isInitialized) return;
     if (!isAuthenticated) {
       navigate('/auth/login', { replace: true, state: { from: location } });
       return;
     }
+    if (!isAdmin) navigate('/', { replace: true });
+  }, [isAuthenticated, isAdmin, isInitialized]);
 
-    if (!isAdmin) {
-      navigate('/', { replace: true });
-    }
-  }, [isAuthenticated, isAdmin, isInitialized, navigate, location]);
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
-  // Scroll to top when route changes
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
-  // Block admin on small screens
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(isDesktopWidth());
-    };
-
-    handleResize();
+    const handleResize = () => setIsDesktop(isDesktopWidth());
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
-  const handleNotificationClick = (notification: any) => {
-    markNotificationRead(notification.id);
-    if (notification.link) {
-      navigate(notification.link);
-    }
-  };
-
-  // Ant Design theme configuration
-  const themeConfig = {
-    algorithm: antTheme.defaultAlgorithm,
-    token: {
-      colorPrimary: '#1890ff',
-      borderRadius: 6,
-    },
-    components: {
-      Layout: {
-        siderBg: '#ffffff',
-        headerBg: '#ffffff',
-        bodyBg: '#f5f5f5',
-      },
-      Menu: {
-        itemBg: 'transparent',
-        subMenuItemBg: 'transparent',
-      },
-    },
-  };
-
   if (!isDesktop) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '16px',
-          backgroundColor: '#f5f5f5',
-        }}
-      >
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
         <Result
           status="warning"
           title="Khu vực Admin chỉ hỗ trợ màn hình từ 1024px"
           subTitle="Vui lòng dùng laptop hoặc desktop để truy cập trang quản trị."
           extra={
-            <Button className="text-black" onClick={() => navigate('/')}>
-              Về trang chủ
-            </Button>
+            <Button onClick={() => navigate('/')}>Về trang chủ</Button>
           }
         />
       </div>
     );
   }
 
-  // Show loading while checking authentication
   if (!isInitialized) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        backgroundColor: '#f5f5f5'
-      }}>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <Spin size="large" />
       </div>
     );
   }
 
-  if (!isAuthenticated || !isAdmin) {
-    return null;
-  }
+  if (!isAuthenticated || !isAdmin) return null;
+
+  const sidebarWidth = collapsed ? 72 : 256;
 
   return (
-    <ConfigProvider theme={themeConfig}>
-      <Layout className="min-h-screen">
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#6366f1',
+          borderRadius: 8,
+          borderRadiusLG: 16,
+          colorBgContainer: '#ffffff',
+          colorBorder: '#e2e8f0',
+          colorBorderSecondary: '#f1f5f9',
+          fontFamily: '\'Inter\', \'Segoe UI\', sans-serif',
+        },
+        components: {
+          Menu: { itemBg: 'transparent', darkItemBg: 'transparent' },
+          Table: { headerBg: '#f8fafc', headerSplitColor: 'transparent' },
+          Card: {
+            boxShadowTertiary: '0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07)',
+            paddingLG: 20,
+          },
+        },
+      }}
+    >
+      <div className="min-h-screen bg-slate-50 flex">
+        {/* Sidebar */}
         <AdminSidebar
           collapsed={collapsed}
           onCollapse={setCollapsed}
-          user={user ? {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            avatar: user.avatar,
-            role: user.role,
-          } : undefined}
-          onLogout={handleLogout}
+          user={
+            user
+              ? {
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  email: user.email,
+                  avatar: user.avatar,
+                  role: user.role,
+                }
+              : undefined
+          }
+          onLogout={async () => await logout()}
         />
-        
-        <Layout 
-          style={{ 
-            marginLeft: collapsed ? 80 : 260,
-            transition: 'margin-left 0.2s',
-          }}
+
+        {/* Main area */}
+        <div
+          className="flex flex-col flex-1 min-w-0 transition-all duration-300"
+          style={{ marginLeft: sidebarWidth }}
         >
           <AdminHeader
-            user={user ? {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email,
-              avatar: user.avatar,
-            } : undefined}
-            onLogout={handleLogout}
+            user={
+              user
+                ? {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    avatar: user.avatar,
+                  }
+                : undefined
+            }
+            onLogout={async () => await logout()}
             notifications={dashboardData?.notifications}
-            onNotificationClick={handleNotificationClick}
-            onMarkAllRead={markAllNotificationsRead}
-            collapsed={collapsed}
-          />
-          
-          <Content
-            style={{
-              margin: '24px',
-              padding: '24px',
-              minHeight: 'calc(100vh - 112px)',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '8px',
+            onNotificationClick={(n) => {
+              markNotificationRead(n.id);
+              if (n.link) navigate(n.link);
             }}
-          >
+            onMarkAllRead={markAllNotificationsRead}
+          />
+
+          <main className="flex-1 p-6 overflow-auto">
             <Outlet />
-          </Content>
-        </Layout>
-      </Layout>
+          </main>
+        </div>
+      </div>
     </ConfigProvider>
   );
 };
 
 export default AdminLayout;
+

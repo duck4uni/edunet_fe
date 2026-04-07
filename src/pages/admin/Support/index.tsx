@@ -1,6 +1,6 @@
 // Support Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Avatar, Dropdown, Tag, Typography, Input, Badge } from 'antd';
+import { Card, Table, Button, Avatar, Dropdown, Tag, Typography, Input } from 'antd';
 import { EyeOutlined, MoreOutlined, ExportOutlined, UserOutlined, MessageOutlined, CheckCircleOutlined, ClockCircleOutlined, SendOutlined } from '@ant-design/icons';
 import { useSupportManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
@@ -108,12 +108,12 @@ const SupportManagement: React.FC = () => {
       <PageHeader title="Hỗ trợ khách hàng" subtitle={`${statistics.total} ticket`} breadcrumb={[{ title: 'Hỗ trợ' }]}
         extra={<Button icon={<ExportOutlined />}>Xuất báo cáo</Button>} />
 
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><Badge count={statistics.open} offset={[10, 0]}><div className="text-2xl font-bold text-blue-500">{statistics.total}</div></Badge><Text type="secondary" className="text-xs">Tổng ticket</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-orange-500">{statistics.open}</div><Text type="secondary" className="text-xs">Đang mở</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-purple-500">{statistics.inProgress}</div><Text type="secondary" className="text-xs">Đang xử lý</Text></Card></Col>
-        <Col xs={12} sm={6}><Card size="small" className="text-center"><div className="text-2xl font-bold text-green-500">{statistics.resolved}</div><Text type="secondary" className="text-xs">Đã xử lý</Text></Card></Col>
-      </Row>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-indigo-500">{statistics.total}</div><p className="text-xs text-gray-500 mt-1 m-0">Tổng ticket</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-amber-500">{statistics.open}</div><p className="text-xs text-gray-500 mt-1 m-0">Đang mở</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-purple-500">{statistics.inProgress}</div><p className="text-xs text-gray-500 mt-1 m-0">Đang xử lý</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-emerald-500">{statistics.resolved}</div><p className="text-xs text-gray-500 mt-1 m-0">Đã xử lý</p></div>
+      </div>
 
       <FilterBar filters={filters} onFilterChange={handleFilterChange} onReset={() => setFilters({})} fields={filterFields} loading={loading} />
 

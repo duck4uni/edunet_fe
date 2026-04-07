@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { api } from '../services/api';
 import { authApi } from '../services/authApi';
+import { chatbotApi } from '../services/chatbotApi';
 import { courseApi } from '../services/courseApi';
 import { learningApi } from '../services/learningApi';
 import { supportApi } from '../services/supportApi';
@@ -11,6 +12,7 @@ export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     [authApi.reducerPath]: authApi.reducer,
+    [chatbotApi.reducerPath]: chatbotApi.reducer,
     [courseApi.reducerPath]: courseApi.reducer,
     [learningApi.reducerPath]: learningApi.reducer,
     [supportApi.reducerPath]: supportApi.reducer,
@@ -20,6 +22,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(api.middleware)
       .concat(authApi.middleware)
+      .concat(chatbotApi.middleware)
       .concat(courseApi.middleware)
       .concat(learningApi.middleware)
       .concat(supportApi.middleware)

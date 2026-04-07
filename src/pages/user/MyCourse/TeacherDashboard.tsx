@@ -220,7 +220,7 @@ const TeacherDashboard: React.FC = () => {
             type="primary" 
             icon={<PlusOutlined />} 
             size="large"
-            className="!bg-[#17EAD9] !border-none hover:!opacity-80 text-[#012643]"
+            className="!bg-[#17EAD9] !border-none text-[#012643]"
             onClick={() => handleOpenModal()}
           >
             Tạo khóa học

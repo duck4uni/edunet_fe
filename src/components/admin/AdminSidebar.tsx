@@ -12,6 +12,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   IdcardOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -41,9 +42,8 @@ const menuItems = [
     icon: <BookOutlined />,
     label: 'Quản lý khóa học',
     children: [
-      { key: '/admin/courses/pending', label: 'Chờ duyệt' },
-      { key: '/admin/courses/rejected', label: 'Bị từ chối' },
-      { key: '/admin/courses', label: 'Đã duyệt' },
+      { key: '/admin/courses', label: 'Danh sách khóa học' },
+      { key: '/admin/courses/review', label: 'Chờ duyệt & Từ chối' },
       { key: '/admin/reviews', label: 'Đánh giá' },
     ],
   },
@@ -74,6 +74,11 @@ const menuItems = [
     key: '/admin/support',
     icon: <CustomerServiceOutlined />,
     label: 'Hỗ trợ',
+  },
+  {
+    key: '/admin/chatbot',
+    icon: <RobotOutlined />,
+    label: 'Chatbot AI',
   },
   // {
   //   key: '/admin/permissions',
@@ -110,20 +115,26 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         }
       }
     }
-    // Then try path-based match
+    // Then try path-based match — pick the longest (most specific) match
+    let bestMatch: string | null = null;
+    let bestLen = 0;
     for (const item of menuItems) {
       if (item.children) {
         for (const child of item.children) {
           const childPath = child.key.split('?')[0];
-          if (!child.key.includes('?') && path.startsWith(childPath)) {
-            return [child.key];
+          if (!child.key.includes('?') && path.startsWith(childPath) && childPath.length > bestLen) {
+            bestMatch = child.key;
+            bestLen = childPath.length;
           }
         }
       } else if (path === item.key || (item.key !== '/admin' && path.startsWith(item.key))) {
-        return [item.key];
+        if (item.key.length > bestLen) {
+          bestMatch = item.key;
+          bestLen = item.key.length;
+        }
       }
     }
-    return ['/admin'];
+    return [bestMatch || '/admin'];
   };
 
   const getOpenKeys = () => {
@@ -196,8 +207,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         <div className={`shrink-0 p-4 border-b border-gray-200 ${collapsed ? 'text-center' : ''}`}>
           <div className={`flex ${collapsed ? 'justify-center' : 'items-center gap-3'}`}>
             <Tooltip title={collapsed ? `${user.firstName} ${user.lastName}` : ''} placement="right">
-              <Avatar 
-                src={user.avatar} 
+              <Avatar
+                src={user.avatar}
                 icon={<UserOutlined />}
                 size={collapsed ? 40 : 44}
               />
@@ -223,7 +234,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
           selectedKeys={getSelectedKey()}
           openKeys={collapsed ? [] : openKeys}
           onOpenChange={setOpenKeys}
-          style={{ 
+          style={{
             border: 'none',
             backgroundColor: 'transparent',
           }}

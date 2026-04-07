@@ -1,7 +1,6 @@
 // Admin Header Component
 import React from 'react';
 import { 
-  Layout, 
   Input, 
   Badge, 
   Avatar, 
@@ -22,7 +21,6 @@ import { Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import type { AdminNotification } from '../../types/admin';
 
-const { Header } = Layout;
 const { Text } = Typography;
 
 interface AdminHeaderProps {
@@ -36,7 +34,7 @@ interface AdminHeaderProps {
   notifications?: AdminNotification[];
   onNotificationClick?: (notification: AdminNotification) => void;
   onMarkAllRead?: () => void;
-  collapsed: boolean;
+  onToggleCollapse?: () => void;
 }
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({
@@ -45,7 +43,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   notifications = [],
   onNotificationClick,
   onMarkAllRead,
-  collapsed,
 }) => {
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
@@ -132,7 +129,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   ];
 
   return (
-    <Header
+    <header
       className="admin-header"
       style={{
         padding: '0 24px',
@@ -145,8 +142,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         height: 64,
-        marginLeft: collapsed ? 80 : 260,
-        transition: 'margin-left 0.2s',
+        width: '100%',
+        transition: 'all 0.2s',
       }}
     >
       {/* Search */}
@@ -192,7 +189,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           </div>
         </Dropdown>
       </Space>
-    </Header>
+    </header>
   );
 };
 

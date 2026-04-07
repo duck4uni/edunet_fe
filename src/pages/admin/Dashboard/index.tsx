@@ -1,42 +1,21 @@
-// Admin Dashboard Page
 import React from 'react';
-import { Row, Col, Card, Typography, Avatar, Table, Tag, List, Skeleton } from 'antd';
+import { Avatar, Card, Skeleton, Table } from 'antd';
 import {
-  UserOutlined,
-  BookOutlined,
-  TeamOutlined,
-  ClockCircleOutlined,
-  StarFilled,
-} from '@ant-design/icons';
+  Users,
+  GraduationCap,
+  BookOpen,
+  Star,
+  TrendingUp,
+  ArrowRight,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDashboard } from '../../../hooks';
-import { StatsCard, PageHeader, StatusBadge, ChartCard } from '../../../components/admin';
-
-const { Text } = Typography;
+import { StatsCard, PageHeader, StatusBadge } from '../../../components/admin';
 
 const AdminDashboard: React.FC = () => {
   const { data, loading } = useDashboard();
-
-  if (loading && !data) {
-    return (
-      <div className="p-6">
-        <Skeleton active paragraph={{ rows: 4 }} />
-        <Row gutter={[16, 16]} className="mt-6">
-          {[1, 2, 3, 4].map(i => (
-            <Col xs={24} sm={12} lg={6} key={i}>
-              <Card>
-                <Skeleton active paragraph={{ rows: 2 }} />
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-    );
-  }
-
   const stats = data?.stats;
 
-  // Top courses table columns
   const courseColumns = [
     {
       title: 'Khóa học',
@@ -44,14 +23,15 @@ const AdminDashboard: React.FC = () => {
       key: 'title',
       render: (text: string, record: any) => (
         <div className="flex items-center gap-3">
-          <img 
-            src={record.thumbnail} 
+          <img
+            src={record.thumbnail}
             alt={text}
-            className="w-12 h-8 object-cover rounded"
+            className="w-10 h-7 object-cover rounded"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
-          <div className="flex-1 min-w-0">
-            <Text strong className="block truncate text-sm">{text}</Text>
-            <Text type="secondary" className="text-xs">{record.teacher.name}</Text>
+          <div>
+            <p className="text-sm font-medium text-gray-800 m-0 truncate max-w-xs">{text}</p>
+            <p className="text-xs text-gray-400 m-0">{record.teacher?.name}</p>
           </div>
         </div>
       ),
@@ -60,177 +40,152 @@ const AdminDashboard: React.FC = () => {
       title: 'Học viên',
       dataIndex: 'totalStudents',
       key: 'students',
-      width: 100,
-      render: (val: number) => val.toLocaleString(),
+      width: 90,
+      render: (v: number) => (
+        <span className="font-semibold text-gray-700">{(v || 0).toLocaleString()}</span>
+      ),
     },
     {
       title: 'Đánh giá',
       dataIndex: 'rating',
       key: 'rating',
       width: 80,
-      render: (val: number) => (
-        <span>
-          <StarFilled className="text-yellow-400 mr-1" />
-          {val}
+      render: (v: number) => (
+        <span className="flex items-center gap-1 text-sm">
+          <Star size={13} className="text-amber-400 fill-amber-400" />
+          <span className="font-medium">{v || '—'}</span>
         </span>
       ),
     },
   ];
 
-  // Recent tickets columns
   const ticketColumns = [
     {
-      title: 'Mã ticket',
+      title: 'Ticket',
       dataIndex: 'ticketId',
-      key: 'ticketId',
-      render: (text: string, record: any) => (
+      key: 'id',
+      render: (id: string, r: any) => (
         <div>
-          <Text strong className="block text-sm">{text}</Text>
-          <Text type="secondary" className="text-xs">{record.userName}</Text>
+          <p className="text-sm font-semibold text-gray-800 m-0">#{id}</p>
+          <p className="text-xs text-gray-400 m-0">{r.userName}</p>
         </div>
       ),
     },
     {
-      title: 'Chủ đề',
+      title: 'Tiêu đề',
       dataIndex: 'subject',
       key: 'subject',
       ellipsis: true,
-    },
-    {
-      title: 'Ưu tiên',
-      dataIndex: 'priority',
-      key: 'priority',
-      width: 100,
-      render: (priority: string) => <StatusBadge status={priority} size="small" />,
+      render: (s: string) => <span className="text-sm text-gray-600">{s}</span>,
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      width: 120,
-      render: (status: string) => <StatusBadge status={status} size="small" />,
+      width: 110,
+      render: (s: string) => <StatusBadge status={s} size="small" />,
     },
   ];
+
+  if (loading && !data) {
+    return (
+      <div>
+        <div className="flex items-start justify-between mb-6">
+          <Skeleton.Input active style={{ width: 200 }} />
+        </div>
+        <div className="grid grid-cols-4 gap-5 mb-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <Skeleton active paragraph={{ rows: 2 }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <PageHeader
         title="Tổng quan"
-        subtitle="Tổng quan về hoạt động của hệ thống"
-        extra={
-          <Text type="secondary">
-            Cập nhật lần cuối: {new Date().toLocaleString('vi-VN')}
-          </Text>
-        }
+        subtitle={`Cập nhật lần cuối: ${new Date().toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}`}
       />
 
-      {/* Stats Cards */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
-          <StatsCard
-            title="Tổng người dùng"
-            value={stats?.totalUsers || 0}
-            icon={<UserOutlined />}
-            color="#1890ff"
-            trend={stats?.usersGrowth}
-            trendLabel="so với tháng trước"
-            formatter={(val) => Number(val).toLocaleString()}
-          />
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <StatsCard
-            title="Tổng giáo viên"
-            value={stats?.totalTeachers || 0}
-            icon={<TeamOutlined />}
-            color="#52c41a"
-            trend={stats?.teachersGrowth}
-            trendLabel="so với tháng trước"
-            formatter={(val) => Number(val).toLocaleString()}
-          />
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <StatsCard
-            title="Tổng khóa học"
-            value={stats?.totalCourses || 0}
-            icon={<BookOutlined />}
-            color="#722ed1"
-            trend={stats?.coursesGrowth}
-            trendLabel="so với tháng trước"
-            formatter={(val) => Number(val).toLocaleString()}
-          />
-        </Col>
-      </Row>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        <StatsCard
+          title="Tổng người dùng"
+          value={stats?.totalUsers ?? 0}
+          icon={<Users size={20} />}
+          color="#6366f1"
+          trend={stats?.usersGrowth}
+          trendLabel="tháng trước"
+          formatter={(v) => Number(v).toLocaleString()}
+        />
+        <StatsCard
+          title="Giáo viên"
+          value={stats?.totalTeachers ?? 0}
+          icon={<GraduationCap size={20} />}
+          color="#10b981"
+          trend={stats?.teachersGrowth}
+          trendLabel="tháng trước"
+          formatter={(v) => Number(v).toLocaleString()}
+        />
+        <StatsCard
+          title="Khóa học"
+          value={stats?.totalCourses ?? 0}
+          icon={<BookOpen size={20} />}
+          color="#f59e0b"
+          trend={stats?.coursesGrowth}
+          trendLabel="tháng trước"
+          formatter={(v) => Number(v).toLocaleString()}
+        />
+        <StatsCard
+          title="Doanh thu"
+          value={stats?.totalRevenue ?? 0}
+          icon={<TrendingUp size={20} />}
+          color="#ef4444"
+          formatter={(v) => `${(Number(v) / 1_000_000).toFixed(1)}M ₫`}
+        />
+      </div>
 
-      {/* Quick Stats */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={12} sm={6}>
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <div className="text-3xl font-bold text-blue-500">{stats?.newUsersToday || 0}</div>
-            <Text type="secondary">Người dùng mới hôm nay</Text>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <div className="text-3xl font-bold text-green-500">{stats?.newCoursesToday || 0}</div>
-            <Text type="secondary">Khóa học mới hôm nay</Text>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <Link to="/admin/courses/pending">
-              <div className="text-3xl font-bold text-orange-500">{stats?.pendingApprovals || 0}</div>
-              <Text type="secondary">Chờ duyệt</Text>
-            </Link>
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card className="text-center hover:shadow-md transition-shadow">
-            <Link to="/admin/support?status=open">
-              <div className="text-3xl font-bold text-red-500">{stats?.openTickets || 0}</div>
-              <Text type="secondary">Ticket mở</Text>
-            </Link>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Charts Row */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} lg={24}>
-          <ChartCard
-            title="Phân bố khóa học"
-            subtitle="Theo danh mục"
-            height={320}
+      {/* Quick action cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        {[
+          { label: 'Người dùng hôm nay', value: stats?.newUsersToday ?? 0, color: 'bg-indigo-50 text-indigo-600', to: null },
+          { label: 'Khóa học mới', value: stats?.newCoursesToday ?? 0, color: 'bg-emerald-50 text-emerald-600', to: null },
+          { label: 'Chờ duyệt', value: stats?.pendingApprovals ?? 0, color: 'bg-amber-50 text-amber-600', to: '/admin/courses/pending' },
+          { label: 'Ticket mở', value: stats?.openTickets ?? 0, color: 'bg-red-50 text-red-600', to: '/admin/support' },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className={`rounded-2xl p-5 ${item.color.split(' ')[0]} border border-transparent`}
           >
-            <div className="space-y-3 pt-2">
-              {data?.coursesChart.labels.map((label, index) => {
-                const value = data.coursesChart.datasets[0].data[index];
-                const total = data.coursesChart.datasets[0].data.reduce((a, b) => a + b, 0);
-                const colors = ['#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#13c2c2'];
-                return (
-                  <div key={label} className="flex items-center gap-3">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: colors[index % colors.length] }}
-                    />
-                    <Text className="flex-1">{label}</Text>
-                    <Text strong>{value}</Text>
-                    <Text type="secondary" className="w-12 text-right">
-                      {((value / total) * 100).toFixed(0)}%
-                    </Text>
-                  </div>
-                );
-              })}
-            </div>
-          </ChartCard>
-        </Col>
-      </Row>
+            {item.to ? (
+              <Link to={item.to} className="block">
+                <p className={`text-3xl font-bold m-0 ${item.color.split(' ')[1]}`}>{item.value}</p>
+                <p className="text-sm text-gray-500 mt-1 m-0 flex items-center gap-1">
+                  {item.label} <ArrowRight size={12} />
+                </p>
+              </Link>
+            ) : (
+              <>
+                <p className={`text-3xl font-bold m-0 ${item.color.split(' ')[1]}`}>{item.value}</p>
+                <p className="text-sm text-gray-500 mt-1 m-0">{item.label}</p>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
 
-      {/* Tables Row */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} lg={14}>
+      {/* Main content */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-5">
+        {/* Top courses */}
+        <div className="lg:col-span-3">
           <Card
-            title="Top khóa học bán chạy"
-            extra={<Link to="/admin/courses">Xem tất cả</Link>}
+            title={<span className="font-semibold text-gray-800">Top khóa học bán chạy</span>}
+            extra={<Link to="/admin/courses" className="text-indigo-500 text-sm font-medium hover:text-indigo-600">Xem tất cả</Link>}
+            className="!rounded-2xl !border-gray-100 !shadow-sm h-full"
           >
             <Table
               dataSource={data?.topCourses}
@@ -238,57 +193,49 @@ const AdminDashboard: React.FC = () => {
               rowKey="id"
               pagination={false}
               size="small"
+              className="ant-table-clean"
             />
           </Card>
-        </Col>
-        <Col xs={24} lg={10}>
-          <Card
-            title="Top giáo viên"
-            extra={<Link to="/admin/teachers">Xem tất cả</Link>}
-          >
-            <List
-              dataSource={data?.topTeachers}
-              renderItem={(teacher: any, index) => (
-                <List.Item className="px-0">
-                  <List.Item.Meta
-                    avatar={
-                      <div className="relative">
-                        <Avatar src={teacher.avatar} size={44} />
-                        <div 
-                          className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold"
-                        >
-                          {index + 1}
-                        </div>
-                      </div>
-                    }
-                    title={
-                      <div className="flex items-center justify-between">
-                        <Text strong>{teacher.firstName} {teacher.lastName}</Text>
-                        <span className="text-yellow-400">
-                          <StarFilled /> {teacher.rating}
-                        </span>
-                      </div>
-                    }
-                    description={
-                      <div className="flex justify-between text-xs">
-                        <span>{teacher.totalCourses || 0} khóa học</span>
-                        <span>{(teacher.totalStudents || 0).toLocaleString()} học viên</span>
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-      </Row>
+        </div>
 
-      {/* Recent Tickets & Activity */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={14}>
+        {/* Top teachers */}
+        <div className="lg:col-span-2">
           <Card
-            title="Ticket hỗ trợ gần đây"
-            extra={<Link to="/admin/support">Xem tất cả</Link>}
+            title={<span className="font-semibold text-gray-800">Top giáo viên</span>}
+            extra={<Link to="/admin/teachers" className="text-indigo-500 text-sm font-medium hover:text-indigo-600">Xem tất cả</Link>}
+            className="!rounded-2xl !border-gray-100 !shadow-sm h-full"
+          >
+            <div className="space-y-4">
+              {(data?.topTeachers ?? []).slice(0, 5).map((teacher: any, idx: number) => (
+                <div key={teacher.id ?? idx} className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400 w-4">{idx + 1}</span>
+                  <Avatar src={teacher.avatar} size={36} className="shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-800 m-0 truncate">
+                      {teacher.firstName} {teacher.lastName}
+                    </p>
+                    <p className="text-xs text-gray-400 m-0">
+                      {teacher.totalCourses ?? 0} khóa · {(teacher.totalStudents ?? 0).toLocaleString()} học viên
+                    </p>
+                  </div>
+                  <span className="flex items-center gap-0.5 text-xs font-semibold text-amber-500">
+                    <Star size={11} className="fill-amber-400" />
+                    {teacher.rating ?? '–'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Tickets */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        <div className="lg:col-span-3">
+          <Card
+            title={<span className="font-semibold text-gray-800">Ticket hỗ trợ gần đây</span>}
+            extra={<Link to="/admin/support" className="text-indigo-500 text-sm font-medium hover:text-indigo-600">Xem tất cả</Link>}
+            className="!rounded-2xl !border-gray-100 !shadow-sm"
           >
             <Table
               dataSource={data?.recentTickets}
@@ -298,45 +245,41 @@ const AdminDashboard: React.FC = () => {
               size="small"
             />
           </Card>
-        </Col>
-        <Col xs={24} lg={10}>
+        </div>
+
+        {/* Course categories */}
+        <div className="lg:col-span-2">
           <Card
-            title="Hoạt động gần đây"
-            extra={<Link to="/admin/activity">Xem tất cả</Link>}
+            title={<span className="font-semibold text-gray-800">Phân bố danh mục</span>}
+            className="!rounded-2xl !border-gray-100 !shadow-sm"
           >
-            <List
-              dataSource={data?.activities.slice(0, 5)}
-              renderItem={(activity: any) => (
-                <List.Item className="px-0 py-3">
-                  <List.Item.Meta
-                    avatar={<Avatar src={activity.userAvatar} icon={<UserOutlined />} />}
-                    title={
-                      <div className="flex items-center justify-between">
-                        <Text strong>{activity.userName}</Text>
-                        <Text type="secondary" className="text-xs">
-                          <ClockCircleOutlined className="mr-1" />
-                          {new Date(activity.createdAt).toLocaleString('vi-VN', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            day: '2-digit',
-                            month: '2-digit',
-                          })}
-                        </Text>
-                      </div>
-                    }
-                    description={
-                      <div>
-                        <Tag color="blue" className="mr-2">{activity.module}</Tag>
-                        <Text type="secondary">{activity.details}</Text>
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+            <div className="space-y-3">
+              {data?.coursesChart?.labels?.map((label: string, i: number) => {
+                const chartData = data.coursesChart.datasets[0].data;
+                const value = chartData[i];
+                const total = chartData.reduce((a: number, b: number) => a + b, 0);
+                const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+                const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+                const c = colors[i % colors.length];
+                return (
+                  <div key={label}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600">{label}</span>
+                      <span className="font-semibold text-gray-800">{value}</span>
+                    </div>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{ width: `${pct}%`, backgroundColor: c }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </Card>
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 };
