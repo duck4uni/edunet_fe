@@ -4,7 +4,7 @@ import { Layout, ConfigProvider, theme as antTheme, Spin, Result, Button } from 
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
-import { useAdminAuth, useDashboard } from '../../hooks';
+import { useAuth, useDashboard } from '../../hooks';
 
 const { Content } = Layout;
 const MIN_ADMIN_WIDTH = 1024;
@@ -22,15 +22,26 @@ const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const { user, logout, isAuthenticated, isInitialized } = useAdminAuth();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
   const { data: dashboardData, markNotificationRead, markAllNotificationsRead } = useDashboard();
+  const isAdmin = user?.role === 'admin';
+  const isInitialized = !isLoading;
 
   // Check authentication on mount and when auth state changes
   useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
-      navigate('/admin/login', { replace: true, state: { from: location } });
+    if (!isInitialized) {
+      return;
     }
-  }, [isAuthenticated, isInitialized, navigate, location]);
+
+    if (!isAuthenticated) {
+      navigate('/auth/login', { replace: true, state: { from: location } });
+      return;
+    }
+
+    if (!isAdmin) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isAdmin, isInitialized, navigate, location]);
 
   // Scroll to top when route changes
   useEffect(() => {
@@ -48,9 +59,8 @@ const AdminLayout: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    await logout();
   };
 
   const handleNotificationClick = (notification: any) => {
@@ -121,7 +131,7 @@ const AdminLayout: React.FC = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !isAdmin) {
     return null;
   }
 

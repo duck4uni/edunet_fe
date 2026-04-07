@@ -41,9 +41,10 @@ const menuItems = [
     icon: <BookOutlined />,
     label: 'Quản lý khóa học',
     children: [
-      { key: '/admin/courses', label: 'Danh sách khóa học' },
-      { key: '/admin/courses?tab=pending', label: 'Chờ duyệt' },
-      { key: '/admin/courses?tab=reviews', label: 'Đánh giá' },
+      { key: '/admin/courses/pending', label: 'Chờ duyệt' },
+      { key: '/admin/courses/rejected', label: 'Bị từ chối' },
+      { key: '/admin/courses', label: 'Đã duyệt' },
+      { key: '/admin/reviews', label: 'Đánh giá' },
     ],
   },
   {

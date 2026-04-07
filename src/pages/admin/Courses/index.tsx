@@ -1,5 +1,5 @@
-// Course Management Page
-import React, { useState, useEffect } from 'react';
+// Approved Course Management Page
+import React, { useMemo, useState } from 'react';
 import { 
   Row, Col, Card, Table, Button, Space, Input, Modal, 
   Typography, Avatar, Tooltip, Dropdown, Tabs, Image,
@@ -11,7 +11,7 @@ import {
   UnlockOutlined, MoreOutlined, StarFilled,
   ExportOutlined, TeamOutlined, UserOutlined
 } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCourseManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
@@ -19,15 +19,14 @@ import type { Course, Review, Enrollment } from '../../../services/courseApi';
 import { useGetCategoriesQuery, useGetTeachersQuery, useCreateCourseMutation } from '../../../services/courseApi';
 import { message } from 'antd';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
+const APPROVED_STATUS_FILTER = 'approved,published,archived';
+type LifecycleTab = 'all' | 'upcoming' | 'ended';
 
 const CourseManagement: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const tabFromUrl = searchParams.get('tab');
   const {
     courses,
     reviews,
@@ -42,8 +41,6 @@ const CourseManagement: React.FC = () => {
     total,
     fetchCourses,
     fetchReviews,
-    approveCourse,
-    rejectCourse,
     publishCourse,
     toggleCourseLock,
     deleteCourse,
@@ -55,52 +52,29 @@ const CourseManagement: React.FC = () => {
     openEnrollmentManagement,
     approveEnrollment,
     rejectEnrollment,
-  } = useCourseManagement();
+  } = useCourseManagement({ status: APPROVED_STATUS_FILTER });
 
   // Fetch real categories from API
   const { data: categoriesData } = useGetCategoriesQuery({ size: 'unlimited' });
   const { data: teachersData } = useGetTeachersQuery({ size: 'unlimited', include: 'user' });
   const [createCourseApi, { isLoading: isCreating }] = useCreateCourseMutation();
 
-  const [activeTab, setActiveTab] = useState(() => {
-    if (tabFromUrl === 'pending') return 'pending';
-    if (tabFromUrl === 'reviews') return 'reviews';
-    return 'all';
-  });
-  const [rejectModal, setRejectModal] = useState<{ open: boolean; courseId: string | null }>({
-    open: false,
-    courseId: null,
-  });
-  const [rejectReason, setRejectReason] = useState('');
+  const [lifecycleTab, setLifecycleTab] = useState<LifecycleTab>('all');
   const [reviewsModalOpen, setReviewsModalOpen] = useState(false);
   const [enrollmentsModalOpen, setEnrollmentsModalOpen] = useState(false);
   const [enrollmentTab, setEnrollmentTab] = useState('pending');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createForm] = Form.useForm();
 
-  // Sync tab from URL query param when navigation changes
-  useEffect(() => {
-    const p = new URLSearchParams(location.search).get('tab');
-    if (p === 'pending' || p === 'reviews') {
-      setActiveTab(p);
-      if (p !== 'reviews') setFilters({ ...filters, status: p });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
-
-  const handleTabChange = (key: string) => {
-    setActiveTab(key);
-    if (key === 'reviews') {
-      setSelectedCourse(null);
-      fetchReviews(undefined);
-      setReviewsModalOpen(true);
-      return;
-    }
-    if (key === 'all') {
-      setFilters({ ...filters, status: undefined });
-    } else {
-      setFilters({ ...filters, status: key });
-    }
+  const handleLifecycleChange = (key: string) => {
+    const nextTab = key as LifecycleTab;
+    setLifecycleTab(nextTab);
+    setTableParams({ ...tableParams, page: 1 });
+    setFilters({
+      ...filters,
+      status: APPROVED_STATUS_FILTER,
+      timeStatus: nextTab === 'all' ? undefined : nextTab,
+    });
   };
 
   const handleFilterChange = (key: string, value: any) => {
@@ -111,13 +85,22 @@ const CourseManagement: React.FC = () => {
     navigate(`/admin/courses/${course.id}`);
   };
 
-  const handleReject = async () => {
-    if (rejectModal.courseId && rejectReason.trim()) {
-      await rejectCourse(rejectModal.courseId, rejectReason);
-      setRejectModal({ open: false, courseId: null });
-      setRejectReason('');
+  const lifecycleStats = useMemo(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    let upcoming = 0;
+    let ended = 0;
+
+    for (const course of courses) {
+      if (!course.startDate) continue;
+      const start = new Date(course.startDate);
+      if (start >= now) upcoming += 1;
+      else ended += 1;
     }
-  };
+
+    return { upcoming, ended };
+  }, [courses]);
 
   const handleCreateCourse = async (values: any) => {
     try {
@@ -180,21 +163,6 @@ const CourseManagement: React.FC = () => {
         onClick: () => handleViewEnrollments(record),
       },
       { type: 'divider' as const },
-      ...(record.status === 'pending' ? [
-        {
-          key: 'approve',
-          icon: <CheckOutlined />,
-          label: 'Duyệt khóa học',
-          onClick: () => approveCourse(record.id),
-        },
-        {
-          key: 'reject',
-          icon: <CloseOutlined />,
-          label: 'Từ chối',
-          danger: true,
-          onClick: () => setRejectModal({ open: true, courseId: record.id }),
-        },
-      ] : []),
       ...(record.status === 'approved' ? [
         {
           key: 'publish',
@@ -494,22 +462,18 @@ const CourseManagement: React.FC = () => {
     },
   ];
 
-  const tabItems = [
-    { key: 'all', label: `Tất cả (${statistics.total})` },
-    { key: 'pending', label: `Chờ duyệt (${statistics.pending})` },
-    { key: 'approved', label: `Đã duyệt (${statistics.approved ?? 0})` },
-    { key: 'published', label: `Đã xuất bản (${statistics.published})` },
-    { key: 'rejected', label: `Từ chối (${statistics.rejected})` },
-    { key: 'archived', label: `Lưu trữ (${statistics.archived})` },
-    { key: 'reviews', label: 'Đánh giá' },
+  const lifecycleTabItems = [
+    { key: 'all', label: 'Tất cả đã duyệt' },
+    { key: 'upcoming', label: 'Sắp bắt đầu' },
+    { key: 'ended', label: 'Đã kết thúc' },
   ];
 
   return (
     <div>
       <PageHeader
-        title="Quản lý khóa học"
+        title="Danh sách khóa học đã duyệt"
         subtitle={`${total} khóa học`}
-        breadcrumb={[{ title: 'Khóa học' }]}
+        breadcrumb={[{ title: 'Khóa học đã duyệt' }]}
         extra={
           <Space>
             <Button icon={<ExportOutlined />}>Xuất Excel</Button>
@@ -524,14 +488,20 @@ const CourseManagement: React.FC = () => {
       <Row gutter={[16, 16]} className="mb-4">
         <Col xs={12} sm={6}>
           <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-blue-500">{statistics.total}</div>
-            <Text type="secondary" className="text-xs">Tổng khóa học</Text>
+            <div className="text-2xl font-bold text-blue-500">{total}</div>
+            <Text type="secondary" className="text-xs">Khóa học đã duyệt</Text>
           </Card>
         </Col>
         <Col xs={12} sm={6}>
           <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-orange-500">{statistics.pending}</div>
-            <Text type="secondary" className="text-xs">Chờ duyệt</Text>
+            <div className="text-2xl font-bold text-orange-500">{lifecycleStats.upcoming}</div>
+            <Text type="secondary" className="text-xs">Sắp bắt đầu</Text>
+          </Card>
+        </Col>
+        <Col xs={12} sm={6}>
+          <Card size="small" className="text-center">
+            <div className="text-2xl font-bold text-purple-500">{lifecycleStats.ended}</div>
+            <Text type="secondary" className="text-xs">Đã kết thúc</Text>
           </Card>
         </Col>
         <Col xs={12} sm={6}>
@@ -540,30 +510,30 @@ const CourseManagement: React.FC = () => {
             <Text type="secondary" className="text-xs">Tổng học viên</Text>
           </Card>
         </Col>
-        <Col xs={12} sm={6}>
-          <Card size="small" className="text-center">
-            <div className="text-2xl font-bold text-red-500">{statistics.flaggedReviews}</div>
-            <Text type="secondary" className="text-xs">Đánh giá bị báo cáo</Text>
-          </Card>
-        </Col>
       </Row>
 
       {/* Filters */}
       <FilterBar
         filters={filters}
         onFilterChange={handleFilterChange}
-        onReset={() => setFilters({})}
+        onReset={() => {
+          setTableParams({ ...tableParams, page: 1 });
+          setFilters({
+            status: APPROVED_STATUS_FILTER,
+            ...(lifecycleTab !== 'all' ? { timeStatus: lifecycleTab } : {}),
+          });
+        }}
         onRefresh={fetchCourses}
         fields={filterFields}
         loading={loading}
       />
 
-      {/* Tabs & Table */}
+      {/* Lifecycle Tabs & Table */}
       <Card>
         <Tabs 
-          activeKey={activeTab} 
-          onChange={handleTabChange}
-          items={tabItems}
+          activeKey={lifecycleTab}
+          onChange={handleLifecycleChange}
+          items={lifecycleTabItems}
           className="mb-4"
         />
         <Table
@@ -588,28 +558,6 @@ const CourseManagement: React.FC = () => {
           scroll={{ x: 1400 }}
         />
       </Card>
-
-      {/* Reject Modal */}
-      <Modal
-        title="Từ chối khóa học"
-        open={rejectModal.open}
-        onOk={handleReject}
-        onCancel={() => {
-          setRejectModal({ open: false, courseId: null });
-          setRejectReason('');
-        }}
-        okText="Từ chối"
-        okType="danger"
-        cancelText="Hủy"
-      >
-        <Paragraph className="mb-4">Vui lòng nhập lý do từ chối:</Paragraph>
-        <TextArea
-          rows={4}
-          value={rejectReason}
-          onChange={(e) => setRejectReason(e.target.value)}
-          placeholder="Nhập lý do từ chối..."
-        />
-      </Modal>
 
       {/* Reviews Modal */}
       <Modal

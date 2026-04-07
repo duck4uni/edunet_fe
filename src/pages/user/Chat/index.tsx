@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import ContactList from '../../../components/Chat/ContactList';
 import ChatWindow from '../../../components/Chat/ChatWindow';
+import SupportBotPanel from '../../../components/Chat/SupportBotPanel';
 import type { Contact, Message } from '../../../models/chat';
+
+const SUPPORT_BOT_CONTACT_ID = 'support-bot';
+
+const supportBotContact: Contact = {
+  id: SUPPORT_BOT_CONTACT_ID,
+  name: 'Tro ly ho tro EduNet',
+  avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=EduNetSupport',
+  isOnline: true,
+  unreadCount: 0,
+  isPinned: true,
+  role: 'admin',
+};
 
 // Mock data for demonstration
 const mockContacts: Contact[] = [
+  supportBotContact,
   {
     id: '1',
     name: 'Sarah Johnson',
@@ -295,6 +309,7 @@ const ChatPage: React.FC = () => {
   };
 
   const currentMessages = selectedContact ? messages[selectedContact.id] || [] : [];
+  const isSupportBotSelected = selectedContact?.id === SUPPORT_BOT_CONTACT_ID;
 
   return (
     <div className="h-[calc(100vh-80px)] flex bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
@@ -310,12 +325,16 @@ const ChatPage: React.FC = () => {
 
       {/* Chat Window - Right Side */}
       <div className="flex-1 min-w-0">
-        <ChatWindow
-          contact={selectedContact}
-          messages={currentMessages}
-          onSendMessage={handleSendMessage}
-          onReaction={handleReaction}
-        />
+        {isSupportBotSelected ? (
+          <SupportBotPanel />
+        ) : (
+          <ChatWindow
+            contact={selectedContact}
+            messages={currentMessages}
+            onSendMessage={handleSendMessage}
+            onReaction={handleReaction}
+          />
+        )}
       </div>
     </div>
   );

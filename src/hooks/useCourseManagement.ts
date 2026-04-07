@@ -21,6 +21,7 @@ interface Filters {
   category?: string;
   teacher?: string;
   search?: string;
+  timeStatus?: 'upcoming' | 'ended';
 }
 
 interface TableParams {
@@ -28,8 +29,8 @@ interface TableParams {
   pageSize: number;
 }
 
-export const useCourseManagement = () => {
-  const [filters, setFilters] = useState<Filters>({});
+export const useCourseManagement = (initialFilters: Filters = {}) => {
+  const [filters, setFilters] = useState<Filters>(initialFilters);
   const [tableParams, setTableParams] = useState<TableParams>({
     page: 1,
     pageSize: 10,
@@ -40,10 +41,31 @@ export const useCourseManagement = () => {
   // Build query params from filters
   const courseQueryParams: QueryParams = useMemo(() => {
     const filterParts: string[] = [];
-    if (filters.status) filterParts.push(`status:eq:${filters.status}`);
+    if (filters.status) {
+      const statuses = filters.status
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      if (statuses.length > 1) {
+        filterParts.push(`status:in:${statuses.join(',')}`);
+      } else if (statuses.length === 1) {
+        filterParts.push(`status:eq:${statuses[0]}`);
+      }
+    }
     if (filters.category) filterParts.push(`categoryId:eq:${filters.category}`);
     if (filters.teacher) filterParts.push(`teacherId:eq:${filters.teacher}`);
     if (filters.search) filterParts.push(`title:like:${filters.search}`);
+    if (filters.timeStatus === 'upcoming') {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      filterParts.push(`startDate:gte:${todayStart.toISOString()}`);
+    }
+    if (filters.timeStatus === 'ended') {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      filterParts.push(`startDate:lt:${todayStart.toISOString()}`);
+    }
 
     return {
       page: tableParams.page,
