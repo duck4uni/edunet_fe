@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   useAOS();
 
   return (
-    <div className="home-page overflow-hidden">
+    <div className="home-page overflow-hidden bg-[#f9fdff]">
       <HeroSection />
       <StatsSection />
       <WhyChooseUsSection />

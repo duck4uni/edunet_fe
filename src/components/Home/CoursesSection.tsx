@@ -17,25 +17,25 @@ const CoursesSection: React.FC = () => {
   const courses = coursesData?.data?.rows || [];
 
   return (
-    <section className="course-area py-20 bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 relative overflow-hidden">
+    <section className="course-area py-16 md:py-20 bg-gradient-to-br from-[#f7fdff] via-[#effaff] to-[#f7fdff] relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-1/2 left-0 w-64 h-64 bg-[#17EAD9]/10 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/4 right-0 w-64 h-64 bg-[#6078EA]/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 left-0 w-64 h-64 bg-[#30C2EC]/15 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/4 right-0 w-64 h-64 bg-[#00B1F5]/15 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-12" data-aos="fade-up">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10" data-aos="fade-up">
           <div>
-            <div className="inline-block px-4 py-2 bg-[#e5698e]/10 rounded-full mb-4">
-              <span className="text-[#e5698e] font-semibold">🔥 Xu hướng</span>
+            <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
+              <span className="text-[#00B1F5] font-semibold">🔥 Xu hướng</span>
             </div>
-            <Title level={2} className="!mb-2 !text-[#012643] !text-3xl md:!text-4xl">
-              Khóa học <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Phổ biến</span> nhất
+            <Title level={2} className="!mb-2 !text-[#012643] !text-2xl md:!text-3xl">
+              Khóa học <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Phổ biến</span> nhất
             </Title>
-            <Paragraph className="text-gray-500 max-w-lg">Khám phá các khóa học được yêu thích nhất do cộng đồng học viên của chúng tôi bình chọn</Paragraph>
+            <Paragraph className="text-gray-600 max-w-lg">Khám phá các khóa học được yêu thích nhất do cộng đồng học viên của chúng tôi bình chọn</Paragraph>
           </div>
           <Link to="/courses">
             <Button 
-              className="!rounded-full !border-[#e5698e] !text-[#e5698e] hover:!bg-[#e5698e] hover:!text-white !h-11 !px-6 !font-medium"
+              className="!rounded-full !border-[#00B1F5] !text-[#00B1F5] hover:!bg-[#00B1F5] hover:!text-white !h-10 !px-5 !font-medium"
               icon={<ArrowRightOutlined />}
             >
               Xem tất cả khóa học

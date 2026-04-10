@@ -24,9 +24,14 @@
   }
 }
 
+/* Swiper pagination colors aligned with EduNet brand */
+.swiper-pagination-bullet {
+  background-color: rgba(48, 194, 236, 0.35) !important;
+}
+
 /* Custom scrollbar for Swiper if needed */
 .swiper-pagination-bullet-active {
-  background-color: #6078EA !important;
+  background-color: #00B1F5 !important;
   width: 24px !important;
   border-radius: 4px !important;
 }

@@ -58,21 +58,21 @@ const RegisterStudent: React.FC = () => {
           <Form.Item
             name="email"
             label="Email"
-            className="!mb-3"
+            className="!mb-4"
             rules={[
               { required: true, message: 'Vui lòng nhập Email!' },
               { type: 'email', message: 'Email không hợp lệ!' },
             ]}
           >
-            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập email của bạn" className="!rounded-lg !h-9" />
+            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập email của bạn" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
           <Form.Item
             name="password"
             label="Mật khẩu"
-            className="!mb-3"
+            className="!mb-4"
             rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
           >
-            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Tạo mật khẩu" className="!rounded-lg !h-9" />
+            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Tạo mật khẩu" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
           <Form.Item
             name="confirmPassword"
@@ -91,7 +91,7 @@ const RegisterStudent: React.FC = () => {
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Xác nhận mật khẩu" className="!rounded-lg !h-9" />
+            <Input.Password prefix={<LockOutlined className="text-gray-400" />} placeholder="Xác nhận mật khẩu" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
         </>
       ),
@@ -103,18 +103,18 @@ const RegisterStudent: React.FC = () => {
           <Form.Item
             name="name"
             label="Họ tên"
-            className="!mb-3"
+            className="!mb-4"
             rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
           >
-            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập họ tên đầy đủ" className="!rounded-lg !h-9" />
+            <Input prefix={<UserOutlined className="text-gray-400" />} placeholder="Nhập họ tên đầy đủ" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
           <Form.Item
             name="phone"
             label="Số điện thoại"
-            className="!mb-3"
+            className="!mb-4"
             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
           >
-            <Input prefix={<PhoneOutlined className="text-gray-400" />} placeholder="Nhập số điện thoại" className="!rounded-lg !h-9" />
+            <Input prefix={<PhoneOutlined className="text-gray-400" />} placeholder="Nhập số điện thoại" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
           <Form.Item
             name="age"
@@ -122,7 +122,7 @@ const RegisterStudent: React.FC = () => {
             className="!mb-0"
             rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}
           >
-            <InputNumber placeholder="Nhập tuổi" className="!w-full !rounded-lg" min={1} max={100} />
+            <InputNumber placeholder="Nhập tuổi" className="!w-full !rounded-lg !h-11" min={1} max={100} />
           </Form.Item>
         </>
       ),
@@ -134,10 +134,10 @@ const RegisterStudent: React.FC = () => {
           <Form.Item
             name="major"
             label="Chuyên ngành"
-            className="!mb-3"
+            className="!mb-4"
             rules={[{ required: true, message: 'Vui lòng nhập chuyên ngành!' }]}
           >
-            <Input prefix={<BookOutlined className="text-gray-400" />} placeholder="VD: Khoa học máy tính" className="!rounded-lg !h-9" />
+            <Input prefix={<BookOutlined className="text-gray-400" />} placeholder="VD: Khoa học máy tính" className="!rounded-lg !h-11 !text-base" />
           </Form.Item>
           <Form.Item
             name="degree"
@@ -146,7 +146,7 @@ const RegisterStudent: React.FC = () => {
             initialValue="University"
             rules={[{ required: true, message: 'Vui lòng chọn trình độ!' }]}
           >
-            <Select placeholder="Chọn trình độ học vấn" className="!rounded-lg">
+            <Select placeholder="Chọn trình độ học vấn" className="!rounded-lg !h-11">
               <Option value="Primary School">Tiểu học</Option>
               <Option value="Middle School">Trung học cơ sở</Option>
               <Option value="High School">Trung học phổ thông</Option>
@@ -159,89 +159,96 @@ const RegisterStudent: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen flex bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden">
+    <div className="h-screen flex bg-gradient-to-br from-[#effcff] via-white to-[#eefaff] overflow-hidden">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#012643] via-[#01385f] to-[#012643] items-center justify-center relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#17EAD9] rounded-full opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#e5698e] rounded-full opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-[#6078EA] rounded-full opacity-10 blur-3xl animate-pulse delay-500"></div>
+      <div className="hidden lg:flex lg:w-3/5 bg-gradient-to-br from-[#0f2b39] via-[#10607a] to-[#00B1F5] items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(48,194,236,0.35),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(0,177,245,0.35),transparent_40%),radial-gradient(circle_at_75%_80%,rgba(255,255,255,0.2),transparent_45%)]"></div>
+        <div className="absolute top-0 right-0 w-[520px] h-[520px] bg-[#30C2EC] rounded-full opacity-20 -translate-y-1/2 translate-x-1/2 blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#00B1F5] rounded-full opacity-20 translate-y-1/2 -translate-x-1/2 blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-white rounded-full opacity-10 blur-3xl animate-pulse delay-500"></div>
 
-        {/* Decorative Circles */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/5 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-white/5 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-white/10 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] border border-white/15 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] border border-white/20 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] border border-white/25 rounded-full"></div>
 
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-20 w-4 h-4 bg-[#17EAD9] rounded-full animate-bounce"></div>
-        <div className="absolute bottom-32 right-20 w-3 h-3 bg-[#e5698e] rounded-full animate-bounce delay-300"></div>
-        <div className="absolute top-1/3 left-16 w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-500"></div>
+        <div className="absolute top-20 left-20 w-4 h-4 bg-[#30C2EC] rounded-full animate-bounce"></div>
+        <div className="absolute bottom-32 right-20 w-3 h-3 bg-[#00B1F5] rounded-full animate-bounce delay-300"></div>
+        <div className="absolute top-1/3 left-16 w-2 h-2 bg-white rounded-full animate-bounce delay-500"></div>
 
-        <div className="z-10 text-center p-8 max-w-lg">
-          <div className="mb-5 relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#17EAD9] to-[#6078EA] rounded-full blur-2xl opacity-30 animate-pulse"></div>
-            <img src={Logo} alt="EduNet" className="w-20 h-20 rounded-2xl shadow-2xl relative z-10 border-4 border-white/10" />
+        <div className="z-10 text-center p-10 xl:p-14 max-w-2xl">
+          <div className="mb-7 relative inline-block">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#30C2EC] to-[#00B1F5] rounded-full blur-2xl opacity-45 animate-pulse"></div>
+            <img src={Logo} alt="EduNet" className="w-24 h-24 rounded-2xl shadow-2xl relative z-10 border-4 border-white/30 bg-white/10" />
           </div>
-          <Title level={2} className="!text-white !mb-3 !text-3xl !font-bold">
-            Đăng ký <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Học viên</span>
+          <Title level={2} className="!text-white !mb-4 !text-4xl xl:!text-5xl !font-bold !leading-tight">
+            Đăng ký <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-white">Học viên</span>
           </Title>
-          <p className="text-blue-200 text-base mb-6">
+          <p className="text-blue-50 text-lg xl:text-xl mb-9">
             Bắt đầu hành trình học tập ngay hôm nay. Truy cập hàng nghìn khóa học từ giảng viên chuyên gia.
           </p>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
-        <div className="w-full max-w-xl bg-white p-5 rounded-2xl shadow-xl border border-gray-100">
-          <div className="text-center mb-3 lg:hidden">
-             <img src={Logo} alt="EduNet" className="w-12 h-12 rounded-full mb-2 mx-auto" />
-             <Title level={4} className="!text-[#012643] !mb-0">EduNet</Title>
+      <div className="w-full lg:w-2/5 flex items-center justify-center p-2 md:p-4 lg:p-5 xl:p-6 overflow-y-auto">
+        <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-9 rounded-2xl lg:rounded-[2rem] shadow-[0_18px_60px_rgba(0,177,245,0.16)] border border-[#30C2EC]/25">
+          <div className="text-center mb-4 lg:hidden">
+            <img src={Logo} alt="EduNet" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
+            <Title level={4} className="!text-[#0c4055] !mb-0">EduNet</Title>
           </div>
 
-          <div className="mb-3">
-            <Title level={3} className="!text-[#012643] !mb-1">Đăng ký học viên</Title>
-            <Text className="text-gray-500">Hoàn thành các bước dưới đây để tạo tài khoản.</Text>
+          <div className="mb-5">
+            <Title level={2} className="!text-[#0c4055] !mb-1 !text-3xl !font-bold">Đăng ký học viên</Title>
+            <Text className="text-gray-600 text-base">Hoàn thành các bước dưới đây để tạo tài khoản.</Text>
           </div>
 
-          <Steps current={current} className="mb-4" size="small" items={steps.map(s => ({ title: s.title }))} />
+          <Steps current={current} className="mb-6" size="small" items={steps.map(s => ({ title: s.title }))} />
 
           <Form
             form={form}
             name="register-student"
             onFinish={onFinish}
             layout="vertical"
+            size="large"
             initialValues={formData}
           >
-            <div className="min-h-[120px]">
+            <div className="min-h-[180px]">
               {steps[current].content}
             </div>
 
-            <div className="flex justify-between mt-3 gap-4">
-              {current > 0 && (
-                <Button onClick={() => setCurrent(current - 1)} className="!rounded-lg">
+            <div className="flex justify-between mt-5 gap-4">
+              {current > 0 ? (
+                <Button onClick={() => setCurrent(current - 1)} className="!rounded-lg !h-11 !px-6 !border-[#cfefff] !text-[#0c4055]">
                   Quay lại
                 </Button>
+              ) : (
+                <div />
               )}
-              {current === 0 && <div></div>}
-              
-              <Button type="primary" htmlType="submit" loading={isLoading} className="!bg-[#023e6d] !border-[#023e6d] !rounded-lg !px-8">
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+                className="!bg-gradient-to-r !from-[#30C2EC] !to-[#00B1F5] !border-none !rounded-lg !px-8 !h-11 !font-semibold"
+              >
                 {current === 2 ? 'Tạo tài khoản' : 'Tiếp tục'}
               </Button>
             </div>
           </Form>
 
-          <div className="text-center mt-3 pt-3 border-t border-gray-100">
+          <div className="text-center mt-5 pt-4 border-t border-gray-100">
             <Text className="text-gray-500 text-sm">
-              Đã có tài khoản? 
-              <Link to="/auth/login" className="text-[#e5698e] ml-1 font-medium hover:underline">Đăng nhập</Link>
+              Đã có tài khoản?
+              <Link to="/auth/login" className="text-[#00B1F5] ml-1 font-semibold hover:text-[#0898cc]">
+                Đăng nhập
+              </Link>
             </Text>
           </div>
 
-          <div className="text-center mt-1">
-             <a href="mailto:support@edunet.com" className="inline-flex items-center gap-2 text-gray-500 text-xs hover:text-[#012643] transition-colors">
-                <MailOutlined /> Cần giúp đỡ? Liên hệ hỗ trợ
-             </a>
+          <div className="text-center mt-2">
+            <a href="mailto:support@edunet.com" className="inline-flex items-center gap-2 text-gray-500 text-sm hover:text-[#00B1F5] transition-colors">
+              <MailOutlined /> Cần giúp đỡ? Liên hệ hỗ trợ
+            </a>
           </div>
         </div>
       </div>

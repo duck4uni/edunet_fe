@@ -45,20 +45,20 @@ const testimonials = [
 
 const TestimonialsSection: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 relative overflow-hidden">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-[#f8fdff] via-[#effaff] to-[#f8fdff] relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#17EAD9]/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#e5698e]/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#30C2EC]/15 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#00B1F5]/15 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-16" data-aos="fade-up">
-          <div className="inline-block px-4 py-2 bg-[#6078EA]/10 rounded-full mb-4">
-            <span className="text-[#6078EA] font-semibold">💬 Cảm nhận</span>
+        <div className="text-center mb-12 md:mb-14" data-aos="fade-up">
+          <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
+            <span className="text-[#00B1F5] font-semibold">💬 Cảm nhận</span>
           </div>
-          <Title level={2} className="!text-3xl md:!text-4xl !font-bold !mb-4 !text-[#012643]">
-            Được yêu thích bởi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e5698e] to-[#6078EA]">Hàng nghìn</span> học viên
+          <Title level={2} className="!text-2xl md:!text-3xl !font-bold !mb-3 !text-[#012643]">
+            Được yêu thích bởi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Hàng nghìn</span> học viên
           </Title>
-          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <Paragraph className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Đừng chỉ nghe chúng tôi nói. Hãy lắng nghe từ cộng đồng học viên đã đạt được mục tiêu của họ.
           </Paragraph>
         </div>
@@ -79,26 +79,26 @@ const TestimonialsSection: React.FC = () => {
             {testimonials.map((item) => (
               <SwiperSlide key={item.id} className="h-auto">
                 <Card 
-                  className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden"
+                  className="h-full border border-[#30C2EC]/15 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden"
                   bodyStyle={{ padding: 0 }}
                 >
-                  <div className="bg-gradient-to-r from-[#012643] to-blue-800 p-6 relative">
-                    <div className="absolute top-4 right-4 text-white/20 text-5xl">"</div>
+                  <div className="bg-gradient-to-r from-[#e0f8ff] to-[#d4f4ff] p-5 relative border-b border-[#30C2EC]/20">
+                    <div className="absolute top-3 right-4 text-[#00B1F5]/20 text-5xl">"</div>
                     <div className="flex items-center gap-4">
                       <Avatar 
                         src={item.avatar} 
                         size={64} 
-                        className="!border-4 !border-white/20"
+                        className="!border-4 !border-[#30C2EC]/30"
                       />
                       <div>
-                        <Text className="font-bold text-white block text-lg">{item.name}</Text>
-                        <Text className="text-blue-200 text-sm">{item.role}</Text>
+                        <Text className="font-bold text-[#012643] block text-base md:text-lg">{item.name}</Text>
+                        <Text className="text-[#012643]/70 text-sm">{item.role}</Text>
                       </div>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="mb-4">
-                      <Rate disabled defaultValue={item.rating} className="!text-[#FFCE00]" />
+                  <div className="p-5">
+                    <div className="mb-3">
+                      <Rate disabled defaultValue={item.rating} className="!text-[#00B1F5]" />
                     </div>
                     <Paragraph className="text-gray-600 text-base leading-relaxed mb-0">
                       "{item.comment}"

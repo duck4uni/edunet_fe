@@ -25,25 +25,25 @@ const CategoriesSection: React.FC = () => {
   const categories = categoriesData?.data?.rows || [];
 
   return (
-    <section className="category-area py-20 bg-white relative overflow-hidden">
+    <section className="category-area py-16 md:py-20 bg-gradient-to-b from-white to-[#f4fcff] relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-100/50 to-blue-100/50 rounded-full blur-3xl -translate-y-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-br from-pink-100/50 to-purple-100/50 rounded-full blur-3xl translate-y-1/2"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#30C2EC]/20 to-[#00B1F5]/20 rounded-full blur-3xl -translate-y-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-br from-[#30C2EC]/20 to-[#00B1F5]/15 rounded-full blur-3xl translate-y-1/2"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-12" data-aos="fade-up">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10" data-aos="fade-up">
           <div>
-            <div className="inline-block px-4 py-2 bg-[#17EAD9]/10 rounded-full mb-4">
-              <span className="text-[#17EAD9] font-semibold">📚 Danh mục</span>
+            <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
+              <span className="text-[#00B1F5] font-semibold">📚 Danh mục</span>
             </div>
-            <Title level={2} className="!mb-2 !text-[#012643] !text-3xl md:!text-4xl">
-              Khám phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#17EAD9] to-[#6078EA]">Danh mục</span> nổi bật
+            <Title level={2} className="!mb-2 !text-[#012643] !text-2xl md:!text-3xl">
+              Khám phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Danh mục</span> nổi bật
             </Title>
-            <Paragraph className="text-gray-500 max-w-lg">Khám phá các khóa học trong những lĩnh vực thịnh hành và bắt đầu hành trình học tập của bạn ngay hôm nay</Paragraph>
+            <Paragraph className="text-gray-600 max-w-lg">Khám phá các khóa học trong những lĩnh vực thịnh hành và bắt đầu hành trình học tập của bạn ngay hôm nay</Paragraph>
           </div>
           <Link to="/courses">
             <Button 
-              className="!rounded-full !border-[#6078EA] !text-[#6078EA] hover:!bg-[#6078EA] hover:!text-white !h-11 !px-6 !font-medium"
+              className="!rounded-full !border-[#00B1F5] !text-[#00B1F5] hover:!bg-[#00B1F5] hover:!text-white !h-10 !px-5 !font-medium"
               icon={<ArrowRightOutlined />}
             >
               Xem tất cả danh mục
@@ -75,7 +75,7 @@ const CategoriesSection: React.FC = () => {
                   <Link to={`/courses?category=${cat.id}`}>
                     <Card 
                       hoverable 
-                      className="h-full border-0 shadow-md hover:shadow-xl transition-all duration-500 rounded-2xl overflow-hidden group"
+                      className="h-full border border-[#30C2EC]/15 shadow-md hover:shadow-xl transition-all duration-500 rounded-2xl overflow-hidden group"
                       styles={{ body: { padding: 0 } }}
                     >
                       <div className="relative h-44 overflow-hidden">
@@ -86,13 +86,13 @@ const CategoriesSection: React.FC = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         <Tag 
-                          className="!absolute !top-3 !right-3 !border-0 !bg-white/90 !backdrop-blur-sm !rounded-full !px-3 !py-1 !text-[#012643] !font-medium"
+                          className="!absolute !top-3 !right-3 !border-0 !bg-white/95 !backdrop-blur-sm !rounded-full !px-3 !py-1 !text-[#00B1F5] !font-medium"
                         >
                           {cat.courses?.length || 0} Khóa học
                         </Tag>
                       </div>
                       <div className="p-5">
-                        <Title level={5} className="!mb-1 !text-[#012643] group-hover:!text-[#6078EA] transition-colors">
+                        <Title level={5} className="!mb-1 !text-[#012643] group-hover:!text-[#00B1F5] transition-colors">
                           {cat.name}
                         </Title>
                         <Text type="secondary" className="text-sm">Bắt đầu học ngay →</Text>
