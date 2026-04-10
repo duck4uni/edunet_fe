@@ -1,6 +1,6 @@
 ---
 name: frontend-uiux-brand-workflow
-description: 'Design and implement frontend UI/UX features for this EduNet project with a senior-level workflow. Use when building new pages/components, refactoring UI, reviewing UX, or generating implementation-ready code with the brand palette #30C2EC and #00B1F5.'
+description: 'Design and implement frontend UI/UX features for this EduNet project with a senior-level workflow. Use when building new pages/components, refactoring UI, reviewing UX, or generating implementation-ready code with text-font rules [11-12] and shared app.css tokens.'
 argument-hint: 'Feature or page goal, target users, and constraints'
 ---
 
@@ -21,9 +21,11 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 
 ## Default Brand Direction
 
-- Primary color: `#30C2EC`
-- Secondary/accent color: `#00B1F5`
-- Keep brand colors prominent, but allow tints/shades and supporting neutrals when needed for hierarchy and accessibility.
+- Text-state-500 primary: `#30C2EC`
+- Text-state-500 secondary: `#00B1F5`
+- Supporting text colors: white `#FFFFFF` and light orange `#FFC069`
+- Keep text-font colors restricted to the four approved values above.
+- Store and reuse these colors from `src/assets/styles/app.css` shared variables.
 - Prefer a modern, energetic look with strong information hierarchy.
 
 ## Workflow
@@ -46,7 +48,9 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 4. Apply visual system with brand tokens
 - Use `#30C2EC` for primary actions and strong visual anchors.
 - Use `#00B1F5` for emphasis and interactive highlights.
-- Allow tonal variants of both brand colors for hover, active, surface tint, and chart differentiation.
+- For text-font rules [11-12], only use `#30C2EC`, `#00B1F5`, white `#FFFFFF`, and light orange `#FFC069`.
+- Do not introduce additional text-font tones unless explicitly requested.
+- Reference shared variables from `src/assets/styles/app.css` instead of repeating inline hex values.
 - Use neutral surfaces/text for readability and contrast.
 - Use gradients, depth, or pattern backgrounds only when they support clarity.
 
@@ -85,7 +89,8 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 ## Completion Checklist
 
 - User can complete the primary task with minimal friction.
-- UI aligns with `#30C2EC` and `#00B1F5` without reducing readability.
+- UI text/font colors align with `#30C2EC`, `#00B1F5`, white `#FFFFFF`, and light orange `#FFC069`.
+- Approved colors are sourced from `src/assets/styles/app.css` shared variables.
 - Loading, empty, error, and success states are implemented.
 - Mobile and desktop behavior are validated.
 - Keyboard/focus and basic accessibility checks pass.

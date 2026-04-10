@@ -35,6 +35,12 @@
   --textBlack100:#012643;
   --textBlack24: #0000003D;
   --textBlack1E:#1E1E1E;
+  /* Text-font rules [11-12]: approved shared palette */
+  --textState500Primary: #30C2EC;
+  --textState500Primary35: rgba(48, 194, 236, 0.35);
+  --textState500Secondary: #00B1F5;
+  --textStateWhite: #FFFFFF;
+  --textStateLightOrange: #FFC069;
   --textWhite: #FFFFFF;
   --textWhite12:#FFFFFF1F;
   --textGray: #898989;
@@ -83,7 +89,7 @@
   --colorThird : linear-gradient(to right, #2563EB, #4F46E5);
   --borderColor: #EBEBEB;
   --dataColor: #2EBEAA;
-  --highlightColor: #ffc069;
+  --highlightColor: var(--textStateLightOrange);
   --indigoColor500: #3F51B5;
   --tealColor700: #218779;
   --textOpacity4: #f6f6f7;
@@ -181,4 +187,20 @@ p {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+.text-state-500-primary {
+  color: var(--textState500Primary);
+}
+
+.text-state-500-secondary {
+  color: var(--textState500Secondary);
+}
+
+.text-state-white {
+  color: var(--textStateWhite);
+}
+
+.text-state-light-orange {
+  color: var(--textStateLightOrange);
 }
