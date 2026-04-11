@@ -36,6 +36,40 @@
   border-radius: 4px !important;
 }
 
+/* WhyChoose Swiper custom navigation */
+.why-choose-prev,
+.why-choose-next {
+  color: var(--textState500Secondary);
+  border-color: rgba(48, 194, 236, 0.25);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.why-choose-prev:hover,
+.why-choose-next:hover {
+  background: linear-gradient(90deg, var(--textState500Primary), var(--textState500Secondary));
+  color: var(--textStateWhite);
+  border-color: transparent;
+}
+
+.why-choose-prev.swiper-button-disabled,
+.why-choose-next.swiper-button-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.why-choose-prev.swiper-button-disabled:hover,
+.why-choose-next.swiper-button-disabled:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--textState500Secondary);
+  border-color: rgba(48, 194, 236, 0.25);
+}
+
+/* Testimonials continuous horizontal movement */
+.testimonials-marquee-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
 /* Global overflow guards */
 html,
 body,

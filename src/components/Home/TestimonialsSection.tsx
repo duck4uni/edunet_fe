@@ -53,7 +53,7 @@ const TestimonialsSection: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-12 md:mb-14" data-aos="fade-up">
           <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
-            <span className="text-[#00B1F5] font-semibold">💬 Cảm nhận</span>
+            <span className="text-[#00B1F5] font-semibold">Cảm nhận</span>
           </div>
           <Title level={2} className="!text-2xl md:!text-3xl !font-bold !mb-3 !text-[#012643]">
             Được yêu thích bởi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Hàng nghìn</span> học viên
@@ -68,13 +68,20 @@ const TestimonialsSection: React.FC = () => {
             modules={[Pagination, Autoplay]}
             spaceBetween={30}
             slidesPerView={1}
+            loop={true}
+            speed={5200}
             breakpoints={{
               768: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
             }}
             pagination={{ clickable: true }}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            className="pb-12"
+            autoplay={{
+              delay: 0,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+              stopOnLastSlide: false,
+            }}
+            className="pb-12 testimonials-marquee-swiper"
           >
             {testimonials.map((item) => (
               <SwiperSlide key={item.id} className="h-auto">
