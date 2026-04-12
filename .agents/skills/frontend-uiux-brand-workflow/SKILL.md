@@ -26,6 +26,8 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 - Supporting text colors: white `#FFFFFF` and light orange `#FFC069`
 - Keep text-font colors restricted to the four approved values above.
 - Store and reuse these colors from `src/assets/styles/app.css` shared variables.
+- Use `src/assets/styles/app.css` only for shared/global CSS (tokens, reset, utilities).
+- Place page-specific/component-specific selectors in dedicated local CSS files and import those files from the related page/component.
 - Prefer a modern, energetic look with strong information hierarchy.
 
 ## Workflow
@@ -91,6 +93,7 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 - User can complete the primary task with minimal friction.
 - UI text/font colors align with `#30C2EC`, `#00B1F5`, white `#FFFFFF`, and light orange `#FFC069`.
 - Approved colors are sourced from `src/assets/styles/app.css` shared variables.
+- `src/assets/styles/app.css` contains only shared/global CSS; feature-specific CSS is separated into feature-local files.
 - Loading, empty, error, and success states are implemented.
 - Mobile and desktop behavior are validated.
 - Keyboard/focus and basic accessibility checks pass.

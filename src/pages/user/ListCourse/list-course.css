@@ -1,0 +1,47 @@
+/* ListCourse page-specific styles */
+
+.course-list-segmented .ant-segmented-item-selected {
+  background-color: var(--textState500Secondary) !important;
+  color: var(--textStateWhite) !important;
+}
+
+.course-list-segmented.ant-segmented {
+  padding: 2px !important;
+}
+
+.course-list-segmented .ant-segmented-item-label {
+  padding: 2px 10px !important;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.course-list-segmented .ant-segmented-item-selected .anticon,
+.course-list-segmented .ant-segmented-item-selected .ant-segmented-item-label {
+  color: var(--textStateWhite) !important;
+}
+
+.course-filter-slider .ant-slider-track {
+  background-color: var(--textState500Secondary) !important;
+}
+
+.course-filter-slider .ant-slider-handle::after {
+  box-shadow: 0 0 0 2px var(--textState500Secondary) !important;
+}
+
+.course-grid-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--textState500Primary35) transparent;
+}
+
+.course-grid-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.course-grid-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.course-grid-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: var(--textState500Primary35);
+}
