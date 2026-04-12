@@ -36,17 +36,17 @@ const HeroSection: React.FC = () => {
           <div className="lg:w-1/2 z-10" data-aos="fade-right">
             <Badge.Ribbon text="Nền tảng học tập #1" color="#00B1F5" className="!-ml-6">
               <div className="pt-3 md:pt-4">
-                <Title level={1} className="!text-3xl sm:!text-4xl md:!text-[2.5rem] !font-bold !mb-3 !text-[#012643] !leading-tight">
+                <Title level={1} className="!text-3xl sm:!text-4xl md:!text-[2.5rem] !font-bold !mb-4 !text-[#012643] !leading-tight">
                   Khai phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Tiềm năng</span> với nền tảng học tập đẳng cấp
                 </Title>
               </div>
             </Badge.Ribbon>
-            <Paragraph className="text-sm md:text-base text-gray-600 mb-4 max-w-xl">
+            <Paragraph className="text-sm md:text-base text-gray-600 mb-3 max-w-xl">
               Tham gia cùng hàng triệu học viên và thay đổi sự nghiệp của bạn với các khóa học chuyên sâu, dự án thực hành và cộng đồng hỗ trợ.
             </Paragraph>
             
             {/* Search Box */}
-            <div className="bg-white p-1.5 md:p-2 rounded-xl shadow-lg border border-[#30C2EC]/20 max-w-xl mb-4">
+            <div className="bg-white p-1.5 md:p-2 rounded-xl shadow-lg border border-[#30C2EC]/20 max-w-xl mb-5">
               <div className="flex flex-col md:flex-row items-center gap-1.5">
                 <div className="flex-1 w-full md:w-auto px-3 border-b md:border-b-0 md:border-r border-gray-200 py-1.5 md:py-0">
                   <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
           
-          <div className="lg:w-1/2 relative mt-4 lg:mt-0" data-aos="fade-left">
+          <div className="lg:w-1/2 relative mt-3 lg:mt-0" data-aos="fade-left">
             <div className="relative z-10 animate-float">
               <img 
                 src={MainBg} 

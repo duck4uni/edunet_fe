@@ -1,33 +1,107 @@
 import React from 'react';
-import { Avatar, Tabs } from 'antd';
-import { ClockCircleOutlined, GlobalOutlined } from '@ant-design/icons';
+import { Avatar, Tabs, Tag } from 'antd';
+import { BarChartOutlined, CalendarOutlined, ClockCircleOutlined, GlobalOutlined, ReadOutlined, StarFilled, TeamOutlined } from '@ant-design/icons';
+import type { TabsProps } from 'antd';
 import type { Course } from '../../models/course';
+import { formatDate, formatNumber } from '../../utils/format';
 
 interface CourseHeaderProps {
   course: Course;
-  items: any[];
+  items: TabsProps['items'];
 }
 
 const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
+  const normalizedLevel = (course.level || '').toLowerCase();
+  const levelLabel = normalizedLevel === 'beginner'
+    ? 'Cơ bản'
+    : normalizedLevel === 'intermediate'
+      ? 'Trung cấp'
+      : normalizedLevel === 'advanced'
+        ? 'Nâng cao'
+        : 'Mọi cấp độ';
+
+  const stats = [
+    {
+      key: 'rating',
+      icon: <StarFilled className="text-state-light-orange" />,
+      value: course.rating ? course.rating.toFixed(1) : '0.0',
+      label: `${course.totalReviews || 0} đánh giá`,
+    },
+    {
+      key: 'students',
+      icon: <TeamOutlined className="text-state-500-primary" />,
+      value: formatNumber(course.totalStudents || 0, 'vi-VN'),
+      label: 'Học viên',
+    },
+    {
+      key: 'lessons',
+      icon: <ReadOutlined className="text-state-500-primary" />,
+      value: String(course.lessons || 0),
+      label: 'Bài học',
+    },
+    {
+      key: 'level',
+      icon: <BarChartOutlined className="text-state-500-primary" />,
+      value: levelLabel,
+      label: course.duration || 'Đang cập nhật',
+    },
+  ];
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-      <h1 className="text-3xl font-bold text-[#012643] mb-4">{course.title}</h1>
-      <div className="flex items-center gap-4 mb-6 text-gray-500">
-        <div className="flex items-center gap-2">
+    <div className="detail-course-main-card mb-6">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <span className="detail-course-brand-pill">{course.category || 'Khóa học'}</span>
+        <span className="detail-course-brand-pill detail-course-brand-pill-secondary">Được đề xuất</span>
+      </div>
+
+      <h1 className="detail-course-title text-2xl font-bold text-[var(--primaryColor)] md:text-3xl">{course.title}</h1>
+
+      <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-gray-500 md:text-sm">
+        <div className="detail-course-meta-chip">
           <Avatar src={course.teacher?.avatar} size="small" />
-          <span>{course.teacher?.name}</span>
+          <span className="font-medium text-[var(--primaryColor)]">{course.teacher?.name || 'Giảng viên EduNet'}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <ClockCircleOutlined className="text-[#e5698e]" />
-          <span>Cập nhật lần cuối 10/2023</span>
+        <div className="detail-course-meta-chip">
+          <ClockCircleOutlined className="text-state-500-primary" />
+          <span>
+            Cập nhật lần cuối {course.updatedAt ? formatDate(course.updatedAt, 'MM/YYYY') : 'gần đây'}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <GlobalOutlined className="text-[#e5698e]" />
-          <span>Tiếng Việt</span>
+        <div className="detail-course-meta-chip">
+          <GlobalOutlined className="text-state-500-primary" />
+          <span>{course.language || 'Vietnamese'}</span>
+        </div>
+        <div className="detail-course-meta-chip">
+          <CalendarOutlined className="text-state-500-primary" />
+          <span>
+            Xuất bản {course.publishedAt ? formatDate(course.publishedAt, 'DD/MM/YYYY') : 'sắp tới'}
+          </span>
         </div>
       </div>
-      
-      <Tabs defaultActiveKey="1" items={items} className="custom-tabs" />
+
+      <div className="detail-course-kpi-grid mb-5">
+        {stats.map((stat) => (
+          <div key={stat.key} className="detail-course-kpi-item">
+            <div className="detail-course-kpi-icon">{stat.icon}</div>
+            <div>
+              <p className="detail-course-kpi-value">{stat.value}</p>
+              <p className="detail-course-kpi-label">{stat.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {course.tags?.length ? (
+        <div className="mb-5 flex flex-wrap gap-2">
+          {course.tags.map((tag) => (
+            <Tag key={tag} className="detail-course-tag-pill">
+              #{tag}
+            </Tag>
+          ))}
+        </div>
+      ) : null}
+
+      <Tabs defaultActiveKey="1" items={items} className="detail-course-tabs" destroyOnHidden size="small" />
     </div>
   );
 };

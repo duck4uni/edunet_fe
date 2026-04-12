@@ -139,9 +139,10 @@ const Login: React.FC = () => {
         <img src={CloudTwo} alt="cloud" className="absolute top-28 right-20 w-28 opacity-90" />
 
         <div className="relative z-10 flex flex-col items-center text-center px-8 xl:px-14">
+          <img src={BookPanda} alt="Book Panda" className="w-[360px] xl:w-[420px] object-contain animate-float" />
           <Title 
             level={1} 
-            className="!mb-0 max-w-3xl animate-fade-in"
+            className="!-mt-12 xl:!-mt-16 !mb-auto max-w-3xl animate-fade-in"
             style={{
               fontSize: '3rem',
               lineHeight: 1.2,
@@ -156,7 +157,6 @@ const Login: React.FC = () => {
           >
             <span className="typing-caret">{typedTitle}</span>
           </Title>
-          <img src={BookPanda} alt="Book Panda" className="w-[360px] xl:w-[420px] object-contain animate-float" />
         </div>
       </div>
 

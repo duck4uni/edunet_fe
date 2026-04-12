@@ -7,22 +7,27 @@ import DescriptionTab from '../../../components/DetailCourse/DescriptionTab';
 import ReviewsTab from '../../../components/DetailCourse/ReviewsTab';
 import CourseSidebar from '../../../components/DetailCourse/CourseSidebar';
 import CourseHeader from '../../../components/DetailCourse/CourseHeader';
+import './detail-course.css';
 
 const DetailCourse: React.FC = () => {
-  const { courseData, isLoading, error } = useCourseDetail();
+  const { courseData, isLoading, error, reviewStats } = useCourseDetail();
 
   if (isLoading) {
     return (
-      <div className="py-20 flex justify-center items-center min-h-screen bg-gray-50">
-        <Spin size="large" />
+      <div className="detail-course-page flex items-center justify-center px-6">
+        <div className="detail-course-surface w-full max-w-sm py-12 text-center">
+          <Spin size="large" />
+        </div>
       </div>
     );
   }
 
   if (error || !courseData.id) {
     return (
-      <div className="py-20 flex justify-center items-center min-h-screen bg-gray-50">
-        <Empty description="Không tìm thấy khóa học" />
+      <div className="detail-course-page flex items-center justify-center px-6">
+        <div className="detail-course-surface w-full max-w-lg py-12 text-center">
+          <Empty description="Không tìm thấy khóa học" />
+        </div>
       </div>
     );
   }
@@ -46,21 +51,19 @@ const DetailCourse: React.FC = () => {
     {
       key: '4',
       label: 'Đánh giá',
-      children: <ReviewsTab reviews={courseData.reviews || []} />,
+      children: <ReviewsTab reviews={courseData.reviews || []} stats={reviewStats} />,
     },
   ];
 
   return (
-    <div className="py-12 bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content */}
-          <div className="lg:w-2/3">
+    <div className="detail-course-page">
+      <div className="detail-course-container">
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div>
             <CourseHeader course={courseData} items={items} />
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:w-1/3">
+          <div>
             <CourseSidebar course={courseData} />
           </div>
         </div>

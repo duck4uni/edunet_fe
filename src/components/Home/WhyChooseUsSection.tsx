@@ -73,9 +73,6 @@ const WhyChooseUsSection: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12 md:mb-14" data-aos="fade-up">
           <div className="text-center md:text-left">
-            <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
-              <span className="text-[#00B1F5] font-semibold">Tại sao chọn chúng tôi</span>
-            </div>
             <Title level={2} className="!text-2xl md:!text-3xl !font-bold !mb-3 !text-[#012643]">
               Tất cả những gì bạn cần để <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Thành công</span>
             </Title>
