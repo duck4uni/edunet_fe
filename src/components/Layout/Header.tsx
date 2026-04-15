@@ -109,7 +109,7 @@ const Header: React.FC = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
               <MailOutlined className="text-[#30C2EC]" />
-              <span>nhutphigenz@email.com</span>
+              <span>edunet@.edu.vn</span>
             </div>
             <div className="flex items-center gap-2">
               <SocialLink href="https://instagram.com" icon={<FacebookFilled />} />

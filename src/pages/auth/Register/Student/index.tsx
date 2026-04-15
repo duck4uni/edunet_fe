@@ -3,18 +3,77 @@ import { Form, Input, Button, Steps, Select, message, InputNumber, Typography } 
 import { UserOutlined, LockOutlined, PhoneOutlined, BookOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../../../assets/images/Logo.png';
+import BookPanda from '../../../../assets/images/Panda/BookPanda.png';
+import CloudOne from '../../../../assets/images/cloud-1.png';
+import CloudTwo from '../../../../assets/images/cloud-2.png';
 import { useRegisterMutation } from '../../../../services/authApi';
 import { setTokens } from '../../../../services/axiosBaseQuery';
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
+const BRAND_TITLE = 'Khai phá tiềm năng với nền tảng học tập đẳng cấp';
+
 const RegisterStudent: React.FC = () => {
+  React.useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+      .animate-fade-in {
+        animation: fade-in 0.8s ease-out;
+      }
+      @keyframes blink-caret {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+      }
+      .typing-caret::after {
+        content: '|';
+        margin-left: 2px;
+        color: #00B1F5;
+        -webkit-text-fill-color: #00B1F5;
+        animation: blink-caret 0.9s step-end infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<Record<string, unknown>>({});
+  const [typedTitle, setTypedTitle] = useState('');
   const [register, { isLoading }] = useRegisterMutation();
+
+  React.useEffect(() => {
+    let currentIndex = 0;
+    setTypedTitle('');
+
+    const intervalId = window.setInterval(() => {
+      currentIndex += 1;
+      setTypedTitle(BRAND_TITLE.slice(0, currentIndex));
+
+      if (currentIndex >= BRAND_TITLE.length) {
+        window.clearInterval(intervalId);
+      }
+    }, 45);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   const onFinish = async (values: Record<string, unknown>) => {
     const newData = { ...formData, ...values };
@@ -161,37 +220,36 @@ const RegisterStudent: React.FC = () => {
   return (
     <div className="h-screen flex bg-gradient-to-br from-[#effcff] via-white to-[#eefaff] overflow-hidden">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-3/5 bg-gradient-to-br from-[#0f2b39] via-[#10607a] to-[#00B1F5] items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(48,194,236,0.35),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(0,177,245,0.35),transparent_40%),radial-gradient(circle_at_75%_80%,rgba(255,255,255,0.2),transparent_45%)]"></div>
-        <div className="absolute top-0 right-0 w-[520px] h-[520px] bg-[#30C2EC] rounded-full opacity-20 -translate-y-1/2 translate-x-1/2 blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#00B1F5] rounded-full opacity-20 translate-y-1/2 -translate-x-1/2 blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-white rounded-full opacity-10 blur-3xl animate-pulse delay-500"></div>
+      <div className="hidden lg:flex lg:w-3/5 items-center justify-center relative overflow-hidden bg-gradient-to-br from-white via-[#f3fcff] to-[#d7f2ff]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_20%,rgba(48,194,236,0.22),transparent_42%),radial-gradient(circle_at_84%_75%,rgba(0,177,245,0.2),transparent_45%)]"></div>
+        <img src={CloudOne} alt="cloud" className="absolute top-14 left-16 w-24 opacity-85" />
+        <img src={CloudTwo} alt="cloud" className="absolute top-28 right-20 w-28 opacity-90" />
 
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] border border-white/15 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] border border-white/20 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] border border-white/25 rounded-full"></div>
-
-        <div className="absolute top-20 left-20 w-4 h-4 bg-[#30C2EC] rounded-full animate-bounce"></div>
-        <div className="absolute bottom-32 right-20 w-3 h-3 bg-[#00B1F5] rounded-full animate-bounce delay-300"></div>
-        <div className="absolute top-1/3 left-16 w-2 h-2 bg-white rounded-full animate-bounce delay-500"></div>
-
-        <div className="z-10 text-center p-10 xl:p-14 max-w-2xl">
-          <div className="mb-7 relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#30C2EC] to-[#00B1F5] rounded-full blur-2xl opacity-45 animate-pulse"></div>
-            <img src={Logo} alt="EduNet" className="w-24 h-24 rounded-2xl shadow-2xl relative z-10 border-4 border-white/30 bg-white/10" />
-          </div>
-          <Title level={2} className="!text-white !mb-4 !text-4xl xl:!text-5xl !font-bold !leading-tight">
-            Đăng ký <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-white">Học viên</span>
+        <div className="relative z-10 flex flex-col items-center text-center px-8 xl:px-14">
+          <img src={BookPanda} alt="Book Panda" className="w-[360px] xl:w-[420px] object-contain animate-float" />
+          <Title
+            level={1}
+            className="!-mt-12 xl:!-mt-16 !mb-auto max-w-3xl animate-fade-in"
+            style={{
+              fontSize: '3rem',
+              lineHeight: 1.2,
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #30C2EC 0%, #00B1F5 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              textShadow: '0 0 30px rgba(48, 194, 236, 0.3)',
+              filter: 'drop-shadow(0 0 20px rgba(0, 177, 245, 0.2))',
+            }}
+          >
+            <span className="typing-caret">{typedTitle}</span>
           </Title>
-          <p className="text-blue-50 text-lg xl:text-xl mb-9">
-            Bắt đầu hành trình học tập ngay hôm nay. Truy cập hàng nghìn khóa học từ giảng viên chuyên gia.
-          </p>
         </div>
       </div>
 
       {/* Right Side - Form */}
       <div className="w-full lg:w-2/5 flex items-center justify-center p-2 md:p-4 lg:p-5 xl:p-6 overflow-y-auto">
-        <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-9 rounded-2xl lg:rounded-[2rem] shadow-[0_18px_60px_rgba(0,177,245,0.16)] border border-[#30C2EC]/25">
+        <div className="w-full max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-9 rounded-2xl lg:rounded-[2rem]">
           <div className="text-center mb-4 lg:hidden">
             <img src={Logo} alt="EduNet" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
             <Title level={4} className="!text-[#0c4055] !mb-0">EduNet</Title>

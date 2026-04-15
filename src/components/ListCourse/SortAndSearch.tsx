@@ -1,119 +1,114 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input, Select, Button, Segmented, Typography } from 'antd';
-import { SearchOutlined, AppstoreOutlined, UnorderedListOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
+import { SearchOutlined, AppstoreOutlined, UnorderedListOutlined, SortAscendingOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
+export type CourseViewMode = 'grid' | 'list';
+export type CourseSortOption = 'newest' | 'popular' | 'rating' | 'price-low' | 'price-high';
+
 interface SortAndSearchProps {
+  searchValue: string;
+  onSearchValueChange: (value: string) => void;
   onSearch: (value: string) => void;
-  onViewChange?: (view: 'grid' | 'list') => void;
-  totalCourses?: number;
+  view: CourseViewMode;
+  onViewChange: (view: CourseViewMode) => void;
+  sortValue: CourseSortOption;
+  onSortChange: (value: CourseSortOption) => void;
+  totalCourses: number;
+  totalFromApi: number;
 }
 
-const SortAndSearch: React.FC<SortAndSearchProps> = ({ onSearch, onViewChange, totalCourses = 156 }) => {
-  const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [searchValue, setSearchValue] = useState('');
-
+const SortAndSearch: React.FC<SortAndSearchProps> = ({
+  searchValue,
+  onSearchValueChange,
+  onSearch,
+  view,
+  onViewChange,
+  sortValue,
+  onSortChange,
+  totalCourses,
+  totalFromApi,
+}) => {
   const handleViewChange = (value: string | number) => {
-    const newView = value as 'grid' | 'list';
-    setView(newView);
-    onViewChange?.(newView);
+    onViewChange(value as CourseViewMode);
   };
 
   return (
-    <div className="mb-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <Title level={2} className="!mb-1 !text-[#012643]">Khám phá khóa học</Title>
-          <Text className="text-gray-500">
-            Hiển thị <span className="font-semibold text-[#012643]">{totalCourses}</span> khóa học có sẵn
+    <div className="rounded-2xl border border-sky-100 bg-white p-3.5 shadow-sm md:p-4">
+      <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="flex min-w-max items-center gap-2">
+          <Title level={5} className="!mb-0 !text-base md:!text-lg" style={{ color: 'var(--primaryColor)' }}>
+            Khám phá khóa học
+          </Title>
+          <span className="text-xs text-gray-300">|</span>
+          <Text className="whitespace-nowrap text-xs text-gray-500 md:text-sm">
+            Hiển thị
+            <span className="font-semibold" style={{ color: 'var(--textState500Secondary)' }}>
+              {' '}{totalCourses}
+            </span>
+            / {totalFromApi} khóa học
           </Text>
         </div>
-        
-        {/* View Toggle - Desktop */}
-        <div className="hidden md:flex items-center gap-3">
-          <Text className="text-gray-500">Hiển thị:</Text>
+
+        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200" aria-hidden="true" />
+
+        <div className="flex shrink-0 items-center gap-2">
+          <Text className="text-xs text-gray-500">Dạng xem:</Text>
           <Segmented
+            size="small"
             value={view}
             onChange={handleViewChange}
             options={[
-              { value: 'grid', icon: <AppstoreOutlined /> },
-              { value: 'list', icon: <UnorderedListOutlined /> },
+              { label: 'Lưới', value: 'grid', icon: <AppstoreOutlined /> },
+              { label: 'Danh sách', value: 'list', icon: <UnorderedListOutlined /> },
             ]}
-            className="bg-gray-100"
+            className="course-list-segmented bg-[var(--primaryColor50)]"
           />
         </div>
-      </div>
 
-      {/* Search and Sort Bar */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Search Input */}
-          <div className="flex-1">
-            <Input
-              size="large"
-              placeholder="Tìm khóa học, chủ đề hoặc giảng viên..."
-              prefix={<SearchOutlined className="text-gray-400 text-lg" />}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onPressEnter={() => onSearch(searchValue)}
-              className="!rounded-xl !border-gray-200 hover:!border-[#e5698e] focus:!border-[#e5698e]"
-              allowClear
-            />
-          </div>
+        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200" aria-hidden="true" />
 
-          {/* Sort and Filter */}
-          <div className="flex gap-3">
-            <Select
-              size="large"
-              defaultValue="newest"
-              className="w-full lg:w-48"
-              popupClassName="rounded-xl"
-              suffixIcon={<SortAscendingOutlined className="text-gray-400" />}
-              options={[
-                { value: 'newest', label: 'Mới nhất' },
-                { value: 'popular', label: 'Phổ biến nhất' },
-                { value: 'rating', label: 'Đánh giá cao nhất' },
-                { value: 'price-low', label: 'Giá: Thấp đến Cao' },
-                { value: 'price-high', label: 'Giá: Cao đến Thấp' },
-              ]}
-            />
-            
-            {/* Mobile Filter Button */}
-            <Button 
-              size="large" 
-              icon={<FilterOutlined />}
-              className="lg:hidden !rounded-xl !border-gray-200"
-            >
-              Bộ lọc
-            </Button>
+        <Input
+          size="middle"
+          placeholder="Tìm tên khóa học hoặc giảng viên"
+          prefix={<SearchOutlined className="text-gray-400" />}
+          value={searchValue}
+          onChange={(event) => onSearchValueChange(event.target.value)}
+          onPressEnter={() => onSearch(searchValue)}
+          className="!w-72 !rounded-lg !border-gray-200 hover:!border-[var(--textState500Primary)] focus:!border-[var(--textState500Primary)]"
+          allowClear
+        />
 
-            <Button 
-              type="primary" 
-              size="large" 
-              icon={<SearchOutlined />}
-              onClick={() => onSearch(searchValue)}
-              className="!bg-[#012643] !border-[#012643] hover:!bg-[#023e6d] !rounded-xl !px-6"
-            >
-              Tìm kiếm
-            </Button>
-          </div>
-        </div>
+        <Select
+          size="middle"
+          value={sortValue}
+          onChange={(value) => onSortChange(value as CourseSortOption)}
+          className="!w-[170px]"
+          popupClassName="rounded-xl"
+          suffixIcon={<SortAscendingOutlined className="text-gray-400" />}
+          options={[
+            { value: 'newest', label: 'Mới cập nhật' },
+            { value: 'popular', label: 'Nhiều học viên' },
+            { value: 'rating', label: 'Đánh giá cao' },
+            { value: 'price-low', label: 'Giá tăng dần' },
+            { value: 'price-high', label: 'Giá giảm dần' },
+          ]}
+        />
 
-        {/* Quick Filters */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Text className="text-gray-500 mr-2">Lọc nhanh:</Text>
-          {['Miễn phí', 'Phù hợp người mới', 'Có chứng chỉ', 'Mới trong tuần', 'Đánh giá cao'].map((filter) => (
-            <Button 
-              key={filter}
-              size="small"
-              className="!rounded-full !border-gray-200 hover:!border-[#e5698e] hover:!text-[#e5698e]"
-            >
-              {filter}
-            </Button>
-          ))}
-        </div>
+        <Button
+          type="primary"
+          size="middle"
+          icon={<SearchOutlined />}
+          onClick={() => onSearch(searchValue)}
+          className="!rounded-lg !px-4"
+          style={{
+            borderColor: 'var(--textState500Secondary)',
+            backgroundColor: 'var(--textState500Secondary)',
+          }}
+        >
+          Tìm
+        </Button>
       </div>
     </div>
   );

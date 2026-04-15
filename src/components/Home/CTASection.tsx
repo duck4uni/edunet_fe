@@ -33,7 +33,7 @@ const CTASection: React.FC = () => {
           <Col xs={24} lg={14}>
             <div data-aos="fade-right">
               <div className="inline-block px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full mb-5 border border-[#30C2EC]/25">
-                <span className="text-[#00B1F5] font-semibold">🚀 Bắt đầu học ngay</span>
+                <span className="text-[#00B1F5] font-semibold">Bắt đầu học ngay</span>
               </div>
               <Title level={1} className="!text-3xl sm:!text-4xl md:!text-[2.75rem] !font-bold !text-[#012643] !mb-5 !leading-tight">
                 Sẵn sàng thay đổi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Sự nghiệp?</span>

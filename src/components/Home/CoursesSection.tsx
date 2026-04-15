@@ -25,9 +25,6 @@ const CoursesSection: React.FC = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10" data-aos="fade-up">
           <div>
-            <div className="inline-block px-4 py-2 bg-[#30C2EC]/10 rounded-full mb-4">
-              <span className="text-[#00B1F5] font-semibold">🔥 Xu hướng</span>
-            </div>
             <Title level={2} className="!mb-2 !text-[#012643] !text-2xl md:!text-3xl">
               Khóa học <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#30C2EC] to-[#00B1F5]">Phổ biến</span> nhất
             </Title>

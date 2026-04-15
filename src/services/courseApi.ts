@@ -41,6 +41,7 @@ export interface CourseTeacher {
   lastName: string;
   email: string;
   avatar?: string;
+  bio?: string;
 }
 
 export interface Category {

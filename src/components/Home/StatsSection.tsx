@@ -37,12 +37,12 @@ const stats = [
 
 const StatsSection: React.FC = () => {
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-[#012643] via-[#00B1F5] to-[#012643] text-white relative overflow-hidden">
+    <section className="py-16 md:py-20 bg-white text-[#012643] relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-4 border-white/40"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-4 border-white/30"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border-2 border-white/30"></div>
+      <div className="absolute top-0 left-0 w-full h-full opacity-70 pointer-events-none">
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-4 border-[#30C2EC]/20"></div>
+        <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-4 border-[#00B1F5]/15"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border-2 border-[#30C2EC]/15"></div>
       </div>
 
       {/* Floating Dots */}
@@ -51,10 +51,10 @@ const StatsSection: React.FC = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-10" data-aos="fade-up">
-          <Title level={2} className="!text-2xl md:!text-3xl !font-bold !text-white !mb-2">
+          <Title level={2} className="!text-2xl md:!text-3xl !font-bold !text-[#012643] !mb-2">
             Thành tựu của chúng tôi qua con số
           </Title>
-          <Text className="text-white/90 text-base md:text-lg">Tham gia cộng đồng học viên đang ngày càng lớn mạnh toàn cầu</Text>
+          <Text className="text-gray-600 text-base md:text-lg">Tham gia cộng đồng học viên đang ngày càng lớn mạnh toàn cầu</Text>
         </div>
 
         <Row gutter={[24, 24]} justify="center">
@@ -62,15 +62,15 @@ const StatsSection: React.FC = () => {
             <Col xs={12} md={6} key={index} data-aos="fade-up" data-aos-delay={index * 100}>
               <div className="text-center group cursor-pointer">
                 <div 
-                  className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+                  className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_14px_28px_rgba(0,177,245,0.2)]"
                   style={{ backgroundColor: stat.bgColor, color: stat.color }}
                 >
                   {stat.icon}
                 </div>
-                <Title level={2} className="!text-white !mb-0 !text-3xl md:!text-4xl font-bold">
+                <Title level={2} className="!text-[#012643] !mb-0 !text-3xl md:!text-4xl font-bold">
                   {stat.count}
                 </Title>
-                <Text className="text-white/90 text-sm md:text-base">
+                <Text className="text-gray-600 text-sm md:text-base">
                   {stat.label}
                 </Text>
               </div>

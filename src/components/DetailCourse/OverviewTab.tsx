@@ -5,10 +5,16 @@ interface OverviewTabProps {
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ description }) => {
+  const hasDescription = Boolean(description?.trim());
+
   return (
-    <div className="py-4">
-      <h3 className="text-xl font-bold mb-4 text-[#012643]">Tổng quan khóa học</h3>
-      <div dangerouslySetInnerHTML={{ __html: description || '' }} className="text-gray-600 leading-relaxed" />
+    <div className="py-2">
+      <h3 className="detail-course-section-title">Tổng quan khóa học</h3>
+      {hasDescription ? (
+        <div dangerouslySetInnerHTML={{ __html: description }} className="detail-course-richtext" />
+      ) : (
+        <p className="detail-course-empty-note">Nội dung tổng quan đang được cập nhật.</p>
+      )}
     </div>
   );
 };

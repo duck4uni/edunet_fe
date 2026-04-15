@@ -37,3 +37,9 @@ When a user provides a file or pattern argument:
 4. Output findings using the format specified in the guidelines
 
 If no files specified, ask the user which files to review.
+
+## Project CSS Scope Rule
+
+- Treat `src/assets/styles/app.css` as shared/global CSS only (tokens, reset, common utilities).
+- Flag page-specific or component-specific selectors found in `src/assets/styles/app.css`.
+- Require feature-specific CSS to live in dedicated local files under the related page/component folder and be imported by that feature.

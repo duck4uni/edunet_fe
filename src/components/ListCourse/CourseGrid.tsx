@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Row, Col, Pagination, Empty, Spin, Typography } from 'antd';
+import React from 'react';
+import { Row, Col, Empty, Spin, Typography, Tag } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import CourseCard from '../common/CourseCard';
 import type { Course } from '../../models/course';
@@ -10,70 +10,71 @@ interface CourseGridProps {
   courses: Course[];
   loading?: boolean;
   view?: 'grid' | 'list';
+  className?: string;
 }
 
-const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view = 'grid' }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 9;
-
-  const paginatedCourses = courses.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view = 'grid', className }) => {
+  const containerClassName = `flex min-h-0 flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-sm ${className || ''}`;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spin indicator={<LoadingOutlined className="text-4xl text-[#e5698e]" spin />} />
+      <div className={containerClassName}>
+        <div className="flex flex-1 items-center justify-center py-12">
+          <Spin indicator={<LoadingOutlined className="text-4xl" style={{ color: 'var(--textState500Secondary)' }} spin />} />
+        </div>
       </div>
     );
   }
 
   if (courses.length === 0) {
     return (
-      <div className="bg-white rounded-2xl p-12 text-center">
-        <Empty
-          description={
-            <div className="mt-4">
-              <Text className="text-gray-500 text-lg">Không tìm thấy khóa học</Text>
-              <p className="text-gray-400 mt-2">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
-            </div>
-          }
-        />
+      <div className={containerClassName}>
+        <div className="flex flex-1 items-center justify-center p-8 text-center">
+          <Empty
+            description={
+              <div className="mt-4">
+                <Text className="text-gray-500 text-lg">Không tìm thấy khóa học</Text>
+                <p className="mt-2 text-gray-400">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+              </div>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      <Row gutter={[24, 24]}>
-        {paginatedCourses.map((course) => (
-          <Col 
-            xs={24} 
-            md={view === 'list' ? 24 : 12} 
-            xl={view === 'list' ? 24 : 8} 
-            key={course.id}
-          >
-            <CourseCard course={course} layout={view === 'list' ? 'horizontal' : 'vertical'} />
-          </Col>
-        ))}
-      </Row>
-
-      {/* Pagination */}
-      <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm">
-        <Text className="text-gray-500">
-          Hiển thị {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, courses.length)} trên {courses.length} khóa học
+    <div className={containerClassName}>
+      <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-2.5">
+        <Text className="text-sm text-gray-600">
+          Kết quả phù hợp: <span className="font-semibold" style={{ color: 'var(--primaryColor)' }}>{courses.length}</span> khóa học
         </Text>
-        <Pagination 
-          current={currentPage}
-          total={courses.length}
-          pageSize={pageSize}
-          onChange={setCurrentPage}
-          showSizeChanger={false}
-          className="custom-pagination"
-        />
+        <Tag
+          className="!rounded-full !border-none !px-2 !py-0.5 !text-xs"
+          style={{ backgroundColor: 'var(--primaryColor50)', color: 'var(--textState500Secondary)' }}
+        >
+          {view === 'grid' ? 'Hiển thị dạng lưới' : 'Hiển thị dạng danh sách'}
+        </Tag>
       </div>
-    </>
+
+      <div className="course-grid-scroll flex-1 overflow-y-auto p-4">
+        {view === 'grid' ? (
+          <Row gutter={[16, 16]}>
+            {courses.map((course) => (
+              <Col xs={24} md={12} xl={8} key={course.id}>
+                <CourseCard course={course} layout="vertical" />
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <div className="space-y-3">
+            {courses.map((course) => (
+              <CourseCard key={course.id} course={course} layout="horizontal" />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
