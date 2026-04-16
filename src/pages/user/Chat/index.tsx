@@ -1,309 +1,396 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ContactList from '../../../components/Chat/ContactList';
 import ChatWindow from '../../../components/Chat/ChatWindow';
-import SupportBotPanel from '../../../components/Chat/SupportBotPanel';
-import type { Contact, Message } from '../../../models/chat';
+import AssistantBotPanel from '../../../components/Chat/AssistantBotPanel';
+import type { Contact, Message, FriendUser, ChatMessageFromServer } from '../../../models/chat';
+import { useGetProfileQuery } from '../../../services/authApi';
+import {
+  useGetFriendsQuery,
+  useLazyGetMessagesQuery,
+  useGetUnreadCountsQuery,
+  useGetLastMessagesQuery,
+  useTogglePinConversationMutation,
+  useHideConversationMutation,
+} from '../../../services/friendChatApi';
+import socketService from '../../../services/socketService';
 
 const SUPPORT_BOT_CONTACT_ID = 'support-bot';
+const DESKTOP_BREAKPOINT = 1024;
+const SWIPE_START_EDGE_PX = 40;
+const SWIPE_BACK_DISTANCE_PX = 90;
+const SWIPE_MAX_VERTICAL_DRIFT_PX = 72;
 
 const supportBotContact: Contact = {
   id: SUPPORT_BOT_CONTACT_ID,
-  name: 'Tro ly ho tro EduNet',
-  avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=EduNetSupport',
+  name: 'Trợ lý học tập',
+  avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=EduNetAssistant',
   isOnline: true,
   unreadCount: 0,
   isPinned: true,
   role: 'admin',
 };
 
-// Mock data for demonstration
-const mockContacts: Contact[] = [
-  supportBotContact,
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-    isOnline: true,
-    isVerified: true,
-    isPinned: true,
-    unreadCount: 3,
-    role: 'teacher',
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    isOnline: true,
-    unreadCount: 0,
-    role: 'student',
-  },
-  {
-    id: '3',
-    name: 'React Study Group',
-    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=100',
-    isOnline: false,
-    isGroup: true,
-    memberCount: 12,
-    unreadCount: 5,
-    isPinned: true,
-  },
-  {
-    id: '4',
-    name: 'Emily Davis',
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-    isOnline: false,
-    lastSeen: '2 hours ago',
-    unreadCount: 0,
-    isMuted: true,
-    role: 'student',
-  },
-  {
-    id: '5',
-    name: 'Prof. David Wilson',
-    avatar: 'https://randomuser.me/api/portraits/men/52.jpg',
-    isOnline: true,
-    isVerified: true,
-    unreadCount: 1,
-    role: 'teacher',
-  },
-  {
-    id: '6',
-    name: 'JavaScript Masters',
-    avatar: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=100',
-    isOnline: false,
-    isGroup: true,
-    memberCount: 45,
-    unreadCount: 0,
-  },
-  {
-    id: '7',
-    name: 'Alex Thompson',
-    avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
-    isOnline: false,
-    lastSeen: '5 mins ago',
-    unreadCount: 0,
-    role: 'student',
-  },
-  {
-    id: '8',
-    name: 'Lisa Park',
-    avatar: 'https://randomuser.me/api/portraits/women/79.jpg',
-    isOnline: true,
-    unreadCount: 2,
-    role: 'student',
-  },
-];
-
-const mockMessages: Record<string, Message[]> = {
-  '1': [
-    {
-      id: '1-1',
-      senderId: '1',
-      content: 'Hi! How are you doing with the React course?',
-      timestamp: '2024-01-15T09:00:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '1-2',
-      senderId: 'me',
-      content: 'Hello! I\'m doing great, just finished the hooks section!',
-      timestamp: '2024-01-15T09:05:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '1-3',
-      senderId: '1',
-      content: 'That\'s wonderful! The hooks section is really important. Did you have any questions about useEffect?',
-      timestamp: '2024-01-15T09:10:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '1-4',
-      senderId: 'me',
-      content: 'Actually yes! I\'m a bit confused about the dependency array. When should I use an empty array vs including dependencies?',
-      timestamp: '2024-01-15T09:15:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '1-5',
-      senderId: '1',
-      content: 'Great question! An empty array [] means the effect runs only once on mount. When you include dependencies, the effect re-runs whenever those values change. I\'ll send you some examples.',
-      timestamp: '2024-01-15T09:20:00Z',
-      type: 'text',
-      status: 'delivered',
-      reactions: ['👍', '❤️'],
-    },
-    {
-      id: '1-6',
-      senderId: '1',
-      content: 'Here\'s a helpful diagram I created for my students',
-      timestamp: '2024-01-15T09:22:00Z',
-      type: 'image',
-      imageUrl: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400',
-      status: 'delivered',
-    },
-    {
-      id: '1-7',
-      senderId: 'me',
-      content: 'This is so helpful! Thank you so much! 🙏',
-      timestamp: '2024-01-15T09:25:00Z',
-      type: 'text',
-      status: 'sent',
-      reactions: ['❤️'],
-    },
-  ],
-  '2': [
-    {
-      id: '2-1',
-      senderId: 'me',
-      content: 'Hey Michael, want to study together for the exam?',
-      timestamp: '2024-01-14T15:00:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '2-2',
-      senderId: '2',
-      content: 'Sure! When are you free?',
-      timestamp: '2024-01-14T15:30:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '2-3',
-      senderId: 'me',
-      content: 'How about tomorrow at 2pm?',
-      timestamp: '2024-01-14T15:35:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-    {
-      id: '2-4',
-      senderId: '2',
-      content: 'Perfect! Let\'s meet at the library 📚',
-      timestamp: '2024-01-14T15:40:00Z',
-      type: 'text',
-      status: 'seen',
-    },
-  ],
-  '3': [
-    {
-      id: '3-1',
-      senderId: '7',
-      content: 'Anyone finished the Redux assignment?',
-      timestamp: '2024-01-15T08:00:00Z',
-      type: 'text',
-    },
-    {
-      id: '3-2',
-      senderId: '8',
-      content: 'I\'m still working on it. The middleware part is tricky!',
-      timestamp: '2024-01-15T08:10:00Z',
-      type: 'text',
-    },
-    {
-      id: '3-3',
-      senderId: 'me',
-      content: 'I can help! I just finished it. The key is understanding the flow of actions.',
-      timestamp: '2024-01-15T08:15:00Z',
-      type: 'text',
-      status: 'seen',
-      reactions: ['🔥', '👍'],
-    },
-    {
-      id: '3-4',
-      senderId: '2',
-      content: 'That would be awesome! Can you share your approach?',
-      timestamp: '2024-01-15T08:20:00Z',
-      type: 'text',
-    },
-  ],
-  '5': [
-    {
-      id: '5-1',
-      senderId: '5',
-      content: 'Don\'t forget to submit your project by Friday!',
-      timestamp: '2024-01-15T10:00:00Z',
-      type: 'text',
-      status: 'delivered',
-    },
-  ],
-};
-
-// Generate last messages for contact list
-const getLastMessages = (): Record<string, Message> => {
-  const lastMessages: Record<string, Message> = {};
-  Object.keys(mockMessages).forEach(contactId => {
-    const messages = mockMessages[contactId];
-    if (messages.length > 0) {
-      lastMessages[contactId] = messages[messages.length - 1];
-    }
-  });
-  return lastMessages;
-};
+/** Convert server message to UI message */
+const toUIMessage = (msg: ChatMessageFromServer, currentUserId: string): Message => ({
+  id: msg.id,
+  senderId: msg.senderId === currentUserId ? 'me' : msg.senderId,
+  content: msg.content,
+  timestamp: msg.createdAt,
+  type: (msg.type || 'text') as Message['type'],
+  status: msg.isRead ? 'seen' : 'delivered',
+});
 
 const ChatPage: React.FC = () => {
-  const [contacts] = useState<Contact[]>(mockContacts);
+  const { data: profileData } = useGetProfileQuery();
+  const currentUser = (profileData as any)?.data ?? profileData;
+  const currentUserId: string = currentUser?.id ?? '';
+
+  // Friend data
+  const { data: friendsRes } = useGetFriendsQuery(undefined, { skip: !currentUserId });
+  const { data: unreadRes, refetch: refetchUnread } = useGetUnreadCountsQuery(undefined, { skip: !currentUserId });
+  const { data: lastMsgRes } = useGetLastMessagesQuery(undefined, { skip: !currentUserId });
+
+  const friends: FriendUser[] = (friendsRes as any)?.data ?? [];
+  const unreadCounts: Record<string, number> = {};
+  ((unreadRes as any)?.data ?? []).forEach((u: any) => {
+    unreadCounts[u.senderId] = parseInt(u.count);
+  });
+
+  const [fetchMessages] = useLazyGetMessagesQuery();
+  const [togglePin] = useTogglePinConversationMutation();
+  const [hideConversation] = useHideConversationMutation();
+
+  // Local state
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
-  const [lastMessages] = useState(getLastMessages());
+  const [messages, setMessages] = useState<Record<string, Message[]>>({});
+  const [lastMessages, setLastMessages] = useState<Record<string, Message>>({});
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  // Layout state
+  const [panelHeight, setPanelHeight] = useState(640);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.innerWidth >= DESKTOP_BREAKPOINT;
+  });
+  const [showConversationOnMobile, setShowConversationOnMobile] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchCurrentXRef = useRef<number | null>(null);
+  const touchCurrentYRef = useRef<number | null>(null);
+
+  // Build contacts from friends list + chat history partners
+  const friendIds = new Set(friends.map((f) => f.id));
+  const lastMsgData: any[] = (lastMsgRes as any)?.data ?? [];
+
+  // Build a map of partnerId -> isPinned from server data
+  const pinnedMap = new Map<string, boolean>();
+  lastMsgData.forEach((msg: any) => {
+    if (msg.partner) {
+      pinnedMap.set(msg.partner.id, msg.isPinned ?? false);
+    }
+  });
+
+  const contacts: Contact[] = [
+    supportBotContact,
+    ...friends.map((f) => ({
+      id: f.id,
+      name: `${f.firstName || ''} ${f.lastName || ''}`.trim() || f.email,
+      avatar: f.avatar || undefined,
+      isOnline: onlineUsers.has(f.id),
+      unreadCount: unreadCounts[f.id] || 0,
+      role: f.role as Contact['role'],
+      isPinned: pinnedMap.get(f.id) ?? false,
+    })),
+    // Add non-friend users who have chat history
+    ...lastMsgData
+      .filter((msg: any) => msg.partner && !friendIds.has(msg.partner.id))
+      .map((msg: any) => {
+        const p = msg.partner;
+        const name = `${p.firstName || ''} ${p.lastName || ''}`.trim() || p.email;
+        return {
+          id: p.id,
+          name,
+          avatar: p.avatar || undefined,
+          isOnline: onlineUsers.has(p.id),
+          unreadCount: unreadCounts[p.id] || 0,
+          role: p.role as Contact['role'],
+          isPinned: msg.isPinned ?? false,
+        };
+      }),
+  ];
+
+  // Pre-populate lastMessages from server data
+  useEffect(() => {
+    if (!currentUserId) return;
+    const serverMsgs = (lastMsgRes as any)?.data ?? [];
+    if (serverMsgs.length === 0) return;
+
+    setLastMessages((prev) => {
+      const next = { ...prev };
+      serverMsgs.forEach((msg: any) => {
+        const partnerId = msg.senderId === currentUserId ? msg.receiverId : msg.senderId;
+        // Only set if not already populated (socket events take precedence)
+        if (!next[partnerId]) {
+          next[partnerId] = toUIMessage(msg, currentUserId);
+        }
+      });
+      return next;
+    });
+  }, [lastMsgRes, currentUserId]);
+
+  // Connect socket when user is authenticated
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    // Socket is connected by Layout — just get the instance
+    const socket = socketService.getSocket();
+    if (!socket) return;
+
+    const handleMessage = (data: ChatMessageFromServer) => {
+      const uiMsg = toUIMessage(data, currentUserId);
+      setMessages((prev) => ({
+        ...prev,
+        [data.senderId]: [...(prev[data.senderId] || []), uiMsg],
+      }));
+      setLastMessages((prev) => ({ ...prev, [data.senderId]: uiMsg }));
+    };
+
+    const handleMessageSent = (data: ChatMessageFromServer) => {
+      const uiMsg: Message = {
+        id: data.id,
+        senderId: 'me',
+        content: data.content,
+        timestamp: data.createdAt,
+        type: (data.type || 'text') as Message['type'],
+        status: 'sent',
+      };
+      setMessages((prev) => {
+        const receiverMsgs = prev[data.receiverId] || [];
+        const pendingIdx = receiverMsgs.findIndex(
+          (m) => m.status === 'sending' && m.content === data.content,
+        );
+        if (pendingIdx >= 0) {
+          const updated = [...receiverMsgs];
+          updated[pendingIdx] = uiMsg;
+          return { ...prev, [data.receiverId]: updated };
+        }
+        return { ...prev, [data.receiverId]: [...receiverMsgs, uiMsg] };
+      });
+      setLastMessages((prev) => ({ ...prev, [data.receiverId]: uiMsg }));
+    };
+
+    const handleUserOnline = ({ userId }: { userId: string }) => {
+      setOnlineUsers((prev) => new Set(prev).add(userId));
+    };
+
+    const handleUserOffline = ({ userId }: { userId: string }) => {
+      setOnlineUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(userId);
+        return next;
+      });
+    };
+
+    const handleOnlineStatus = (statuses: { userId: string; isOnline: boolean }[]) => {
+      setOnlineUsers((prev) => {
+        const next = new Set(prev);
+        statuses.forEach(({ userId, isOnline }) => {
+          if (isOnline) next.add(userId);
+          else next.delete(userId);
+        });
+        return next;
+      });
+    };
+
+    const handleMessageRead = ({ readBy }: { readBy: string }) => {
+      setMessages((prev) => {
+        const updated = { ...prev };
+        if (updated[readBy]) {
+          updated[readBy] = updated[readBy].map((m) =>
+            m.senderId === 'me' ? { ...m, status: 'seen' as const } : m,
+          );
+        }
+        return updated;
+      });
+    };
+
+    socket.on('message:receive', handleMessage);
+    socket.on('message:sent', handleMessageSent);
+    socket.on('user:online', handleUserOnline);
+    socket.on('user:offline', handleUserOffline);
+    socket.on('online:status', handleOnlineStatus);
+    socket.on('message:read', handleMessageRead);
+
+    return () => {
+      socket.off('message:receive', handleMessage);
+      socket.off('message:sent', handleMessageSent);
+      socket.off('user:online', handleUserOnline);
+      socket.off('user:offline', handleUserOffline);
+      socket.off('online:status', handleOnlineStatus);
+      socket.off('message:read', handleMessageRead);
+    };
+  }, [currentUserId]);
+
+  // Check online status of all contacts
+  useEffect(() => {
+    const contactIds = contacts
+      .filter((c) => c.id !== SUPPORT_BOT_CONTACT_ID)
+      .map((c) => c.id);
+    if (contactIds.length > 0 && socketService.isConnected()) {
+      socketService.checkOnlineStatus(contactIds);
+    }
+  }, [friends, lastMsgRes]);
+
+  // Load messages when selecting a contact
+  const loadMessages = useCallback(
+    async (friendId: string) => {
+      if (!currentUserId || friendId === SUPPORT_BOT_CONTACT_ID) return;
+      try {
+        const res = await fetchMessages({ friendId }).unwrap();
+        const data = (res as any)?.data ?? res;
+        const serverMsgs: ChatMessageFromServer[] = data?.messages ?? [];
+        const uiMsgs = serverMsgs.map((m) => toUIMessage(m, currentUserId));
+        setMessages((prev) => ({ ...prev, [friendId]: uiMsgs }));
+        if (uiMsgs.length > 0) {
+          setLastMessages((prev) => ({
+            ...prev,
+            [friendId]: uiMsgs[uiMsgs.length - 1],
+          }));
+        }
+        socketService.markAsRead(friendId);
+        refetchUnread();
+      } catch (err) {
+        console.error('Failed to load messages:', err);
+      }
+    },
+    [currentUserId, fetchMessages, refetchUnread],
+  );
+
+  // Layout resize
+  useEffect(() => {
+    const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight;
+    const updateLayoutMetrics = () => {
+      const viewportHeight = getViewportHeight();
+      const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+      const footerHeight = document.querySelector('footer')?.getBoundingClientRect().height ?? 0;
+      const safePadding = window.innerWidth < DESKTOP_BREAKPOINT ? 18 : 36;
+      const availableHeight = viewportHeight - headerHeight - footerHeight - safePadding;
+      const boundedHeight = Math.max(window.innerWidth < DESKTOP_BREAKPOINT ? 360 : 520, availableHeight);
+      setPanelHeight(Math.min(boundedHeight, 900));
+      setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+    };
+    updateLayoutMetrics();
+    window.addEventListener('resize', updateLayoutMetrics);
+    window.visualViewport?.addEventListener('resize', updateLayoutMetrics);
+    window.visualViewport?.addEventListener('scroll', updateLayoutMetrics);
+    return () => {
+      window.removeEventListener('resize', updateLayoutMetrics);
+      window.visualViewport?.removeEventListener('resize', updateLayoutMetrics);
+      window.visualViewport?.removeEventListener('scroll', updateLayoutMetrics);
+    };
+  }, []);
 
   const handleSelectContact = (contact: Contact) => {
     setSelectedContact(contact);
-    // Mark as read
+    if (contact.id !== SUPPORT_BOT_CONTACT_ID) {
+      loadMessages(contact.id);
+    }
+    if (!isDesktop) setShowConversationOnMobile(true);
+  };
+
+  const handlePinContact = async (contactId: string) => {
+    try {
+      await togglePin(contactId).unwrap();
+    } catch (err) {
+      console.error('Failed to toggle pin:', err);
+    }
+  };
+
+  const handleDeleteConversation = async (contactId: string) => {
+    try {
+      await hideConversation(contactId).unwrap();
+      if (selectedContact?.id === contactId) {
+        setSelectedContact(null);
+        if (!isDesktop) setShowConversationOnMobile(false);
+      }
+      setMessages((prev) => {
+        const next = { ...prev };
+        delete next[contactId];
+        return next;
+      });
+      setLastMessages((prev) => {
+        const next = { ...prev };
+        delete next[contactId];
+        return next;
+      });
+    } catch (err) {
+      console.error('Failed to hide conversation:', err);
+    }
+  };
+
+  const handleBackToList = () => setShowConversationOnMobile(false);
+
+  const handleConversationTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (isDesktop || !showConversationOnMobile) return;
+    touchStartXRef.current = event.touches[0].clientX;
+    touchStartYRef.current = event.touches[0].clientY;
+    touchCurrentXRef.current = event.touches[0].clientX;
+    touchCurrentYRef.current = event.touches[0].clientY;
+  };
+
+  const handleConversationTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (isDesktop || !showConversationOnMobile) return;
+    touchCurrentXRef.current = event.touches[0].clientX;
+    touchCurrentYRef.current = event.touches[0].clientY;
+  };
+
+  const handleConversationTouchEnd = () => {
+    if (isDesktop || !showConversationOnMobile) return;
+    if (
+      touchStartXRef.current === null ||
+      touchStartYRef.current === null ||
+      touchCurrentXRef.current === null ||
+      touchCurrentYRef.current === null
+    ) return;
+    const deltaX = touchCurrentXRef.current - touchStartXRef.current;
+    const deltaY = Math.abs(touchCurrentYRef.current - touchStartYRef.current);
+    const startedFromEdge = touchStartXRef.current <= SWIPE_START_EDGE_PX;
+    if (startedFromEdge && deltaX >= SWIPE_BACK_DISTANCE_PX && deltaY <= SWIPE_MAX_VERTICAL_DRIFT_PX) {
+      handleBackToList();
+    }
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    touchCurrentXRef.current = null;
+    touchCurrentYRef.current = null;
   };
 
   const handleSendMessage = (content: string, type: string = 'text') => {
-    if (!selectedContact) return;
+    if (!selectedContact || selectedContact.id === SUPPORT_BOT_CONTACT_ID) return;
 
-    const newMessage: Message = {
-      id: `new-${Date.now()}`,
+    const optimistic: Message = {
+      id: `sending-${Date.now()}`,
       senderId: 'me',
       content,
       timestamp: new Date().toISOString(),
-      type: type as 'text',
+      type: type as Message['type'],
       status: 'sending',
     };
 
-    setMessages(prev => ({
+    setMessages((prev) => ({
       ...prev,
-      [selectedContact.id]: [...(prev[selectedContact.id] || []), newMessage],
+      [selectedContact.id]: [...(prev[selectedContact.id] || []), optimistic],
     }));
 
-    // Simulate message sent
-    setTimeout(() => {
-      setMessages(prev => ({
-        ...prev,
-        [selectedContact.id]: prev[selectedContact.id].map(msg =>
-          msg.id === newMessage.id ? { ...msg, status: 'sent' } : msg
-        ),
-      }));
-    }, 500);
-
-    // Simulate message delivered
-    setTimeout(() => {
-      setMessages(prev => ({
-        ...prev,
-        [selectedContact.id]: prev[selectedContact.id].map(msg =>
-          msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
-        ),
-      }));
-    }, 1000);
+    socketService.sendMessage(selectedContact.id, content, type);
   };
 
   const handleReaction = (messageId: string, reaction: string) => {
     if (!selectedContact) return;
-
-    setMessages(prev => ({
+    setMessages((prev) => ({
       ...prev,
-      [selectedContact.id]: prev[selectedContact.id].map(msg =>
+      [selectedContact.id]: (prev[selectedContact.id] || []).map((msg) =>
         msg.id === messageId
           ? { ...msg, reactions: [...(msg.reactions || []), reaction] }
-          : msg
+          : msg,
       ),
     }));
   };
@@ -311,30 +398,53 @@ const ChatPage: React.FC = () => {
   const currentMessages = selectedContact ? messages[selectedContact.id] || [] : [];
   const isSupportBotSelected = selectedContact?.id === SUPPORT_BOT_CONTACT_ID;
 
-  return (
-    <div className="h-[calc(100vh-80px)] flex bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-      {/* Contact List - Left Side */}
-      <div className="w-[360px] border-r border-gray-100 flex-shrink-0">
-        <ContactList
-          contacts={contacts}
-          selectedContact={selectedContact}
-          onSelectContact={handleSelectContact}
-          lastMessages={lastMessages}
-        />
-      </div>
+  const showContactPanel = isDesktop || !showConversationOnMobile;
+  const showConversationPanel = isDesktop || showConversationOnMobile;
+  const shouldRenderContactPanel = isDesktop ? showContactPanel : true;
+  const shouldRenderConversationPanel = isDesktop ? showConversationPanel : true;
 
-      {/* Chat Window - Right Side */}
-      <div className="flex-1 min-w-0">
-        {isSupportBotSelected ? (
-          <SupportBotPanel />
-        ) : (
-          <ChatWindow
-            contact={selectedContact}
-            messages={currentMessages}
-            onSendMessage={handleSendMessage}
-            onReaction={handleReaction}
-          />
-        )}
+  return (
+    <div className="bg-gradient-to-br from-[#f3fbff] via-[#eef8ff] to-[#e8f6ff] px-3 py-3 md:px-5 md:py-5">
+      <div className="mx-auto w-full max-w-[1500px]">
+
+        <section
+          className="overflow-hidden rounded-3xl border border-[#d5ebf8] bg-white shadow-[0_20px_45px_-28px_rgba(1,38,67,0.35)]"
+          style={{ height: `${panelHeight}px` }}
+        >
+          <div className={`${isDesktop ? 'flex' : 'relative'} h-full min-h-0 overflow-hidden`}>
+            <aside
+              className={`${shouldRenderContactPanel ? 'flex' : 'hidden'} ${isDesktop ? 'w-[360px] border-r border-[#d5ebf8]' : 'absolute inset-0 w-full transition-all duration-300 ease-out'} ${!isDesktop && showConversationOnMobile ? '-translate-x-full opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'} min-h-0 flex-col bg-[#f8fdff]`}
+            >
+              <ContactList
+                contacts={contacts}
+                selectedContact={selectedContact}
+                onSelectContact={handleSelectContact}
+                lastMessages={lastMessages}
+                onPinContact={handlePinContact}
+                onDeleteConversation={handleDeleteConversation}
+              />
+            </aside>
+
+            <main
+              className={`${shouldRenderConversationPanel ? 'flex' : 'hidden'} ${isDesktop ? 'relative flex-1' : 'absolute inset-0 w-full transition-all duration-300 ease-out'} ${!isDesktop && !showConversationOnMobile ? 'translate-x-full opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'} min-h-0 min-w-0 flex-col bg-white`}
+              onTouchStart={handleConversationTouchStart}
+              onTouchMove={handleConversationTouchMove}
+              onTouchEnd={handleConversationTouchEnd}
+            >
+              {isSupportBotSelected ? (
+                <AssistantBotPanel onBack={!isDesktop ? handleBackToList : undefined} />
+              ) : (
+                <ChatWindow
+                  contact={selectedContact}
+                  messages={currentMessages}
+                  onSendMessage={handleSendMessage}
+                  onReaction={handleReaction}
+                  onBack={!isDesktop ? handleBackToList : undefined}
+                />
+              )}
+            </main>
+          </div>
+        </section>
       </div>
     </div>
   );

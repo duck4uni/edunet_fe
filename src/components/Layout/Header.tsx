@@ -13,11 +13,12 @@ import {
   SettingOutlined,
   SafetyCertificateOutlined
 } from '@ant-design/icons';
-import { Avatar, Button, Drawer, Dropdown } from 'antd';
+import { Avatar, Badge, Button, Drawer, Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { useGetProfileQuery } from '../../services/authApi';
 import { getAccessToken, clearTokens } from '../../services/axiosBaseQuery';
 import { useLogoutMutation } from '../../services/authApi';
+import { useGetUnreadCountsQuery, useGetPendingRequestsQuery } from '../../services/friendChatApi';
 
 import Logo from '../../assets/images/Logo.png';
 
@@ -35,15 +36,32 @@ const Header: React.FC = () => {
   const user = profileData?.data || null;
   const isLoggedIn = !!user;
 
+  // Notification queries
+  const { data: unreadRes } = useGetUnreadCountsQuery(undefined, { skip: !hasToken });
+  const { data: pendingRes } = useGetPendingRequestsQuery(undefined, { skip: !hasToken });
+
+  const totalUnreadMessages = ((unreadRes as any)?.data ?? []).reduce(
+    (sum: number, u: any) => sum + parseInt(u.count || '0'), 0
+  );
+  const pendingFriendCount = ((pendingRes as any)?.data ?? []).length;
+
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
     { title: 'Trang chủ', path: '/' },
     { title: 'Khóa học', path: '/courses' },
-    { title: 'Khóa học của tôi', path: '/my-course' },
-    { title: 'Lịch học', path: '/schedule' },
-    { title: 'Tin nhắn', path: '/chat' },
+    { title: 'Khóa học của tôi', path: '/my-course', requiresAuth: true },
+    { title: 'Lịch học', path: '/schedule', requiresAuth: true },
+    { title: 'Bạn bè', path: '/friends', badge: pendingFriendCount, requiresAuth: true },
+    { title: 'Tin nhắn', path: '/chat', badge: totalUnreadMessages, requiresAuth: true },
   ];
+
+  const handleNavClick = (e: React.MouseEvent, link: { requiresAuth?: boolean }) => {
+    if (link.requiresAuth && !isLoggedIn) {
+      e.preventDefault();
+      message.warning('Vui lòng đăng nhập để sử dụng chức năng này');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -141,11 +159,18 @@ const Header: React.FC = () => {
                 <Link 
                   key={link.path}
                   to={link.path}
+                  onClick={(e) => handleNavClick(e, link)}
                   className={`text-base font-medium flex items-center gap-1 transition-colors duration-300 ${
                     isActive(link.path) ? 'text-[#30C2EC]' : 'text-gray-600 hover:text-[#30C2EC]'
                   }`}
                 >
-                  {link.title}
+                  <Badge count={'badge' in link ? link.badge : 0} size="small" offset={[8, -2]}>
+                    <span className={`text-base font-medium ${
+                      isActive(link.path) ? 'text-[#30C2EC]' : 'text-gray-600'
+                    }`}>
+                      {link.title}
+                    </span>
+                  </Badge>
                   <PlusOutlined className="text-xs opacity-50" />
                 </Link>
               ))}
@@ -206,12 +231,14 @@ const Header: React.FC = () => {
             <Link 
               key={link.path}
               to={link.path}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => { handleNavClick(e, link); if (!link.requiresAuth || isLoggedIn) setMobileMenuOpen(false); }}
               className={`text-lg font-medium py-2 border-b border-gray-50 ${
                 isActive(link.path) ? 'text-[#30C2EC]' : 'text-gray-600'
               }`}
             >
-              {link.title}
+              <Badge count={'badge' in link ? link.badge : 0} size="small" offset={[8, -2]}>
+                {link.title}
+              </Badge>
             </Link>
           ))}
           <div className="mt-4">
