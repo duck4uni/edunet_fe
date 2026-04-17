@@ -15,6 +15,7 @@ import Answer from '../pages/user/MyCourse/Quizz/Answer';
 import DetailAnswer from '../pages/user/MyCourse/Quizz/DetailAnswer';
 import ManageCourse from '../pages/user/MyCourse/ManageCourse';
 import Chat from '../pages/user/Chat';
+import Friends from '../pages/user/Friends';
 import Profile from '../pages/user/Profile';
 import Login from '../pages/auth/Login';
 import RegisterStudent from '../pages/auth/Register/Student';
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: 'chat',
         element: <Chat />,
+      },
+      {
+        path: 'friends',
+        element: <Friends />,
       },
       {
         path: 'profile',

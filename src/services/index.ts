@@ -191,3 +191,22 @@ export {
 export type {
   Student,
 } from './userApi';
+
+// Friend & Chat API
+export {
+  friendChatApi,
+  useLazySearchUsersQuery,
+  useGetFriendsQuery,
+  useGetPendingRequestsQuery,
+  useGetSentRequestsQuery,
+  useSendFriendRequestMutation,
+  useRespondToFriendRequestMutation,
+  useUnfriendMutation,
+  useGetMessagesQuery,
+  useLazyGetMessagesQuery,
+  useGetUnreadCountsQuery,
+  useMarkAsReadMutation,
+} from './friendChatApi';
+
+// Socket service
+export { socketService } from './socketService';

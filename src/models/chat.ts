@@ -40,3 +40,36 @@ export interface Conversation {
   createdAt: string;
   updatedAt: string;
 }
+
+// Friend-related types
+export interface FriendUser {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
+  role: string;
+  friendshipId?: string | null;
+  friendshipStatus?: 'pending' | 'accepted' | 'rejected' | null;
+}
+
+export interface FriendRequest {
+  friendshipId: string;
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
+  role: string;
+  createdAt: string;
+}
+
+export interface ChatMessageFromServer {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+}

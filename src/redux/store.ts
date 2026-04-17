@@ -7,6 +7,8 @@ import { courseApi } from '../services/courseApi';
 import { learningApi } from '../services/learningApi';
 import { supportApi } from '../services/supportApi';
 import { userApi } from '../services/userApi';
+import { friendChatApi } from '../services/friendChatApi';
+import { personalAssistantApi } from '../services/personalAssistantApi';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +19,8 @@ export const store = configureStore({
     [learningApi.reducerPath]: learningApi.reducer,
     [supportApi.reducerPath]: supportApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [friendChatApi.reducerPath]: friendChatApi.reducer,
+    [personalAssistantApi.reducerPath]: personalAssistantApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -26,7 +30,9 @@ export const store = configureStore({
       .concat(courseApi.middleware)
       .concat(learningApi.middleware)
       .concat(supportApi.middleware)
-      .concat(userApi.middleware),
+      .concat(userApi.middleware)
+      .concat(friendChatApi.middleware)
+      .concat(personalAssistantApi.middleware),
 });
 
 setupListeners(store.dispatch);
