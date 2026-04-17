@@ -30,6 +30,92 @@ interface Question {
   correctAnswer: string;
 }
 
+const OPTION_KEYS = ['A', 'B', 'C', 'D'];
+
+const normalizeQuizQuestions = (rawQuestions: unknown): Question[] => {
+  if (!Array.isArray(rawQuestions)) {
+    return [];
+  }
+
+  return rawQuestions
+    .map((rawQuestion, index) => {
+      if (!rawQuestion || typeof rawQuestion !== 'object') {
+        return null;
+      }
+
+      const question = rawQuestion as Record<string, unknown>;
+      const rawText = question.text ?? question.questionText ?? question.question;
+      const text = typeof rawText === 'string' ? rawText.trim() : '';
+      if (!text) {
+        return null;
+      }
+
+      const rawOptions = question.options;
+      const options = Array.isArray(rawOptions)
+        ? rawOptions
+            .map((rawOption, optionIndex) => {
+              if (typeof rawOption === 'string') {
+                const label = rawOption.trim();
+                if (!label) {
+                  return null;
+                }
+                return {
+                  key: OPTION_KEYS[optionIndex] || `OPT${optionIndex + 1}`,
+                  label,
+                };
+              }
+
+              if (!rawOption || typeof rawOption !== 'object') {
+                return null;
+              }
+
+              const option = rawOption as Record<string, unknown>;
+              const rawLabel = option.label ?? option.text ?? option.value;
+              const label = typeof rawLabel === 'string' ? rawLabel.trim() : '';
+              if (!label) {
+                return null;
+              }
+
+              const key =
+                typeof option.key === 'string' && option.key.trim().length > 0
+                  ? option.key.trim().toUpperCase()
+                  : OPTION_KEYS[optionIndex] || `OPT${optionIndex + 1}`;
+
+              return { key, label };
+            })
+            .filter((option): option is { key: string; label: string } => Boolean(option))
+        : [];
+
+      if (options.length < 2) {
+        return null;
+      }
+
+      let correctAnswer = options[0].key;
+      if (typeof question.correctAnswer === 'string') {
+        const candidate = question.correctAnswer.trim().toUpperCase();
+        if (options.some((option) => option.key === candidate)) {
+          correctAnswer = candidate;
+        }
+      } else if (typeof question.correctAnswerIndex === 'number') {
+        const option = options[question.correctAnswerIndex];
+        if (option) {
+          correctAnswer = option.key;
+        }
+      }
+
+      return {
+        id:
+          typeof question.id === 'string' && question.id.trim().length > 0
+            ? question.id.trim()
+            : `question-${index}`,
+        text,
+        options,
+        correctAnswer,
+      };
+    })
+    .filter((question): question is Question => Boolean(question));
+};
+
 const DetailAnswer: React.FC = () => {
   const { id: attemptId } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -39,10 +125,8 @@ const DetailAnswer: React.FC = () => {
   const quiz = attempt?.quiz;
 
   const questions: Question[] = useMemo(() => {
-    if (!quiz?.questions) return [];
-    const raw = quiz.questions as Question[];
-    return Array.isArray(raw) ? raw : [];
-  }, [quiz]);
+    return normalizeQuizQuestions(quiz?.questions);
+  }, [quiz?.questions]);
 
   const userAnswers = (attempt?.answers || {}) as Record<string, string>;
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Table, Button, Modal, Form, Input, InputNumber, Switch, Popconfirm, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import QuizQuestionManager from './QuizQuestionManager';
+import QuizGenerationDrawer from './QuizGenerationDrawer';
 import { 
   useGetQuizzesByCourseQuery, 
   useCreateQuizMutation, 
@@ -20,6 +21,7 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
   const [deleteQuiz] = useDeleteQuizMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isGenerationDrawerOpen, setIsGenerationDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [manageQuizId, setManageQuizId] = useState<string | null>(null);
   const [manageQuestionsData, setManageQuestionsData] = useState<any>(null);
@@ -125,7 +127,7 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
         <Button 
           type="primary" 
           icon={<PlusOutlined />} 
-          onClick={() => handleOpenModal()}
+          onClick={() => setIsGenerationDrawerOpen(true)}
           className="!bg-[#012643]"
         >
           Thêm Quiz
@@ -184,6 +186,13 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
           </Button>
         </Form>
       </Modal>
+
+      <QuizGenerationDrawer
+        open={isGenerationDrawerOpen}
+        onClose={() => setIsGenerationDrawerOpen(false)}
+        courseId={courseId}
+        onCreated={refetch}
+      />
 
       <QuizQuestionManager
         visible={isQuestionManagerVisible}

@@ -46,7 +46,7 @@ export interface Quiz {
   title: string;
   description?: string;
   duration: number;
-  questions?: object;
+  questions?: QuizQuestion[];
   totalQuestions: number;
   maxAttempts: number;
   passingScore: number;
@@ -55,6 +55,34 @@ export interface Quiz {
   isVisible: boolean;
   courseId: string;
   createdAt: string;
+}
+export interface QuizQuestionOption {
+  key: string;
+  label: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  options: QuizQuestionOption[];
+  correctAnswer: string;
+}
+
+export interface GenerateAiQuizRequest {
+  courseId: string;
+  title: string;
+  topic: string;
+  description?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  language?: string;
+  additionalInstructions?: string;
+  questionCount?: number;
+  duration?: number;
+  maxAttempts?: number;
+  passingScore?: number;
+  shuffleQuestions?: boolean;
+  showCorrectAnswers?: boolean;
+  isVisible?: boolean;
 }
 
 export interface QuizAttempt {
@@ -263,6 +291,15 @@ export const learningApi = createApi({
     createQuiz: builder.mutation<ApiResponse<Quiz>, Partial<Quiz> & { courseId: string; title: string }>({
       query: (data) => ({
         url: '/quizzes',
+        method: 'post',
+        data,
+      }),
+      invalidatesTags: ['Quizzes'],
+    }),
+
+    generateAiQuiz: builder.mutation<ApiResponse<Quiz>, GenerateAiQuizRequest>({
+      query: (data) => ({
+        url: '/quizzes/generate/ai',
         method: 'post',
         data,
       }),
@@ -485,6 +522,7 @@ export const {
   useGetQuizzesByCourseQuery,
   useGetQuizByIdQuery,
   useCreateQuizMutation,
+  useGenerateAiQuizMutation,
   useUpdateQuizMutation,
   useDeleteQuizMutation,
   useStartQuizAttemptMutation,
