@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Row, Col } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { useCourses } from '../../../hooks/useCourses';
@@ -14,6 +14,7 @@ type SortOption = 'newest' | 'popular' | 'rating' | 'price-low' | 'price-high';
 type LevelFilter = 'all' | 'beginner' | 'intermediate' | 'advanced';
 
 const DEFAULT_PRICE_RANGE: [number, number] = [0, 500000];
+const SEARCH_DEBOUNCE_MS = 450;
 
 const toNumber = (value: number | string | null | undefined): number => {
   const parsedValue = Number(value);
@@ -62,6 +63,16 @@ const ListCourse: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<LevelFilter>('all');
   const [minimumRating, setMinimumRating] = useState<number>(0);
   const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
+
+  useEffect(() => {
+    const debounceTimer = window.setTimeout(() => {
+      setSearchTerm(searchValue.trim());
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(debounceTimer);
+    };
+  }, [searchValue]);
   
   const { courses, loading, totalCount } = useCourses({ 
     page: 1, 
@@ -140,12 +151,6 @@ const ListCourse: React.FC = () => {
     setSearchParams(params);
   };
 
-  const handleSearch = (value: string) => {
-    const nextKeyword = value.trim();
-    setSearchTerm(nextKeyword);
-    setSearchValue(nextKeyword);
-  };
-
   const handleResetFilters = () => {
     setSelectedLevel('all');
     setMinimumRating(0);
@@ -179,7 +184,6 @@ const ListCourse: React.FC = () => {
                 totalFromApi={totalCount}
                 searchValue={searchValue}
                 onSearchValueChange={setSearchValue}
-                onSearch={handleSearch}
                 view={viewMode}
                 onViewChange={setViewMode}
                 sortValue={sortOption}

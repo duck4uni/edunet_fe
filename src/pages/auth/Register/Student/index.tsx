@@ -8,6 +8,7 @@ import CloudOne from '../../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../../assets/images/cloud-2.png';
 import { useRegisterMutation } from '../../../../services/authApi';
 import { setTokens } from '../../../../services/axiosBaseQuery';
+import '../register.css';
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -260,7 +261,7 @@ const RegisterStudent: React.FC = () => {
             <Text className="text-gray-600 text-base">Hoàn thành các bước dưới đây để tạo tài khoản.</Text>
           </div>
 
-          <Steps current={current} className="mb-6" size="small" items={steps.map(s => ({ title: s.title }))} />
+          <Steps current={current} className="mb-6 register-auth-steps" size="small" items={steps.map(s => ({ title: s.title }))} />
 
           <Form
             form={form}
@@ -297,7 +298,7 @@ const RegisterStudent: React.FC = () => {
           <div className="text-center mt-5 pt-4 border-t border-gray-100">
             <Text className="text-gray-500 text-sm">
               Đã có tài khoản?
-              <Link to="/auth/login" className="text-[#00B1F5] ml-1 font-semibold hover:text-[#0898cc]">
+              <Link to="/auth/login" className="register-login-link ml-1">
                 Đăng nhập
               </Link>
             </Text>

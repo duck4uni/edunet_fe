@@ -17,6 +17,7 @@ import BookPanda from '../../../../assets/images/Panda/BookPanda.png';
 import CloudOne from '../../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../../assets/images/cloud-2.png';
 import { useRegisterTeacherMutation } from '../../../../services/authApi';
+import '../register.css';
 
 const { Title, Text } = Typography;
 const { Dragger } = Upload;
@@ -360,7 +361,7 @@ const RegisterTeacher: React.FC = () => {
 
           <Steps
             current={current}
-            className="mb-6"
+            className="mb-6 register-auth-steps"
             size="small"
             items={steps.map(s => ({ title: s.title }))}
           />
@@ -401,7 +402,7 @@ const RegisterTeacher: React.FC = () => {
           <div className="text-center mt-5 pt-4 border-t border-gray-100">
             <Text className="text-gray-500 text-sm">
               Đã có tài khoản?{' '}
-              <Link to="/auth/login" className="text-[#00B1F5] font-semibold hover:text-[#0898cc]">
+              <Link to="/auth/login" className="register-login-link">
                 Đăng nhập
               </Link>
             </Text>
