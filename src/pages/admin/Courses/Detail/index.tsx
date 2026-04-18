@@ -17,10 +17,8 @@ import {
   Spin,
   Statistic,
   Table,
-  Tag,
   Tabs,
   Typography,
-  message,
 } from 'antd';
 import {
   CheckOutlined,
@@ -44,6 +42,8 @@ import {
 } from '../../../../services/courseApi';
 import type { Course, Lesson, Review } from '../../../../services/courseApi';
 import { formatCurrency, formatDate, formatDateTime } from '../../../../utils/format';
+import { notify } from '../../../../utils/notify';
+import Badge from '../../../../components/common/Tag';
 
 const { Paragraph, Text, Title } = Typography;
 const { TextArea } = Input;
@@ -125,16 +125,16 @@ const AdminCourseDetail: React.FC = () => {
     if (!id) return;
     try {
       await reviewCourse({ id, status: 'approved' }).unwrap();
-      message.success('Đã duyệt khóa học');
+      notify.success('Đã duyệt khóa học');
       refetch();
     } catch {
-      message.error('Không thể duyệt khóa học');
+      notify.error('Không thể duyệt khóa học');
     }
   };
 
   const handleReject = async (): Promise<void> => {
     if (!id || !rejectReason.trim()) {
-      message.error('Vui lòng nhập lý do từ chối');
+      notify.error('Vui lòng nhập lý do từ chối');
       return;
     }
     try {
@@ -143,12 +143,12 @@ const AdminCourseDetail: React.FC = () => {
         status: 'rejected',
         rejectionReason: rejectReason.trim(),
       }).unwrap();
-      message.success('Đã từ chối khóa học');
+      notify.success('Đã từ chối khóa học');
       setRejectOpen(false);
       setRejectReason('');
       refetch();
     } catch {
-      message.error('Không thể từ chối khóa học');
+      notify.error('Không thể từ chối khóa học');
     }
   };
 
@@ -156,10 +156,10 @@ const AdminCourseDetail: React.FC = () => {
     if (!id) return;
     try {
       await publishCourse(id).unwrap();
-      message.success('Đã xuất bản khóa học');
+      notify.success('Đã xuất bản khóa học');
       refetch();
     } catch {
-      message.error('Không thể xuất bản khóa học');
+      notify.error('Không thể xuất bản khóa học');
     }
   };
 
@@ -168,10 +168,10 @@ const AdminCourseDetail: React.FC = () => {
     const nextStatus = course.status === 'archived' ? 'published' : 'archived';
     try {
       await updateCourse({ id, data: { status: nextStatus } }).unwrap();
-      message.success(nextStatus === 'archived' ? 'Đã khóa khóa học' : 'Đã mở khóa khóa học');
+      notify.success(nextStatus === 'archived' ? 'Đã khóa khóa học' : 'Đã mở khóa khóa học');
       refetch();
     } catch {
-      message.error('Không thể cập nhật trạng thái khóa học');
+      notify.error('Không thể cập nhật trạng thái khóa học');
     }
   };
 
@@ -179,10 +179,10 @@ const AdminCourseDetail: React.FC = () => {
     if (!id) return;
     try {
       await deleteCourse(id).unwrap();
-      message.success('Đã xóa khóa học');
+      notify.success('Đã xóa khóa học');
       navigate('/admin/courses');
     } catch {
-      message.error('Không thể xóa khóa học');
+      notify.error('Không thể xóa khóa học');
     }
   };
 
@@ -214,7 +214,7 @@ const AdminCourseDetail: React.FC = () => {
       dataIndex: 'type',
       key: 'type',
       width: 120,
-      render: (type: string) => <Tag color="blue">{type || 'video'}</Tag>,
+      render: (type: string) => <Badge color="blue">{type || 'video'}</Badge>,
     },
     {
       title: 'Thời lượng',
@@ -229,7 +229,7 @@ const AdminCourseDetail: React.FC = () => {
       key: 'isFree',
       width: 120,
       render: (isFree: boolean) => (
-        <Tag color={isFree ? 'green' : 'gold'}>{isFree ? 'Miễn phí' : 'Trả phí'}</Tag>
+        <Badge color={isFree ? 'green' : 'gold'}>{isFree ? 'Miễn phí' : 'Trả phí'}</Badge>
       ),
     },
   ];
@@ -428,9 +428,9 @@ const AdminCourseDetail: React.FC = () => {
               <div>
                 <Space className="mb-2" wrap>
                   <StatusBadge status={course.status} />
-                  <Tag color="blue">{course.level}</Tag>
-                  <Tag color="purple">{course.language || 'Vietnamese'}</Tag>
-                  {course.category?.name && <Tag color="geekblue">{course.category.name}</Tag>}
+                  <Badge color="blue">{course.level}</Badge>
+                  <Badge color="purple">{course.language || 'Vietnamese'}</Badge>
+                  {course.category?.name && <Badge color="geekblue">{course.category.name}</Badge>}
                 </Space>
                 <Paragraph>{course.description || 'Không có mô tả'}</Paragraph>
               </div>
@@ -462,7 +462,7 @@ const AdminCourseDetail: React.FC = () => {
                       <Descriptions.Item label="Mục tiêu" span={2}>{course.goal || '—'}</Descriptions.Item>
                       <Descriptions.Item label="Tags" span={2}>
                         {(course.tags || []).length > 0
-                          ? (course.tags || []).map(tag => <Tag key={tag}>{tag}</Tag>)
+                          ? (course.tags || []).map(tag => <Badge key={tag}>{tag}</Badge>)
                           : 'Không có tags'}
                       </Descriptions.Item>
                       {course.rejectionReason && (
@@ -521,9 +521,9 @@ const AdminCourseDetail: React.FC = () => {
               <Descriptions.Item label="Email">{course.teacher?.email || '—'}</Descriptions.Item>
               <Descriptions.Item label="Điện thoại">{course.teacher?.phone || '—'}</Descriptions.Item>
               <Descriptions.Item label="Trạng thái">
-                <Tag color={course.teacher?.isActive === false ? 'red' : 'green'}>
+                <Badge color={course.teacher?.isActive === false ? 'red' : 'green'}>
                   {course.teacher?.isActive === false ? 'Đang khóa' : 'Đang hoạt động'}
-                </Tag>
+                </Badge>
               </Descriptions.Item>
             </Descriptions>
             <Paragraph className="!mb-0 !mt-3" type="secondary">

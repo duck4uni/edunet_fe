@@ -1,6 +1,6 @@
 // Status Badge Component
 import React from 'react';
-import { Tag } from 'antd';
+import Badge from '../common/Tag';
 
 interface StatusConfig {
   label: string;
@@ -72,12 +72,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   };
 
   return (
-    <Tag 
+    <Badge 
       color={config.color}
       style={size === 'small' ? { fontSize: '11px', padding: '0 6px' } : undefined}
     >
       {config.label}
-    </Tag>
+    </Badge>
   );
 };
 

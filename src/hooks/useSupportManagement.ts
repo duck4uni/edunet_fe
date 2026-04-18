@@ -1,6 +1,6 @@
 // Support Ticket Management Hook — connected to real API
 import { useState, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { AdminSupportTicket, TicketResponse, TableParams } from '../types/admin';
 import {
   useGetTicketsQuery,
@@ -13,6 +13,7 @@ import {
 import { useGetProfileQuery } from '../services/authApi';
 import type { QueryParams } from '../services/supportApi';
 
+import { notify } from '../utils/notify';
 interface TicketFilters {
   status?: string;
   category?: string;
@@ -93,10 +94,10 @@ export const useSupportManagement = () => {
         id: ticketId,
         data: { assignedToId: assignedTo, status: 'in_progress' } as any,
       }).unwrap();
-      message.success('Đã phân công ticket');
+      notify.success('Đã phân công ticket');
       return { success: true };
     } catch {
-      message.error('Không thể phân công ticket');
+      notify.error('Không thể phân công ticket');
       return { success: false };
     }
   }, [updateTicketApi]);
@@ -111,10 +112,10 @@ export const useSupportManagement = () => {
       } else {
         await updateTicketApi({ id: ticketId, data: { status } as any }).unwrap();
       }
-      message.success('Đã cập nhật trạng thái ticket');
+      notify.success('Đã cập nhật trạng thái ticket');
       return { success: true };
     } catch {
-      message.error('Không thể cập nhật trạng thái');
+      notify.error('Không thể cập nhật trạng thái');
       return { success: false };
     }
   }, [updateTicketApi, resolveTicketApi, closeTicketApi]);
@@ -123,10 +124,10 @@ export const useSupportManagement = () => {
   const updateTicketPriority = useCallback(async (ticketId: string, priority: AdminSupportTicket['priority']) => {
     try {
       await updateTicketApi({ id: ticketId, data: { priority } as any }).unwrap();
-      message.success('Đã cập nhật độ ưu tiên');
+      notify.success('Đã cập nhật độ ưu tiên');
       return { success: true };
     } catch {
-      message.error('Không thể cập nhật độ ưu tiên');
+      notify.error('Không thể cập nhật độ ưu tiên');
       return { success: false };
     }
   }, [updateTicketApi]);
@@ -155,10 +156,10 @@ export const useSupportManagement = () => {
         );
       }
 
-      message.success('Đã gửi phản hồi');
+      notify.success('Đã gửi phản hồi');
       return { success: true };
     } catch {
-      message.error('Không thể gửi phản hồi');
+      notify.error('Không thể gửi phản hồi');
       return { success: false };
     }
   }, [respondToTicketApi, profileData, selectedTicket]);
@@ -226,4 +227,3 @@ export const useSupportManagement = () => {
     getTicketById,
   };
 };
-

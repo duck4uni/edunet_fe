@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Rate, Progress, List, Avatar, Tag, Form, Input, Upload, Button, Modal, Select, Dropdown, message, Tooltip, Typography } from 'antd';
+import { Rate, Progress, List, Avatar, Form, Input, Upload, Button, Modal, Select, Dropdown, Tooltip, Typography } from 'antd';
 import { ClockCircleOutlined, UploadOutlined, MoreOutlined, FlagOutlined, LikeOutlined, LikeFilled, DislikeOutlined, DislikeFilled, FilterOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useReviewForm } from '../../hooks/useReviewForm';
 
+import { notify } from '../../utils/notify';
+import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -35,7 +37,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
 
   const handleSubmitReport = (values: any) => {
     console.log('Report submitted:', { review: reportingReview, ...values });
-    message.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
+    notify.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
     setReportModalOpen(false);
     reportForm.resetFields();
   };
@@ -157,7 +159,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews }) => {
                     <h4 className="text-lg font-bold text-[#012643] mb-1">{item.user}</h4>
                     <div className="flex items-center gap-3">
                       <Rate disabled defaultValue={item.rate} className="text-sm text-yellow-500" />
-                      <Tag color="blue" className="!rounded-full">{item.role}</Tag>
+                      <Badge color="blue" className="!rounded-full">{item.role}</Badge>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

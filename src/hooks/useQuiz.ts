@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { message } from 'antd';
+
 import { useNavigate } from 'react-router-dom';
 import {
   useGetQuizzesByCourseQuery,
@@ -12,6 +12,7 @@ import {
 import { useGetProfileQuery } from '../services/authApi';
 import type { QuizItem } from '../types/myCourse';
 
+import { notify } from '../utils/notify';
 export const useQuiz = (courseId: string) => {
   const navigate = useNavigate();
   const { data: profileData } = useGetProfileQuery();
@@ -96,9 +97,9 @@ export const useQuiz = (courseId: string) => {
   const handleDelete = async (quizId: string) => {
     try {
       await deleteQuiz(quizId).unwrap();
-      message.success('Đã xóa bài kiểm tra');
+      notify.success('Đã xóa bài kiểm tra');
     } catch {
-      message.error('Xóa bài kiểm tra thất bại');
+      notify.error('Xóa bài kiểm tra thất bại');
     }
   };
 
@@ -106,14 +107,14 @@ export const useQuiz = (courseId: string) => {
     try {
       if (selectedQuiz) {
         await updateQuiz({ id: selectedQuiz.id, data: values }).unwrap();
-        message.success('Đã cập nhật bài kiểm tra');
+        notify.success('Đã cập nhật bài kiểm tra');
       } else {
         await createQuiz({ ...values, courseId }).unwrap();
-        message.success('Đã tạo bài kiểm tra');
+        notify.success('Đã tạo bài kiểm tra');
       }
       setIsModalOpen(false);
     } catch {
-      message.error(selectedQuiz ? 'Cập nhật thất bại' : 'Tạo bài kiểm tra thất bại');
+      notify.error(selectedQuiz ? 'Cập nhật thất bại' : 'Tạo bài kiểm tra thất bại');
     }
   };
 
@@ -124,7 +125,7 @@ export const useQuiz = (courseId: string) => {
         navigate(`/my-course/quizz/practics/${result.data.id}`);
       }
     } catch {
-      message.error('Không thể bắt đầu bài kiểm tra');
+      notify.error('Không thể bắt đầu bài kiểm tra');
     }
   };
 

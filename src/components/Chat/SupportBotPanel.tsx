@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Avatar, Button, Input, Spin, Tag, Typography } from 'antd';
+import { Avatar, Button, Input, Spin, Typography } from 'antd';
 import {
   RobotOutlined,
   SendOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useAskChatbotMutation } from '../../services/chatbotApi';
+import Badge from '../common/Tag';
 
 const { Text, Title } = Typography;
 
@@ -121,7 +122,7 @@ const SupportBotPanel: React.FC = () => {
                     {turn.references && turn.references.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {turn.references.map((ref) => (
-                          <Tag key={ref} color="blue" className="!rounded-full !text-xs">{ref}</Tag>
+                          <Badge key={ref} color="blue" className="!rounded-full !text-xs">{ref}</Badge>
                         ))}
                       </div>
                     )}

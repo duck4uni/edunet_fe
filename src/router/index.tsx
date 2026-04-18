@@ -46,79 +46,98 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
+    handle: { hideBreadcrumb: true },
     children: [
       {
         index: true,
         element: <Home />,
+        handle: { breadcrumb: 'Trang chủ' },
       },
       {
         path: 'courses',
         element: <ListCourse />,
+        handle: { breadcrumb: 'Khóa học' },
       },
       {
         path: 'courses/:id',
         element: <DetailCourse />,
+        handle: { breadcrumb: 'Chi tiết khóa học' },
       },
       {
         path: 'schedule',
         element: <Schedule />,
+        handle: { breadcrumb: 'Lịch học' },
       },
       {
         path: 'chat',
         element: <Chat />,
+        handle: { breadcrumb: 'Tin nhắn' },
       },
       {
         path: 'profile',
         element: <Profile />,
+        handle: { breadcrumb: 'Hồ sơ cá nhân' },
       },
       {
         path: 'my-course',
+        handle: { breadcrumb: 'Khóa học của tôi' },
         children: [
           {
             index: true,
             element: <MyCourse />,
+            handle: { breadcrumb: 'Danh sách khóa học' },
           },
           {
             path: 'detail/:id',
             element: <DetailMyCourse />,
+            handle: { breadcrumb: 'Chi tiết khóa học' },
           },
           {
             path: 'classroom/:id',
             element: <Classroom />,
+            handle: { breadcrumb: 'Lớp học' },
           },
           {
             path: 'material/:id',
             element: <Material />,
+            handle: { breadcrumb: 'Tài liệu' },
           },
           {
             path: 'assignment/index/:id',
             element: <Assignment />,
+            handle: { breadcrumb: 'Bài tập' },
           },
           {
             path: 'quizz/:id',
             element: <Quizz />,
+            handle: { breadcrumb: 'Bài kiểm tra' },
           },
           {
             path: 'quizz/practics/:id',
             element: <Practics />,
+            handle: { breadcrumb: 'Làm bài' },
           },
           {
             path: 'quizz/answer/:id',
             element: <Answer />,
+            handle: { breadcrumb: 'Kết quả làm bài' },
           },
           {
             path: 'quizz/answer/detail/:id',
             element: <DetailAnswer />,
+            handle: { breadcrumb: 'Chi tiết kết quả' },
           },
           {
             path: 'manage-course/:id',
             element: <ManageCourse />,
+            handle: { breadcrumb: 'Quản lý khóa học' },
           },
         ],
       },
       {
         path: '*',
         element: <NotFound />,
+        handle: { hideBreadcrumb: true },
       },
     ],
   },

@@ -17,8 +17,8 @@ import { PageHeader, StatusBadge, FilterBar } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
 import type { Course, Review, Enrollment } from '../../../services/courseApi';
 import { useGetCategoriesQuery, useGetTeachersQuery, useCreateCourseMutation } from '../../../services/courseApi';
-import { message } from 'antd';
 
+import { notify } from '../../../utils/notify';
 const { Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -112,12 +112,12 @@ const CourseManagement: React.FC = () => {
         startDate: values.startDate ? values.startDate.toISOString() : undefined,
         // Admin create → backend sets status = published automatically
       }).unwrap();
-      message.success('Tạo khóa học thành công — đã xuất bản ngay lập tức');
+      notify.success('Tạo khóa học thành công — đã xuất bản ngay lập tức');
       setCreateModalOpen(false);
       createForm.resetFields();
       fetchCourses();
     } catch {
-      message.error('Không thể tạo khóa học, vui lòng thử lại');
+      notify.error('Không thể tạo khóa học, vui lòng thử lại');
     }
   };
 

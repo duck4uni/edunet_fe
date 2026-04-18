@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Image, Tag, Modal, Form, Input, Select, message, Tooltip, Typography, Avatar, Spin } from 'antd';
+import { Button, Image, Modal, Form, Input, Select, Tooltip, Typography, Avatar, Spin } from 'antd';
 import { ClockCircleOutlined, CalendarOutlined, FacebookOutlined, TwitterOutlined, YoutubeOutlined, InstagramOutlined, FlagOutlined, HeartOutlined, HeartFilled, ShareAltOutlined, SafetyCertificateOutlined, CheckCircleOutlined, ExclamationCircleOutlined, BookOutlined, HourglassOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../utils/format';
@@ -7,6 +7,8 @@ import { useCheckEnrollmentQuery, useEnrollMeMutation } from '../../services/cou
 import { getAccessToken } from '../../services/axiosBaseQuery';
 import type { Course } from '../../models/course';
 
+import { notify } from '../../utils/notify';
+import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -43,16 +45,16 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
 
   const handleEnroll = async () => {
     if (!isLoggedIn) {
-      message.info('Vui lòng đăng nhập để đăng ký khóa học');
+      notify.info('Vui lòng đăng nhập để đăng ký khóa học');
       navigate('/auth/login');
       return;
     }
     try {
       await enrollMe(courseId).unwrap();
-      message.success('Đăng ký khóa học thành công!');
+      notify.success('Đăng ký khóa học thành công!');
     } catch (err: any) {
       const msg = err?.data?.message || 'Đăng ký khóa học thất bại';
-      message.error(msg);
+      notify.error(msg);
     }
   };
 
@@ -62,14 +64,14 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
 
   const handleReportCourse = (values: any) => {
     console.log('Course report submitted:', values);
-    message.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
+    notify.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
     setReportModalOpen(false);
     reportForm.resetFields();
   };
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
-    message.success('Đã sao chép liên kết!');
+    notify.success('Đã sao chép liên kết!');
   };
 
   return (
@@ -117,7 +119,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
             {course.discountPrice ? formatCurrency(course.discountPrice) : formatCurrency(course.price)}
           </span>
           {course.discountPrice && (
-            <Tag color="red" className="!rounded-full !text-sm">-38%</Tag>
+            <Badge color="red" className="!rounded-full !text-sm">-38%</Badge>
           )}
         </div>
         {course.discountPrice && (
@@ -227,7 +229,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
           </span>
           <div className="flex gap-1">
             {course.schedule?.map(day => (
-              <Tag key={day} color="blue" className="!rounded-full">{day}</Tag>
+              <Badge key={day} color="blue" className="!rounded-full">{day}</Badge>
             ))}
           </div>
         </div>

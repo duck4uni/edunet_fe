@@ -1,12 +1,14 @@
 // Permissions Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Tag, Modal, Form, Input, Tabs, Tree, Typography, Dropdown, message } from 'antd';
+import { Row, Col, Card, Table, Button, Modal, Form, Input, Tabs, Tree, Typography, Dropdown } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, MoreOutlined, TeamOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { usePermissionManagement } from '../../../hooks';
 import { PageHeader, ConfirmModal } from '../../../components/admin';
 import type { Permission, RoleGroup } from '../../../types/admin';
 import type { DataNode } from 'antd/es/tree';
 
+import { notify } from '../../../utils/notify';
+import Badge from '../../../components/common/Tag';
 const { Text } = Typography;
 
 const PermissionsManagement: React.FC = () => {
@@ -31,10 +33,10 @@ const PermissionsManagement: React.FC = () => {
       const values = await form.validateFields();
       if (editMode && selectedRole) { 
         await updateRoleGroup(selectedRole.id, values); 
-        message.success('Cập nhật thành công'); 
+        notify.success('Cập nhật thành công'); 
       } else { 
         await createRoleGroup({ ...values, permissions: [], isSystem: false }); 
-        message.success('Tạo mới thành công'); 
+        notify.success('Tạo mới thành công'); 
       }
       setModalOpen(false);
     } catch { /* validation failed */ }
@@ -43,14 +45,14 @@ const PermissionsManagement: React.FC = () => {
   const handleDelete = async () => {
     if (!selectedRole) return;
     await deleteRoleGroup(selectedRole.id);
-    message.success('Xóa thành công');
+    notify.success('Xóa thành công');
     setDeleteOpen(false);
   };
 
   const handlePermissionSave = async () => {
     if (!selectedRole) return;
     await updateRolePermissions(selectedRole.id, checkedKeys);
-    message.success('Cập nhật quyền thành công');
+    notify.success('Cập nhật quyền thành công');
   };
 
   const treeData: DataNode[] = Object.entries(permissionsByModule).map(([mod, perms]) => ({
@@ -74,17 +76,17 @@ const PermissionsManagement: React.FC = () => {
   });
 
   const roleColumns = [
-    { title: 'Tên vai trò', dataIndex: 'name', key: 'name', render: (n: string, r: RoleGroup) => <Text strong className={r.isSystem ? 'text-blue-500' : ''}>{n}{r.isSystem && <Tag color="blue" className="ml-2">Hệ thống</Tag>}</Text> },
+    { title: 'Tên vai trò', dataIndex: 'name', key: 'name', render: (n: string, r: RoleGroup) => <Text strong className={r.isSystem ? 'text-blue-500' : ''}>{n}{r.isSystem && <Badge color="blue" className="ml-2">Hệ thống</Badge>}</Text> },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', ellipsis: true },
-    { title: 'Số quyền', key: 'permCount', width: 100, render: (_: unknown, r: RoleGroup) => <Tag>{r.permissions?.length || 0}</Tag> },
-    { title: 'Số user', dataIndex: 'usersCount', key: 'usersCount', width: 100, render: (c: number) => <Tag color="green">{c || 0}</Tag> },
+    { title: 'Số quyền', key: 'permCount', width: 100, render: (_: unknown, r: RoleGroup) => <Badge>{r.permissions?.length || 0}</Badge> },
+    { title: 'Số user', dataIndex: 'usersCount', key: 'usersCount', width: 100, render: (c: number) => <Badge color="green">{c || 0}</Badge> },
     { title: '', key: 'actions', width: 50, render: (_: unknown, r: RoleGroup) => <Dropdown menu={actions(r)} trigger={['click']}><Button type="text" icon={<MoreOutlined />} /></Dropdown> },
   ];
 
   const permColumns = [
     { title: 'Quyền', dataIndex: 'name', key: 'name' },
-    { title: 'Mã', dataIndex: 'code', key: 'code', render: (c: string) => <Tag>{c}</Tag> },
-    { title: 'Phân hệ', dataIndex: 'module', key: 'module', render: (m: string) => <Tag color="blue" className="capitalize">{m}</Tag> },
+    { title: 'Mã', dataIndex: 'code', key: 'code', render: (c: string) => <Badge>{c}</Badge> },
+    { title: 'Phân hệ', dataIndex: 'module', key: 'module', render: (m: string) => <Badge color="blue" className="capitalize">{m}</Badge> },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', ellipsis: true },
   ];
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Steps, message, InputNumber, Upload, Typography } from 'antd';
+import { Form, Input, Button, Steps, InputNumber, Upload, Typography } from 'antd';
 import type { UploadFile, RcFile } from 'antd/es/upload';
 import {
   UserOutlined,
@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import Logo from '../../../../assets/images/Logo.png';
 import { useRegisterTeacherMutation } from '../../../../services/authApi';
 
+import { notify } from '../../../../utils/notify';
 const { Title, Text } = Typography;
 const { Dragger } = Upload;
 
@@ -36,7 +37,7 @@ const RegisterTeacher: React.FC = () => {
 
     // Step 3: submit via FormData
     if (!cvFile) {
-      message.error('Vui lòng tải lên CV dạng PDF!');
+      notify.error('Vui lòng tải lên CV dạng PDF!');
       return;
     }
 
@@ -62,19 +63,19 @@ const RegisterTeacher: React.FC = () => {
       } else if (errorData?.errors) {
         errorMessage = Object.values(errorData.errors).join('. ');
       }
-      message.error(errorMessage);
+      notify.error(errorMessage);
     }
   };
 
   const beforeCvUpload = (file: RcFile) => {
     const isPdf = file.type === 'application/pdf';
     if (!isPdf) {
-      message.error('Chỉ chấp nhận file PDF!');
+      notify.error('Chỉ chấp nhận file PDF!');
       return Upload.LIST_IGNORE;
     }
     const isLt5M = file.size / 1024 / 1024 < 5;
     if (!isLt5M) {
-      message.error('File không được vượt quá 5MB!');
+      notify.error('File không được vượt quá 5MB!');
       return Upload.LIST_IGNORE;
     }
     setCvFile(file);

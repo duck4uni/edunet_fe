@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Collapse, Checkbox, Slider, Rate, Input, Tag, Spin } from 'antd';
+import { Button, Collapse, Checkbox, Slider, Rate, Input, Spin } from 'antd';
 import { SearchOutlined, StarFilled } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetCategoriesQuery } from '../../services/courseApi';
+import Badge from '../common/Tag';
 
 const FILTER_DAYS = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
 
@@ -75,11 +76,11 @@ const FilterSidebar: React.FC = () => {
               }`}
             >
               <span className="font-medium">{cat.name}</span>
-              <Tag className={`!rounded-full !border-none ${
+              <Badge className={`!rounded-full !border-none ${
                 selectedCategories.includes(cat.id) ? '!bg-[#e5698e] !text-white' : '!bg-gray-100'
               }`}>
                 {cat.courses?.length || 0}
-              </Tag>
+              </Badge>
             </div>
           ))}
         </div>
@@ -186,24 +187,24 @@ const FilterSidebar: React.FC = () => {
           {selectedCategories.map(catId => {
             const category = categories.find(c => c.id === catId);
             return (
-              <Tag 
+              <Badge 
                 key={catId}
                 closable 
                 onClose={() => handleCategoryChange(catId)}
                 className="!rounded-full !bg-[#012643] !text-white !border-none !px-3 !py-1"
               >
                 {category?.name || catId}
-              </Tag>
+              </Badge>
             );
           })}
           {selectedRating > 0 && (
-            <Tag 
+            <Badge 
               closable 
               onClose={() => setSelectedRating(0)}
               className="!rounded-full !bg-[#e5698e] !text-white !border-none !px-3 !py-1 flex items-center gap-1"
             >
               <StarFilled /> {selectedRating}+
-            </Tag>
+            </Badge>
           )}
         </div>
       )}

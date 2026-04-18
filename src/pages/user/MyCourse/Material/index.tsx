@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   Card, 
   Table, 
-  Tag, 
   Button, 
   Input, 
   Modal, 
@@ -10,7 +9,6 @@ import {
   Typography, 
   Space, 
   Popconfirm,
-  Breadcrumb,
   Select,
   Upload,
   Tooltip,
@@ -21,7 +19,6 @@ import {
 import { 
   SearchOutlined, 
   DeleteOutlined,
-  HomeOutlined,
   BookOutlined,
   FileTextOutlined,
   FilePdfOutlined,
@@ -33,9 +30,10 @@ import {
   InboxOutlined,
   CloudUploadOutlined
 } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useMaterial } from '../../../../hooks';
 import type { MaterialItem } from '../../../../types/myCourse';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -110,9 +108,9 @@ const Material: React.FC = () => {
       render: (type: string) => {
         const config = getTypeConfig(type);
         return (
-          <Tag color={config.color} icon={getTypeIcon(type)} className="!rounded-full">
+          <Badge color={config.color} icon={getTypeIcon(type)} className="!rounded-full">
             {config.text}
-          </Tag>
+          </Badge>
         );
       },
     },
@@ -172,19 +170,8 @@ const Material: React.FC = () => {
   ];
 
   return (
-    <div className="py-8 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Breadcrumb */}
-        <Breadcrumb 
-          className="mb-6"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: <Link to={`/my-course/detail/${id}`}>Chi tiết khóa học</Link> },
-            { title: 'Tài liệu' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>

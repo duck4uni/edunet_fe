@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { 
   Row, Col, Card, Button, Space, Avatar, Typography, Form, Input, 
-  Switch, Tabs, Divider, List, Tag, Badge, Select, message, Modal
+  Switch, Tabs, Divider, List, Badge as AntBadge, Select, Modal
 } from 'antd';
 import {
   UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, 
@@ -14,6 +14,8 @@ import {
 import { useAdminAuth } from '../../../hooks';
 import { PageHeader } from '../../../components/admin';
 import { formatDate, formatDateTime } from '../../../utils/format';
+import { notify } from '../../../utils/notify';
+import Chip from '../../../components/common/Tag';
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -34,7 +36,7 @@ const AdminProfile: React.FC = () => {
       setLoading(true);
       const values = await profileForm.validateFields();
       await updateProfile(values);
-      message.success('Cập nhật thông tin thành công');
+      notify.success('Cập nhật thông tin thành công');
       setEditMode(false);
     } catch (e) {
       console.error(e);
@@ -47,15 +49,15 @@ const AdminProfile: React.FC = () => {
     try {
       const values = await passwordForm.validateFields();
       if (values.newPassword !== values.confirmPassword) {
-        message.error('Mật khẩu xác nhận không khớp');
+        notify.error('Mật khẩu xác nhận không khớp');
         return;
       }
       await changePassword(values.currentPassword, values.newPassword);
-      message.success('Đổi mật khẩu thành công');
+      notify.success('Đổi mật khẩu thành công');
       setPasswordModalOpen(false);
       passwordForm.resetFields();
     } catch (e) {
-      message.error('Đổi mật khẩu thất bại');
+      notify.error('Đổi mật khẩu thất bại');
     }
   };
 
@@ -203,14 +205,14 @@ const AdminProfile: React.FC = () => {
                 <List.Item>
                   <List.Item.Meta
                     avatar={
-                      <Badge status={item.status === 'success' ? 'success' : 'error'} offset={[-5, 30]}>
+                      <AntBadge status={item.status === 'success' ? 'success' : 'error'} offset={[-5, 30]}>
                         <Avatar icon={<GlobalOutlined />} />
-                      </Badge>
+                      </AntBadge>
                     }
                     title={
                       <span>
                         {item.device} - {item.browser}
-                        {item.isCurrent && <Tag color="green" className="ml-2">Phiên hiện tại</Tag>}
+                        {item.isCurrent && <Chip color="green" className="ml-2">Phiên hiện tại</Chip>}
                       </span>
                     }
                     description={
@@ -258,7 +260,7 @@ const AdminProfile: React.FC = () => {
               <Title level={4} className="mb-1">{admin?.firstName} {admin?.lastName}</Title>
               <Text type="secondary">{admin?.email}</Text>
               <div className="mt-2">
-                <Tag color="purple">{admin?.role === 'super_admin' ? 'Quản trị viên cao cấp' : 'Quản trị viên'}</Tag>
+                <Chip color="purple">{admin?.role === 'super_admin' ? 'Quản trị viên cao cấp' : 'Quản trị viên'}</Chip>
               </div>
             </div>
 
@@ -275,7 +277,7 @@ const AdminProfile: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <Text type="secondary">Trạng thái</Text>
-                <Tag color={admin?.status === 'active' ? 'green' : 'red'}>{admin?.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</Tag>
+                <Chip color={admin?.status === 'active' ? 'green' : 'red'}>{admin?.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</Chip>
               </div>
               <div className="flex justify-between">
                 <Text type="secondary">Ngày tạo</Text>

@@ -1,11 +1,12 @@
 // Recruitment Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Space, Avatar, Tabs, Dropdown, Tag, Modal, Typography } from 'antd';
+import { Row, Col, Card, Table, Button, Space, Avatar, Tabs, Dropdown, Modal, Typography } from 'antd';
 import { PlusOutlined, EyeOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, FileTextOutlined, CheckCircleOutlined, CloseCircleOutlined, InboxOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { useRecruitment } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
 import type { CVApplication, JobPosting } from '../../../types/admin';
+import Badge from '../../../components/common/Tag';
 
 const { Text } = Typography;
 
@@ -61,7 +62,7 @@ const RecruitmentManagement: React.FC = () => {
         </div>
       ),
     },
-    { title: 'Vị trí', dataIndex: 'position', key: 'position', width: 180, render: (p: string) => <Tag color="blue">{p}</Tag> },
+    { title: 'Vị trí', dataIndex: 'position', key: 'position', width: 180, render: (p: string) => <Badge color="blue">{p}</Badge> },
     { title: 'Kinh nghiệm', dataIndex: 'experience', key: 'exp', width: 100, render: (v: number) => `${v} năm` },
     { title: 'Mức lương', dataIndex: 'expectedSalary', key: 'salary', width: 130, render: (v: number | undefined) => v ? formatCurrency(v) : '-' },
     { title: 'Ngày nộp', dataIndex: 'appliedAt', key: 'date', width: 110, render: (d: string) => formatDate(d) },
@@ -79,8 +80,8 @@ const RecruitmentManagement: React.FC = () => {
         </div>
       ),
     },
-    { title: 'Phòng ban', dataIndex: 'department', key: 'dept', width: 140, render: (d: string) => <Tag color="geekblue">{d}</Tag> },
-    { title: 'Loại', dataIndex: 'type', key: 'type', width: 120, render: (t: string) => <Tag color={t === 'full-time' ? 'green' : t === 'internship' ? 'orange' : 'blue'}>{t === 'full-time' ? 'Toàn thời gian' : t === 'internship' ? 'Thực tập' : t}</Tag> },
+    { title: 'Phòng ban', dataIndex: 'department', key: 'dept', width: 140, render: (d: string) => <Badge color="geekblue">{d}</Badge> },
+    { title: 'Loại', dataIndex: 'type', key: 'type', width: 120, render: (t: string) => <Badge color={t === 'full-time' ? 'green' : t === 'internship' ? 'orange' : 'blue'}>{t === 'full-time' ? 'Toàn thời gian' : t === 'internship' ? 'Thực tập' : t}</Badge> },
     { title: 'Mức lương', key: 'salary', width: 160, render: (_: unknown, r: JobPosting) => r.salaryRange ? `${formatCurrency(r.salaryRange.min)} - ${formatCurrency(r.salaryRange.max)}` : '-' },
     { title: 'Ứng viên', dataIndex: 'applicationsCount', key: 'apps', width: 90 },
     { title: 'Hạn', dataIndex: 'deadline', key: 'deadline', width: 110, render: (d: string | undefined) => d ? formatDate(d) : '-' },
@@ -97,12 +98,12 @@ const RecruitmentManagement: React.FC = () => {
     { label: 'Họ tên', value: selectedApplication.applicantName },
     { label: 'Email', value: selectedApplication.email },
     { label: 'SĐT', value: selectedApplication.phone },
-    { label: 'Vị trí', value: <Tag color="blue">{selectedApplication.position}</Tag> },
+    { label: 'Vị trí', value: <Badge color="blue">{selectedApplication.position}</Badge> },
     { label: 'Kinh nghiệm', value: `${selectedApplication.experience} năm` },
     { label: 'Học vấn', value: selectedApplication.education },
     { label: 'Lương mong muốn', value: selectedApplication.expectedSalary ? formatCurrency(selectedApplication.expectedSalary) : '-' },
     { label: 'Ngày nộp', value: formatDate(selectedApplication.appliedAt) },
-    { label: 'Kỹ năng', value: selectedApplication.skills?.map((s: string) => <Tag key={s}>{s}</Tag>) || '-', span: 2 },
+    { label: 'Kỹ năng', value: selectedApplication.skills?.map((s: string) => <Badge key={s}>{s}</Badge>) || '-', span: 2 },
   ] : [];
 
   const tabItems = [
@@ -147,7 +148,7 @@ const RecruitmentManagement: React.FC = () => {
       <DetailDrawer open={detailOpen} onClose={() => setDetailOpen(false)} title={selectedApplication?.applicantName || ''} subtitle={selectedApplication?.position} status={selectedApplication?.status} items={appDetailItems} />
       <DetailDrawer open={jobDetailOpen} onClose={() => setJobDetailOpen(false)} title={selectedJob?.title || ''} subtitle={`${selectedJob?.department} • ${selectedJob?.location}`} status={selectedJob?.status}
         items={selectedJob ? [
-          { label: 'Phòng ban', value: <Tag color="geekblue">{selectedJob.department}</Tag> },
+          { label: 'Phòng ban', value: <Badge color="geekblue">{selectedJob.department}</Badge> },
           { label: 'Địa điểm', value: selectedJob.location },
           { label: 'Loại', value: selectedJob.type },
           { label: 'Mức lương', value: selectedJob.salaryRange ? `${formatCurrency(selectedJob.salaryRange.min)} - ${formatCurrency(selectedJob.salaryRange.max)}` : '-' },

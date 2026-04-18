@@ -10,7 +10,6 @@ import {
   Tabs,
   Tooltip,
   Typography,
-  message,
 } from 'antd';
 import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { FilterBar, PageHeader, StatusBadge } from '../../../components/admin';
@@ -21,6 +20,7 @@ import {
 } from '../../../services/courseApi';
 import type { QueryParams, Review } from '../../../services/courseApi';
 import { formatDate } from '../../../utils/format';
+import { notify } from '../../../utils/notify';
 
 const { Text, Paragraph } = Typography;
 
@@ -79,18 +79,18 @@ const ReviewManagement: React.FC = () => {
   const handleToggleVisibility = async (reviewId: string, currentlyVisible: boolean) => {
     try {
       await toggleVisibilityApi(reviewId).unwrap();
-      message.success(currentlyVisible ? 'Đã ẩn đánh giá' : 'Đã hiển thị lại đánh giá');
+      notify.success(currentlyVisible ? 'Đã ẩn đánh giá' : 'Đã hiển thị lại đánh giá');
     } catch {
-      message.error('Không thể cập nhật trạng thái đánh giá');
+      notify.error('Không thể cập nhật trạng thái đánh giá');
     }
   };
 
   const handleDelete = async (reviewId: string) => {
     try {
       await deleteReviewApi(reviewId).unwrap();
-      message.success('Đã xóa đánh giá');
+      notify.success('Đã xóa đánh giá');
     } catch {
-      message.error('Không thể xóa đánh giá');
+      notify.error('Không thể xóa đánh giá');
     }
   };
 
