@@ -10,6 +10,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useCreateTicketMutation } from '../../../services/supportApi';
 import { useForgotPasswordMutation } from '../../../services/authApi';
 
+import { notify } from '../../../utils/notify';
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
@@ -92,10 +93,10 @@ const Login: React.FC = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     const success = await login({ email: values.email, password: values.password });
     if (success) {
-      message.success('Đăng nhập thành công!');
+      notify.success('Đăng nhập thành công!');
       navigate('/');
     } else {
-      message.error(error || 'Email hoặc mật khẩu không đúng');
+      notify.error(error || 'Email hoặc mật khẩu không đúng');
     }
   };
 
@@ -107,11 +108,11 @@ const Login: React.FC = () => {
     try {
       const values = await resetEmailForm.validateFields();
       await forgotPassword({ email: values.resetEmail }).unwrap();
-      message.success('Link đặt lại mật khẩu đã được gửi đến email của bạn!');
+      notify.success('Link đặt lại mật khẩu đã được gửi đến email của bạn!');
       setIsModalOpen(false);
       resetEmailForm.resetFields();
     } catch {
-      message.error('Không thể gửi email. Vui lòng thử lại!');
+      notify.error('Không thể gửi email. Vui lòng thử lại!');
     }
   };
 
@@ -122,11 +123,11 @@ const Login: React.FC = () => {
         description: values.description,
         category: values.category as 'technical' | 'billing' | 'course' | 'account' | 'other',
       }).unwrap();
-      message.success('Ticket hỗ trợ đã được gửi! Chúng tôi sẽ liên hệ sớm.');
+      notify.success('Ticket hỗ trợ đã được gửi! Chúng tôi sẽ liên hệ sớm.');
       setIsSupportModalOpen(false);
       supportForm.resetFields();
     } catch {
-      message.error('Không thể gửi ticket. Vui lòng thử lại!');
+      notify.error('Không thể gửi ticket. Vui lòng thử lại!');
     }
   };
 

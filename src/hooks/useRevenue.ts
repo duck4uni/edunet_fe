@@ -1,9 +1,10 @@
 // Revenue & Statistics Hook
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { RevenueData, ChartData } from '../types/admin';
 import { revenueData as mockRevenueData, adminCourses, teachers } from '../constants/adminData';
 
+import { notify } from '../utils/notify';
 interface DateRange {
   startDate: string;
   endDate: string;
@@ -28,7 +29,7 @@ export const useRevenue = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       setRevenueData(mockRevenueData);
     } catch (error) {
-      message.error('Không thể tải dữ liệu doanh thu');
+      notify.error('Không thể tải dữ liệu doanh thu');
     } finally {
       setLoading(false);
     }
@@ -203,10 +204,10 @@ export const useRevenue = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Simulate file download
-      message.success(`Đã xuất báo cáo ${format.toUpperCase()}`);
+      notify.success(`Đã xuất báo cáo ${format.toUpperCase()}`);
       return { success: true };
     } catch (error) {
-      message.error('Không thể xuất báo cáo');
+      notify.error('Không thể xuất báo cáo');
       return { success: false };
     } finally {
       setLoading(false);
@@ -235,4 +236,3 @@ export const useRevenue = () => {
     exportReport,
   };
 };
-

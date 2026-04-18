@@ -1,6 +1,6 @@
 // Employee Management Page - Simplified
 import React, { useState } from 'react';
-import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography, Form, Input, Select, message } from 'antd';
+import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Modal, Typography, Form, Input, Select } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
 import { useEmployeeManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
@@ -8,6 +8,8 @@ import { formatCurrency, formatDate } from '../../../utils/format';
 import type { Employee } from '../../../types/admin';
 import { employeeStatuses, employeeRoles } from '../../../constants/adminData';
 
+import { notify } from '../../../utils/notify';
+import Badge from '../../../components/common/Tag';
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -32,10 +34,10 @@ const EmployeeManagement: React.FC = () => {
       const values = await form.validateFields();
       if (editMode && selectedEmployee) {
         await updateEmployee(selectedEmployee.id, values);
-        message.success('Cập nhật thành công');
+        notify.success('Cập nhật thành công');
       } else {
         await createEmployee(values);
-        message.success('Thêm thành công');
+        notify.success('Thêm thành công');
       }
       setFormOpen(false);
     } catch (e) { console.error(e); }
@@ -54,7 +56,7 @@ const EmployeeManagement: React.FC = () => {
         Modal.confirm({
           title: 'Xác nhận xóa', content: `Xóa "${record.firstName} ${record.lastName}"?`,
           okText: 'Xóa', okType: 'danger', cancelText: 'Hủy',
-          onOk: () => { deleteEmployee(record.id); message.success('Đã xóa'); },
+          onOk: () => { deleteEmployee(record.id); notify.success('Đã xóa'); },
         });
       }},
     ],
@@ -74,9 +76,9 @@ const EmployeeManagement: React.FC = () => {
       ),
     },
     { title: 'Email', dataIndex: 'email', key: 'email', width: 180 },
-    { title: 'Phòng ban', dataIndex: 'department', key: 'department', width: 140, render: (d: string) => <Tag color="geekblue">{d}</Tag> },
+    { title: 'Phòng ban', dataIndex: 'department', key: 'department', width: 140, render: (d: string) => <Badge color="geekblue">{d}</Badge> },
     { title: 'Chức vụ', dataIndex: 'position', key: 'position', width: 140 },
-    { title: 'Quyền', dataIndex: 'role', key: 'role', width: 120, render: (r: string) => { const info = employeeRoles.find((x: { value: string; color: string; label: string }) => x.value === r); return <Tag color={info?.color}>{info?.label || r}</Tag>; } },
+    { title: 'Quyền', dataIndex: 'role', key: 'role', width: 120, render: (r: string) => { const info = employeeRoles.find((x: { value: string; color: string; label: string }) => x.value === r); return <Badge color={info?.color}>{info?.label || r}</Badge>; } },
     { title: 'Ngày vào', dataIndex: 'hireDate', key: 'hireDate', width: 110, render: (d: string) => formatDate(d) },
     { title: 'Lương', dataIndex: 'salary', key: 'salary', width: 120, render: (v: number | undefined) => v ? formatCurrency(v) : '-' },
     { title: 'Trạng thái', dataIndex: 'status', key: 'status', width: 100, render: (s: string) => <StatusBadge status={s} /> },
@@ -95,9 +97,9 @@ const EmployeeManagement: React.FC = () => {
     { label: 'Họ tên', value: `${selectedEmployee.firstName} ${selectedEmployee.lastName}` },
     { label: 'Email', value: selectedEmployee.email },
     { label: 'SĐT', value: selectedEmployee.phone },
-    { label: 'Phòng ban', value: <Tag color="geekblue">{selectedEmployee.department}</Tag> },
+    { label: 'Phòng ban', value: <Badge color="geekblue">{selectedEmployee.department}</Badge> },
     { label: 'Chức vụ', value: selectedEmployee.position },
-    { label: 'Quyền', value: <Tag>{selectedEmployee.role}</Tag> },
+    { label: 'Quyền', value: <Badge>{selectedEmployee.role}</Badge> },
     { label: 'Ngày vào', value: formatDate(selectedEmployee.hireDate) },
     { label: 'Lương', value: selectedEmployee.salary ? formatCurrency(selectedEmployee.salary) : '-' },
     { label: 'Địa chỉ', value: selectedEmployee.address, span: 2 },

@@ -10,7 +10,6 @@ import {
   Typography, 
   Row, 
   Col,
-  Tag,
   Modal,
   Table,
   Upload,
@@ -39,6 +38,7 @@ import {
   EyeOutlined,
   PlusOutlined
 } from '@ant-design/icons';
+import Badge from '../../../components/common/Tag';
 import dayjs from 'dayjs';
 import { useProfile } from '../../../hooks/useProfile';
 import { 
@@ -145,7 +145,7 @@ const Profile: React.FC = () => {
       key: 'category',
       render: (category: string) => {
         const cat = SUPPORT_CATEGORIES.find(c => c.value === category);
-        return <Tag>{cat?.label || category}</Tag>;
+        return <Badge>{cat?.label || category}</Badge>;
       },
     },
     {
@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
       key: 'priority',
       render: (priority: string) => {
         const p = TICKET_PRIORITIES.find(pr => pr.value === priority);
-        return <Tag color={p?.color}>{p?.label || priority}</Tag>;
+        return <Badge color={p?.color}>{p?.label || priority}</Badge>;
       },
     },
     {
@@ -163,7 +163,7 @@ const Profile: React.FC = () => {
       key: 'status',
       render: (status: string) => {
         const config = getTicketStatusConfig(status);
-        return <Tag color={config.color}>{config.text}</Tag>;
+        return <Badge color={config.color}>{config.text}</Badge>;
       },
     },
     {
@@ -223,9 +223,9 @@ const Profile: React.FC = () => {
                   <Title level={2} className="!text-white !mb-1">
                     {profile.firstName} {profile.lastName}
                   </Title>
-                  <Tag color="gold" className="!rounded-full !mb-2">
+                  <Badge color="gold" className="!rounded-full !mb-2">
                     {profile.role === 'student' ? '👨‍🎓 Học viên' : '👨‍🏫 Giảng viên'}
-                  </Tag>
+                  </Badge>
                   <Text className="text-white/80 block">{profile.bio}</Text>
                   <div className="flex justify-center md:justify-start gap-3 mt-4">
                     {profile.socialLinks.facebook && (
@@ -391,9 +391,9 @@ const Profile: React.FC = () => {
                         <Text className="font-semibold text-[#012643] block">{achievement.title}</Text>
                         <Text className="text-gray-500 text-sm">{achievement.description}</Text>
                         <div className="mt-2">
-                          <Tag color="blue" className="!rounded-full !text-xs">
+                          <Badge color="blue" className="!rounded-full !text-xs">
                             {new Date(achievement.earnedAt).toLocaleDateString()}
-                          </Tag>
+                          </Badge>
                         </div>
                       </div>
                     </Card>
@@ -674,9 +674,9 @@ const Profile: React.FC = () => {
                 <Col span={8}>
                   <Text className="text-gray-500 text-sm">Trạng thái</Text>
                   <div>
-                    <Tag color={getTicketStatusConfig(selectedTicket.status).color}>
+                    <Badge color={getTicketStatusConfig(selectedTicket.status).color}>
                       {getTicketStatusConfig(selectedTicket.status).text}
-                    </Tag>
+                    </Badge>
                   </div>
                 </Col>
                 <Col span={8}>
@@ -686,9 +686,9 @@ const Profile: React.FC = () => {
                 <Col span={8}>
                   <Text className="text-gray-500 text-sm">Mức ưu tiên</Text>
                   <div>
-                    <Tag color={TICKET_PRIORITIES.find(p => p.value === selectedTicket.priority)?.color}>
+                    <Badge color={TICKET_PRIORITIES.find(p => p.value === selectedTicket.priority)?.color}>
                       {TICKET_PRIORITIES.find(p => p.value === selectedTicket.priority)?.label}
-                    </Tag>
+                    </Badge>
                   </div>
                 </Col>
               </Row>

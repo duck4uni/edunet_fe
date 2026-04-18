@@ -1,0 +1,134 @@
+.mycourse-course-drawer.course-editor-drawer {
+  --course-editor-control-height: 24px;
+  --course-editor-font-size: 11px;
+  --course-editor-line-height: 18px;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-form-item-label > label,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-checkbox-wrapper,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-number-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-picker-input > input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-selector,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-selection-item,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-selection-placeholder,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-form-item-explain-error {
+  font-size: var(--course-editor-font-size) !important;
+  line-height: var(--course-editor-line-height) !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-form-item-label > label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .course-editor-label-with-star {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .course-editor-label-star {
+  color: #ff4d4f;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single {
+  height: var(--course-editor-control-height) !important;
+  min-height: var(--course-editor-control-height) !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form input.ant-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-affix-wrapper,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single .ant-select-selector,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selector,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-picker,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-number,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form textarea.ant-input {
+  height: var(--course-editor-control-height) !important;
+  min-height: var(--course-editor-control-height) !important;
+  max-height: var(--course-editor-control-height) !important;
+  border-radius: 6px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form input.ant-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-affix-wrapper > input.ant-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-number-input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-picker-input > input,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single .ant-select-selector .ant-select-selection-item,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  height: 22px !important;
+  line-height: 22px !important;
+  font-size: var(--course-editor-font-size) !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input::placeholder,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-input-affix-wrapper > input.ant-input::placeholder,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-selection-placeholder,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-picker-input > input::placeholder {
+  font-size: var(--course-editor-font-size) !important;
+  line-height: var(--course-editor-line-height) !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  display: flex;
+  align-items: center;
+  padding-inline: 8px 24px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single .ant-select-selection-search,
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-single .ant-select-selection-search-input {
+  height: 22px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-arrow {
+  inset-inline-end: 8px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selector {
+  padding: 0 8px !important;
+  align-items: center !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selection-overflow {
+  flex-wrap: nowrap !important;
+  overflow: hidden;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selection-item {
+  height: 16px !important;
+  margin: 3px 4px 3px 0 !important;
+  font-size: var(--course-editor-font-size) !important;
+  line-height: 14px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selection-search {
+  margin-inline-start: 0 !important;
+  margin-block: 3px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form .ant-select-multiple .ant-select-selection-search-input {
+  height: 16px !important;
+  font-size: var(--course-editor-font-size) !important;
+  line-height: 14px !important;
+}
+
+.mycourse-course-drawer.course-editor-drawer .course-editor-form textarea.ant-input {
+  resize: none;
+}
+
+.course-editor-select-dropdown .ant-select-item,
+.course-editor-select-dropdown .ant-select-item-option-content,
+.course-editor-select-dropdown .ant-empty-description {
+  font-size: 11px !important;
+  line-height: 18px !important;
+}
+
+.course-editor-select-dropdown .ant-select-item {
+  min-height: 24px !important;
+  display: flex;
+  align-items: center;
+}

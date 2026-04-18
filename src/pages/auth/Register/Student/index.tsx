@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Steps, Select, message, InputNumber, Typography } from 'antd';
+import { Form, Input, Button, Steps, Select, InputNumber, Typography } from 'antd';
 import { UserOutlined, LockOutlined, PhoneOutlined, BookOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../../../assets/images/Logo.png';
@@ -10,6 +10,7 @@ import { useRegisterMutation } from '../../../../services/authApi';
 import { setTokens } from '../../../../services/axiosBaseQuery';
 import '../register.css';
 
+import { notify } from '../../../../utils/notify';
 const { Option } = Select;
 const { Title, Text } = Typography;
 
@@ -98,14 +99,14 @@ const RegisterStudent: React.FC = () => {
 
         if (result.success && result.data) {
           setTokens(result.data.accessToken, result.data.refreshToken);
-          message.success('Đăng ký thành công! Đang chuyển hướng...');
+          notify.success('Đăng ký thành công! Đang chuyển hướng...');
           setTimeout(() => navigate('/'), 1500);
         } else {
-          message.error('Đăng ký thất bại. Vui lòng thử lại.');
+          notify.error('Đăng ký thất bại. Vui lòng thử lại.');
         }
       } catch (err: unknown) {
         const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Đăng ký thất bại';
-        message.error(errorMessage);
+        notify.error(errorMessage);
       }
     }
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Col, Row, Typography, Progress, Avatar, Breadcrumb, Tag, Button, Spin } from 'antd';
+import { Card, Col, Row, Typography, Progress, Avatar, Button, Spin } from 'antd';
 import { Link, useParams } from 'react-router-dom';
 import {
   TeamOutlined,
@@ -7,7 +7,6 @@ import {
   BookOutlined,
   BellOutlined,
   FileTextOutlined,
-  HomeOutlined,
   PlayCircleOutlined,
   TrophyOutlined,
   CalendarOutlined,
@@ -18,6 +17,7 @@ import { useGetCourseByIdQuery, useCheckEnrollmentQuery } from '../../../../serv
 import { useGetProfileQuery } from '../../../../services/authApi';
 import { useGetMaterialsByCourseQuery, useGetAssignmentsByCourseQuery, useGetQuizzesByCourseQuery } from '../../../../services/learningApi';
 import { useGetEnrollmentsByCourseQuery } from '../../../../services/courseApi';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
@@ -136,18 +136,8 @@ const DetailMyCourse: React.FC = () => {
   ];
 
   return (
-    <div className="py-8 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Breadcrumb */}
-        <Breadcrumb 
-          className="mb-6"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: course?.title || 'Chi tiết khóa học' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container">
         {/* Course Header Card */}
         <Card className="rounded-2xl border-0 shadow-lg mb-8 overflow-hidden">
           <div className="flex flex-col lg:flex-row gap-6">
@@ -164,9 +154,9 @@ const DetailMyCourse: React.FC = () => {
             <div className="flex-1">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
-                  <Tag color={userRole === 'teacher' ? 'gold' : 'blue'} className="!rounded-full !mb-2">
+                  <Badge color={userRole === 'teacher' ? 'gold' : 'blue'} className="!rounded-full !mb-2">
                     {userRole === 'teacher' ? '👨‍🏫 Giảng viên' : '👨‍🎓 Học viên'}
-                  </Tag>
+                  </Badge>
                   <Title level={2} className="!text-[#012643] !mb-2">{course?.title}</Title>
                   <div className="flex items-center gap-3">
                     <Avatar src={course?.teacher?.avatar} size={40} />
@@ -240,9 +230,9 @@ const DetailMyCourse: React.FC = () => {
                         {item.icon}
                       </div>
                       {item.badge && (
-                        <Tag color="white" className="!text-gray-800 !rounded-full !font-medium">
+                        <Badge color="white" className="!text-gray-800 !rounded-full !font-medium">
                           {item.badge}
-                        </Tag>
+                        </Badge>
                       )}
                     </div>
                     <Title level={4} className="!text-white !mt-4 !mb-1">{item.title}</Title>

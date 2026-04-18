@@ -1,7 +1,7 @@
 // Teacher Registration Approvals Page
 import React, { useState, useMemo } from 'react';
 import {
-  Card, Table, Button, Space, Avatar, Modal, message,
+  Card, Table, Button, Space, Avatar, Modal,
   Typography, Input, Tooltip, Badge, Tabs,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -25,6 +25,7 @@ import {
 } from '../../../services/courseApi';
 import { API_BASE_URL } from '../../../services/axiosBaseQuery';
 import type { Teacher } from '../../../services/courseApi';
+import { notify } from '../../../utils/notify';
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -72,11 +73,11 @@ const TeacherRegistrations: React.FC = () => {
     if (!approveConfirmTarget) return;
     try {
       await approveTeacher(approveConfirmTarget.id).unwrap();
-      message.success('Đã phê duyệt tài khoản giảng viên.');
+      notify.success('Đã phê duyệt tài khoản giảng viên.');
       setApproveConfirmTarget(null);
       refetch();
     } catch {
-      message.error('Phê duyệt thất bại. Vui lòng thử lại.');
+      notify.error('Phê duyệt thất bại. Vui lòng thử lại.');
     }
   };
 

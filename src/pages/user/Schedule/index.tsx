@@ -4,7 +4,6 @@ import {
   Card,
   Modal,
   Typography,
-  Tag,
   Button,
   Row,
   Col,
@@ -28,6 +27,7 @@ import {
 import { EVENT_TYPE_CONFIG } from '../../../constants/scheduleData';
 import { useSchedule } from '../../../hooks';
 import { EventCard, getEventIcon } from '../../../components/common';
+import Badge from '../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
@@ -216,7 +216,7 @@ const Schedule: React.FC = () => {
             <Card className="rounded-2xl border-0 shadow-md mb-6">
               <div className="flex items-center justify-between mb-4">
                 <Title level={5} className="!mb-0 !text-[#012643]">Lịch hôm nay</Title>
-                <Tag color="blue" className="!rounded-full">{todayEvents.length} sự kiện</Tag>
+                <Badge color="blue" className="!rounded-full">{todayEvents.length} sự kiện</Badge>
               </div>
               {todayEvents.length === 0 ? (
                 <Empty
@@ -294,12 +294,12 @@ const Schedule: React.FC = () => {
                     {getEventIcon(selectedEvent.type)}
                   </div>
                   <div>
-                    <Tag
+                    <Badge
                       color={EVENT_TYPE_CONFIG[selectedEvent.type as keyof typeof EVENT_TYPE_CONFIG].color}
                       className="!rounded-full"
                     >
                       {EVENT_TYPE_CONFIG[selectedEvent.type as keyof typeof EVENT_TYPE_CONFIG].label}
-                    </Tag>
+                    </Badge>
                   </div>
                 </div>
                 <Title level={4} className="!mb-1 !text-[#012643]">{selectedEvent.title}</Title>

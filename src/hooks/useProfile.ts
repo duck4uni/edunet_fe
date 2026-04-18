@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { message } from 'antd';
+
 import { 
   useGetProfileQuery, 
   useUpdateProfileMutation,
@@ -8,6 +8,7 @@ import { useGetMyTicketsQuery, useCreateTicketMutation } from '../services/suppo
 import { useGetUserEnrollmentsQuery } from '../services/courseApi';
 import type { SupportTicket, Achievement, Certificate } from '../types/profile';
 
+import { notify } from '../utils/notify';
 export const useProfile = () => {
   const [activeTab, setActiveTab] = useState('info');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -81,16 +82,16 @@ export const useProfile = () => {
         country: values.country as string,
       }).unwrap();
       
-      message.success('Cập nhật hồ sơ thành công!');
+      notify.success('Cập nhật hồ sơ thành công!');
       setIsEditModalOpen(false);
       refetchProfile();
     } catch {
-      message.error('Không thể cập nhật hồ sơ. Vui lòng thử lại.');
+      notify.error('Không thể cập nhật hồ sơ. Vui lòng thử lại.');
     }
   };
 
   const handleChangePassword = (_values: Record<string, unknown>) => {
-    message.success('Đổi mật khẩu thành công!');
+    notify.success('Đổi mật khẩu thành công!');
     setIsPasswordModalOpen(false);
   };
 
@@ -103,10 +104,10 @@ export const useProfile = () => {
         priority: (values.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
       }).unwrap();
       
-      message.success('Ticket hỗ trợ đã được gửi thành công!');
+      notify.success('Ticket hỗ trợ đã được gửi thành công!');
       setIsTicketModalOpen(false);
     } catch {
-      message.error('Không thể gửi ticket. Vui lòng thử lại.');
+      notify.error('Không thể gửi ticket. Vui lòng thử lại.');
     }
   };
 

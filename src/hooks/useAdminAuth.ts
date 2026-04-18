@@ -1,11 +1,12 @@
 // Admin Authentication Hook
 import { useState, useCallback, useEffect } from 'react';
-import { message } from 'antd';
+
 import { useLoginMutation, useGetProfileQuery } from '../services/authApi';
 import { setTokens, clearTokens, getAccessToken } from '../services/axiosBaseQuery';
 import type { User } from '../services/authApi';
 import type { AdminUser } from '../types/admin';
 
+import { notify } from '../utils/notify';
 interface LoginCredentials {
   email: string;
   password: string;
@@ -249,12 +250,12 @@ export const useAdminAuth = () => {
       setAdmin(loggedInUser);
       persistAdminUser(loggedInUser, credentials.remember);
 
-      message.success('Đăng nhập thành công!');
+      notify.success('Đăng nhập thành công!');
       return { success: true, user: loggedInUser };
     } catch (err: unknown) {
       const errorMessage = getErrorMessage(err, 'Đăng nhập thất bại');
       setError(errorMessage);
-      message.error(errorMessage);
+      notify.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -265,7 +266,7 @@ export const useAdminAuth = () => {
     setAdmin(null);
     clearTokens();
     clearStoredAdminUser();
-    message.success('Đã đăng xuất');
+    notify.success('Đã đăng xuất');
   }, []);
 
   const updateProfile = useCallback(async (data: Partial<AdminUser>) => {
@@ -289,13 +290,13 @@ export const useAdminAuth = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       // Mock password validation
       if (currentPassword === 'admin123') {
-        message.success('Đổi mật khẩu thành công');
+        notify.success('Đổi mật khẩu thành công');
         return { success: true };
       }
       throw new Error('Mật khẩu hiện tại không đúng');
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Đổi mật khẩu thất bại';
-      message.error(errorMessage);
+      notify.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -312,7 +313,7 @@ export const useAdminAuth = () => {
       
       // Mock validation
       if (data.email === 'admin@edunet.com') {
-        message.success('Email khôi phục mật khẩu đã được gửi!');
+        notify.success('Email khôi phục mật khẩu đã được gửi!');
         return { success: true };
       } else {
         throw new Error('Email không tồn tại trong hệ thống');
@@ -320,7 +321,7 @@ export const useAdminAuth = () => {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Gửi yêu cầu thất bại';
       setError(errorMessage);
-      message.error(errorMessage);
+      notify.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -343,12 +344,12 @@ export const useAdminAuth = () => {
         throw new Error('Mật khẩu phải có ít nhất 6 ký tự');
       }
       
-      message.success('Đặt lại mật khẩu thành công!');
+      notify.success('Đặt lại mật khẩu thành công!');
       return { success: true };
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Đặt lại mật khẩu thất bại';
       setError(errorMessage);
-      message.error(errorMessage);
+      notify.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);

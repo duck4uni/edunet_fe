@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Typography } from 'antd';
+import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import {
   ClockCircleOutlined,
@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { EVENT_TYPE_CONFIG } from '../../constants/scheduleData';
 import type { ScheduleEvent } from '../../types/schedule';
+import Badge from './Tag';
 
 const { Text } = Typography;
 
@@ -50,9 +51,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, compact = false, onClick }
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <Tag color={config.color} className="!rounded-full !text-xs !m-0">
+            <Badge color={config.color} className="!rounded-full !text-xs !m-0">
               {config.label}
-            </Tag>
+            </Badge>
             <Text className="text-xs text-gray-400">
               {dayjs(event.date).format('MMM D')}
             </Text>

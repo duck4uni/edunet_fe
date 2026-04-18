@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
-import { message } from 'antd';
+
 import { useGetMaterialsByCourseQuery, useCreateMaterialMutation, useDeleteMaterialMutation } from '../services/learningApi';
 import { useGetProfileQuery } from '../services/authApi';
 import type { MaterialItem } from '../types/myCourse';
 
+import { notify } from '../utils/notify';
 export const useMaterial = (courseId: string) => {
   const { data: profileData } = useGetProfileQuery();
   const userRole = (profileData?.data?.role as 'student' | 'teacher') || 'student';
@@ -71,9 +72,9 @@ export const useMaterial = (courseId: string) => {
   const handleDelete = async (materialId: string) => {
     try {
       await deleteMaterial(materialId).unwrap();
-      message.success('Đã xóa tài liệu');
+      notify.success('Đã xóa tài liệu');
     } catch {
-      message.error('Xóa tài liệu thất bại');
+      notify.error('Xóa tài liệu thất bại');
     }
   };
 
@@ -86,10 +87,10 @@ export const useMaterial = (courseId: string) => {
         description: values.description,
         courseId,
       }).unwrap();
-      message.success('Đã tải lên tài liệu');
+      notify.success('Đã tải lên tài liệu');
       setIsModalOpen(false);
     } catch {
-      message.error('Tải lên tài liệu thất bại');
+      notify.error('Tải lên tài liệu thất bại');
     }
   };
 

@@ -1,6 +1,6 @@
 // Course Management Hook — connected to real API
 import { useState, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import {
   useGetCoursesQuery,
   useGetReviewsQuery,
@@ -16,6 +16,7 @@ import {
 } from '../services/courseApi';
 import type { Course, QueryParams } from '../services/courseApi';
 
+import { notify } from '../utils/notify';
 interface Filters {
   status?: string;
   category?: string;
@@ -132,10 +133,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const approveCourse = useCallback(async (courseId: string) => {
     try {
       await reviewCourseApi({ id: courseId, status: 'approved' }).unwrap();
-      message.success('Đã duyệt khóa học');
+      notify.success('Đã duyệt khóa học');
       return { success: true };
     } catch {
-      message.error('Không thể duyệt khóa học');
+      notify.error('Không thể duyệt khóa học');
       return { success: false };
     }
   }, [reviewCourseApi]);
@@ -143,10 +144,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const rejectCourse = useCallback(async (courseId: string, reason: string) => {
     try {
       await reviewCourseApi({ id: courseId, status: 'rejected', rejectionReason: reason }).unwrap();
-      message.success('Đã từ chối khóa học');
+      notify.success('Đã từ chối khóa học');
       return { success: true };
     } catch {
-      message.error('Không thể từ chối khóa học');
+      notify.error('Không thể từ chối khóa học');
       return { success: false };
     }
   }, [reviewCourseApi]);
@@ -154,10 +155,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const publishCourse = useCallback(async (courseId: string) => {
     try {
       await publishCourseByIdApi(courseId).unwrap();
-      message.success('Đã xuất bản khóa học');
+      notify.success('Đã xuất bản khóa học');
       return { success: true };
     } catch {
-      message.error('Không thể xuất bản khóa học');
+      notify.error('Không thể xuất bản khóa học');
       return { success: false };
     }
   }, [publishCourseByIdApi]);
@@ -167,10 +168,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
       const course = courses.find(c => c.id === courseId);
       const newStatus = course?.status === 'archived' ? 'published' : 'archived';
       await updateCourse({ id: courseId, data: { status: newStatus } }).unwrap();
-      message.success('Đã cập nhật trạng thái khóa học');
+      notify.success('Đã cập nhật trạng thái khóa học');
       return { success: true };
     } catch {
-      message.error('Không thể cập nhật trạng thái');
+      notify.error('Không thể cập nhật trạng thái');
       return { success: false };
     }
   }, [updateCourse, courses]);
@@ -178,10 +179,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const deleteCourse = useCallback(async (courseId: string) => {
     try {
       await deleteCourseApi(courseId).unwrap();
-      message.success('Đã xóa khóa học');
+      notify.success('Đã xóa khóa học');
       return { success: true };
     } catch {
-      message.error('Không thể xóa khóa học');
+      notify.error('Không thể xóa khóa học');
       return { success: false };
     }
   }, [deleteCourseApi]);
@@ -189,10 +190,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const hideReview = useCallback(async (reviewId: string) => {
     try {
       await toggleVisibility(reviewId).unwrap();
-      message.success('Đã ẩn đánh giá');
+      notify.success('Đã ẩn đánh giá');
       return { success: true };
     } catch {
-      message.error('Không thể ẩn đánh giá');
+      notify.error('Không thể ẩn đánh giá');
       return { success: false };
     }
   }, [toggleVisibility]);
@@ -200,10 +201,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const showReview = useCallback(async (reviewId: string) => {
     try {
       await toggleVisibility(reviewId).unwrap();
-      message.success('Đã hiển thị lại đánh giá');
+      notify.success('Đã hiển thị lại đánh giá');
       return { success: true };
     } catch {
-      message.error('Không thể hiển thị đánh giá');
+      notify.error('Không thể hiển thị đánh giá');
       return { success: false };
     }
   }, [toggleVisibility]);
@@ -211,10 +212,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const deleteReview = useCallback(async (reviewId: string) => {
     try {
       await deleteReviewApi(reviewId).unwrap();
-      message.success('Đã xóa đánh giá');
+      notify.success('Đã xóa đánh giá');
       return { success: true };
     } catch {
-      message.error('Không thể xóa đánh giá');
+      notify.error('Không thể xóa đánh giá');
       return { success: false };
     }
   }, [deleteReviewApi]);
@@ -226,10 +227,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const approveEnrollment = useCallback(async (enrollmentId: string) => {
     try {
       await approveEnrollmentApi(enrollmentId).unwrap();
-      message.success('Đã phê duyệt học viên');
+      notify.success('Đã phê duyệt học viên');
       return { success: true };
     } catch {
-      message.error('Không thể phê duyệt học viên');
+      notify.error('Không thể phê duyệt học viên');
       return { success: false };
     }
   }, [approveEnrollmentApi]);
@@ -237,10 +238,10 @@ export const useCourseManagement = (initialFilters: Filters = {}) => {
   const rejectEnrollment = useCallback(async (enrollmentId: string) => {
     try {
       await rejectEnrollmentApi(enrollmentId).unwrap();
-      message.success('Đã từ chối học viên');
+      notify.success('Đã từ chối học viên');
       return { success: true };
     } catch {
-      message.error('Không thể từ chối học viên');
+      notify.error('Không thể từ chối học viên');
       return { success: false };
     }
   }, [rejectEnrollmentApi]);

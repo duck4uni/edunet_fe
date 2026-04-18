@@ -3,14 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import {
   Card,
   Table,
-  Tag,
   Button,
   Typography,
-  Breadcrumb,
   Empty,
 } from 'antd';
 import {
-  HomeOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   WarningOutlined,
@@ -19,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useGetQuizAttemptsQuery, useGetQuizByIdQuery } from '../../../../services/learningApi';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
@@ -66,7 +64,7 @@ const Answer: React.FC = () => {
       key: 'status',
       render: (status: string) => {
         const config = getStatusConfig(status);
-        return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>;
+        return <Badge color={config.color} icon={config.icon}>{config.text}</Badge>;
       },
     },
     {
@@ -124,19 +122,8 @@ const Answer: React.FC = () => {
   ];
 
   return (
-    <div className="py-8 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Breadcrumb */}
-        <Breadcrumb
-          className="mb-6"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: <Link to={`/my-course/quizz/${quiz?.courseId || ''}`}>Bài kiểm tra</Link> },
-            { title: 'Kết quả' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container">
         {/* Header */}
         <div className="mb-6">
           <Title level={2} className="!text-[#012643] !mb-1 flex items-center gap-3">

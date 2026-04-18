@@ -7,6 +7,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useAskChatbotMutation } from '../../services/chatbotApi';
+import Badge from '../common/Tag';
 
 const { Text, Title } = Typography;
 

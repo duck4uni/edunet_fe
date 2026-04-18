@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from 'antd';
+import { ClockCircleOutlined, BookOutlined, DollarCircleOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Button, Tag } from 'antd';
 import {
   ClockCircleOutlined,
@@ -10,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import type { Course } from '../../models/course';
+import Badge from './Tag';
 
 interface CourseCardProps {
   course: Course;
@@ -72,6 +75,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical' }) 
           </Link>
         </div>
         <div className="absolute top-3 left-3">
+          <Badge color="blue" className="!rounded-full !border-none !px-2">{course.category}</Badge>
           <Tag
             className="!rounded-full !border-none !px-2"
             style={{ backgroundColor: 'var(--primaryColor50)', color: 'var(--textState500Secondary)' }}

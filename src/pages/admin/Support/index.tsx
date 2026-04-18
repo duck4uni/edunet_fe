@@ -1,12 +1,13 @@
 // Support Management Page - Simplified
 import React, { useState } from 'react';
-import { Card, Table, Button, Avatar, Dropdown, Tag, Typography, Input } from 'antd';
+import { Card, Table, Button, Avatar, Dropdown, Typography, Input } from 'antd';
 import { EyeOutlined, MoreOutlined, ExportOutlined, UserOutlined, MessageOutlined, CheckCircleOutlined, ClockCircleOutlined, SendOutlined } from '@ant-design/icons';
 import { useSupportManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
 import { formatRelativeTime } from '../../../utils/format';
 import type { AdminSupportTicket } from '../../../types/admin';
 import { supportCategories, ticketStatuses, ticketPriorities } from '../../../constants/adminData';
+import Badge from '../../../components/common/Tag';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -35,7 +36,7 @@ const SupportManagement: React.FC = () => {
   const getPriorityTag = (p: string) => {
     const colors: Record<string, string> = { low: 'default', medium: 'warning', high: 'orange', urgent: 'red' };
     const labels: Record<string, string> = { low: 'Thấp', medium: 'Trung bình', high: 'Cao', urgent: 'Khẩn cấp' };
-    return <Tag color={colors[p]}>{labels[p] || p}</Tag>;
+    return <Badge color={colors[p]}>{labels[p] || p}</Badge>;
   };
 
   const actions = (r: AdminSupportTicket) => ({
@@ -76,12 +77,12 @@ const SupportManagement: React.FC = () => {
       ),
     },
     { title: 'Tiêu đề', dataIndex: 'subject', key: 'subject', width: 250, ellipsis: true },
-    { title: 'Phân loại', dataIndex: 'category', key: 'category', width: 120, render: (c: string) => <Tag>{supportCategories.find((x: { value: string; label: string }) => x.value === c)?.label || c}</Tag> },
+    { title: 'Phân loại', dataIndex: 'category', key: 'category', width: 120, render: (c: string) => <Badge>{supportCategories.find((x: { value: string; label: string }) => x.value === c)?.label || c}</Badge> },
     { title: 'Độ ưu tiên', dataIndex: 'priority', key: 'priority', width: 110, render: (p: string) => getPriorityTag(p) },
     { title: 'Trạng thái', dataIndex: 'status', key: 'status', width: 120, render: (s: string) => <StatusBadge status={s} /> },
     {
       title: 'Phân công', dataIndex: 'assignedTo', key: 'assigned', width: 140,
-      render: (a: string | undefined) => a ? <Tag color="blue">{a}</Tag> : <Text type="secondary">Chưa phân công</Text>,
+      render: (a: string | undefined) => a ? <Badge color="blue">{a}</Badge> : <Text type="secondary">Chưa phân công</Text>,
     },
     { title: '', key: 'actions', width: 50, fixed: 'right' as const, render: (_: unknown, r: AdminSupportTicket) => <Dropdown menu={actions(r)} trigger={['click']}><Button type="text" icon={<MoreOutlined />} /></Dropdown> },
   ];
@@ -97,7 +98,7 @@ const SupportManagement: React.FC = () => {
     { label: 'Mã ticket', value: `#${selectedTicket.ticketId}` },
     { label: 'Người gửi', value: selectedTicket.userName },
     { label: 'Email', value: selectedTicket.userEmail },
-    { label: 'Phân loại', value: <Tag>{selectedTicket.category}</Tag> },
+    { label: 'Phân loại', value: <Badge>{selectedTicket.category}</Badge> },
     { label: 'Độ ưu tiên', value: getPriorityTag(selectedTicket.priority) },
     { label: 'Thời gian', value: formatRelativeTime(selectedTicket.createdAt) },
     { label: 'Nội dung', value: selectedTicket.description, span: 2 },

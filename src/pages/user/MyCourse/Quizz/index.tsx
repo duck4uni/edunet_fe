@@ -1,14 +1,12 @@
 import React from 'react';
 import { 
   Card, 
-  Tag, 
   Button, 
   Input, 
   Modal, 
   Form, 
   Typography, 
   Popconfirm,
-  Breadcrumb,
   Select,
   Row,
   Col,
@@ -20,7 +18,6 @@ import {
   SearchOutlined, 
   PlusOutlined, 
   DeleteOutlined,
-  HomeOutlined,
   ReadOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
@@ -34,6 +31,7 @@ import {
 import { Link, useParams } from 'react-router-dom';
 import { useQuiz } from '../../../../hooks';
 import type { QuizItem } from '../../../../types/myCourse';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -87,19 +85,8 @@ const Quizz: React.FC = () => {
   };
 
   return (
-    <div className="py-8 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Breadcrumb */}
-        <Breadcrumb 
-          className="mb-6"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: <Link to={`/my-course/detail/${id}`}>Chi tiết khóa học</Link> },
-            { title: 'Bài kiểm tra' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
@@ -206,9 +193,9 @@ const Quizz: React.FC = () => {
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                           <ReadOutlined className="text-2xl" />
                         </div>
-                        <Tag color={statusConfig.color} icon={getStatusIcon(quiz.status)} className="!rounded-full">
+                        <Badge color={statusConfig.color} icon={getStatusIcon(quiz.status)} className="!rounded-full">
                           {statusConfig.text}
-                        </Tag>
+                        </Badge>
                       </div>
                       <Title level={4} className="!text-white !mb-1">{quiz.title}</Title>
                       <Text className="text-white/70 text-sm line-clamp-2">{quiz.description}</Text>

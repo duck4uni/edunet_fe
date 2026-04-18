@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { message } from 'antd';
+
 import { 
   useGetEnrollmentsByCourseQuery,
   useApproveEnrollmentMutation,
@@ -10,6 +10,7 @@ import {
 import { useGetProfileQuery } from '../services/authApi';
 import type { ClassMember } from '../types/myCourse';
 
+import { notify } from '../utils/notify';
 export const useClassroom = (courseId: string) => {
   const { data: profileData } = useGetProfileQuery();
   const userRole = (profileData?.data?.role as 'student' | 'teacher') || 'student';
@@ -86,48 +87,48 @@ export const useClassroom = (courseId: string) => {
   const handleDeleteMember = async (memberId: string) => {
     try {
       await deleteEnrollment(memberId).unwrap();
-      message.success('Đã xóa thành viên');
+      notify.success('Đã xóa thành viên');
       refetch();
     } catch {
-      message.error('Không thể xóa thành viên');
+      notify.error('Không thể xóa thành viên');
     }
   };
 
   const handleApproveMember = async (memberId: string) => {
     try {
       await approveEnrollment(memberId).unwrap();
-      message.success('Đã duyệt thành viên');
+      notify.success('Đã duyệt thành viên');
       refetch();
     } catch {
-      message.error('Không thể duyệt thành viên');
+      notify.error('Không thể duyệt thành viên');
     }
   };
 
   const handleRejectMember = async (memberId: string) => {
     try {
       await rejectEnrollment(memberId).unwrap();
-      message.success('Đã từ chối thành viên');
+      notify.success('Đã từ chối thành viên');
       refetch();
     } catch {
-      message.error('Không thể từ chối thành viên');
+      notify.error('Không thể từ chối thành viên');
     }
   };
 
   const handleUpdateProgress = async (memberId: string, progress: number) => {
     try {
       await updateProgress({ id: memberId, progress }).unwrap();
-      message.success('Đã cập nhật tiến độ');
+      notify.success('Đã cập nhật tiến độ');
       refetch();
     } catch {
-      message.error('Không thể cập nhật tiến độ');
+      notify.error('Không thể cập nhật tiến độ');
     }
   };
 
   const handleSubmit = (_values: Record<string, unknown>) => {
     if (editingMember) {
-      message.success('Đã cập nhật thành viên');
+      notify.success('Đã cập nhật thành viên');
     } else {
-      message.success('Đã thêm thành viên');
+      notify.success('Đã thêm thành viên');
     }
     setIsModalOpen(false);
     refetch();
