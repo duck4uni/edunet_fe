@@ -12,7 +12,6 @@ import {
   Space,
   Switch,
   Tabs,
-  message,
 } from 'antd';
 import {
   DeleteOutlined,
@@ -25,6 +24,7 @@ import {
   useGenerateAiQuizMutation,
   type QuizQuestion,
 } from '../../../../../services/learningApi';
+import { notify } from '../../../../../utils/notify';
 
 interface QuizGenerationDrawerProps {
   open: boolean;
@@ -122,7 +122,7 @@ const QuizGenerationDrawer: React.FC<QuizGenerationDrawerProps> = ({
 
   const validateManualQuestions = (questions: QuizQuestion[]) => {
     if (questions.length === 0) {
-      message.error('Vui lòng thêm ít nhất 1 câu hỏi.');
+      notify.error('Vui lòng thêm ít nhất 1 câu hỏi.');
       return false;
     }
 
@@ -140,7 +140,7 @@ const QuizGenerationDrawer: React.FC<QuizGenerationDrawerProps> = ({
     });
 
     if (hasInvalidQuestion) {
-      message.error('Mỗi câu hỏi cần có nội dung, đủ 4 đáp án và 1 đáp án đúng.');
+      notify.error('Mỗi câu hỏi cần có nội dung, đủ 4 đáp án và 1 đáp án đúng.');
       return false;
     }
 
@@ -172,14 +172,14 @@ const QuizGenerationDrawer: React.FC<QuizGenerationDrawerProps> = ({
         totalQuestions: questions.length,
       }).unwrap();
 
-      message.success('Tạo quiz thủ công thành công.');
+      notify.success('Tạo quiz thủ công thành công.');
       onCreated?.();
       onClose();
     } catch (error) {
       if (typeof error === 'object' && error && 'errorFields' in error) {
         return;
       }
-      message.error('Không thể tạo quiz thủ công.');
+      notify.error('Không thể tạo quiz thủ công.');
     }
   };
 
@@ -192,14 +192,14 @@ const QuizGenerationDrawer: React.FC<QuizGenerationDrawerProps> = ({
         courseId,
       }).unwrap();
 
-      message.success('Tạo quiz bằng AI thành công.');
+      notify.success('Tạo quiz bằng AI thành công.');
       onCreated?.();
       onClose();
     } catch (error) {
       if (typeof error === 'object' && error && 'errorFields' in error) {
         return;
       }
-      message.error('Không thể tạo quiz bằng AI.');
+      notify.error('Không thể tạo quiz bằng AI.');
     }
   };
 

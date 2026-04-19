@@ -83,7 +83,7 @@ const CategoriesSection: React.FC = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        <Tag 
+                        <Badge 
                           className="!absolute !top-3 !right-3 !border-0 !bg-white/95 !backdrop-blur-sm !rounded-full !px-3 !py-1 !text-[#00B1F5] !font-medium"
                         >
                           {cat.courses?.length || 0} Khóa học

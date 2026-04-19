@@ -150,6 +150,28 @@
   justify-content: flex-end;
 }
 
+.manage-course-shell .manage-action-icon-btn.ant-btn {
+  width: 28px;
+  min-width: 28px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.manage-course-shell .manage-action-icon-btn .ant-btn-icon,
+.manage-course-shell .manage-action-icon-btn .anticon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.manage-course-shell .manage-action-icon-btn.ant-btn-dangerous,
+.manage-course-shell .manage-action-icon-btn.ant-btn-dangerous:hover,
+.manage-course-shell .manage-action-icon-btn.ant-btn-dangerous:focus {
+  color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+}
+
 .manage-question-option-row {
   display: flex;
   align-items: center;

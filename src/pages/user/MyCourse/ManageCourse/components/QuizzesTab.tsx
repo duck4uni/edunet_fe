@@ -17,10 +17,10 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import QuizQuestionManager from './QuizQuestionManager';
+import QuizGenerationDrawer from './QuizGenerationDrawer';
 import { notify } from '../../../../../utils/notify';
 import {
   type Quiz,
-  useCreateQuizMutation,
   useDeleteQuizMutation,
   useGetQuizzesByCourseQuery,
   useUpdateQuizMutation,
@@ -36,7 +36,6 @@ type QuizFormValues = {
   duration: number;
   passingScore: number;
   maxAttempts: number;
-  totalQuestions: number;
   shuffleQuestions: boolean;
   showCorrectAnswers: boolean;
   isVisible: boolean;
@@ -53,20 +52,19 @@ interface QuizzesTabProps {
 
 const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
   const { data: quizzesData, isLoading, refetch } = useGetQuizzesByCourseQuery(courseId);
-  const [createQuiz, { isLoading: isCreating }] = useCreateQuizMutation();
   const [updateQuiz, { isLoading: isUpdating }] = useUpdateQuizMutation();
   const [deleteQuiz] = useDeleteQuizMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGenerationDrawerOpen, setIsGenerationDrawerOpen] = useState(false);
   const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
   const [searchText, setSearchText] = useState('');
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
   const [questionManagerState, setQuestionManagerState] = useState<QuestionManagerState | null>(null);
   const [form] = Form.useForm();
 
-  const quizzes = quizzesData?.data ?? [];
-
   const filteredQuizzes = useMemo(() => {
+    const quizzes = quizzesData?.data ?? [];
     const normalizedKeyword = searchText.trim().toLowerCase();
 
     return quizzes.filter((quiz) => {
@@ -81,60 +79,48 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
 
       return matchesKeyword && matchesVisibility;
     });
-  }, [quizzes, searchText, visibilityFilter]);
+  }, [quizzesData?.data, searchText, visibilityFilter]);
 
-  const openModal = (quiz?: Quiz) => {
-    if (quiz) {
-      setEditingQuiz(quiz);
-      form.setFieldsValue({
-        ...quiz,
-        duration: Number(quiz.duration) || 30,
-        passingScore: Number(quiz.passingScore) || 50,
-        maxAttempts: Number(quiz.maxAttempts) || 1,
-        totalQuestions: Number(quiz.totalQuestions) || 10,
-        shuffleQuestions: quiz.shuffleQuestions ?? true,
-        showCorrectAnswers: quiz.showCorrectAnswers ?? true,
-        isVisible: quiz.isVisible ?? true,
-      });
-    } else {
-      setEditingQuiz(null);
-      form.resetFields();
-      form.setFieldsValue({
-        duration: 30,
-        passingScore: 50,
-        maxAttempts: 1,
-        totalQuestions: 10,
-        shuffleQuestions: true,
-        showCorrectAnswers: true,
-        isVisible: true,
-      });
-    }
-
+  const openEditModal = (quiz: Quiz) => {
+    setEditingQuiz(quiz);
+    form.setFieldsValue({
+      ...quiz,
+      duration: Number(quiz.duration) || 30,
+      passingScore: Number(quiz.passingScore) || 50,
+      maxAttempts: Number(quiz.maxAttempts) || 1,
+      shuffleQuestions: quiz.shuffleQuestions ?? true,
+      showCorrectAnswers: quiz.showCorrectAnswers ?? true,
+      isVisible: quiz.isVisible ?? true,
+    });
     setIsModalOpen(true);
   };
 
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+    setEditingQuiz(null);
+    form.resetFields();
+  };
+
   const handleFinish = async (values: QuizFormValues) => {
+    if (!editingQuiz) {
+      return;
+    }
+
     const payload = {
       ...values,
       duration: Number(values.duration) || 0,
       passingScore: Number(values.passingScore) || 0,
       maxAttempts: Number(values.maxAttempts) || 1,
-      totalQuestions: Number(values.totalQuestions) || 1,
       shuffleQuestions: !!values.shuffleQuestions,
       showCorrectAnswers: !!values.showCorrectAnswers,
       isVisible: !!values.isVisible,
     };
 
     try {
-      if (editingQuiz) {
-        await updateQuiz({ id: editingQuiz.id, data: payload }).unwrap();
-        notify.success('Cập nhật quiz thành công.');
-      } else {
-        await createQuiz({ ...payload, courseId }).unwrap();
-        notify.success('Đã tạo quiz mới.');
-      }
+      await updateQuiz({ id: editingQuiz.id, data: payload }).unwrap();
+      notify.success('Cập nhật quiz thành công.');
 
-      setIsModalOpen(false);
+      closeEditModal();
       refetch();
     } catch {
       notify.error('Không thể lưu quiz. Vui lòng thử lại.');
@@ -210,6 +196,9 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
         <Space size={4}>
           <Tooltip title="Quản lý câu hỏi">
             <Button
+              type="text"
+              aria-label="Quản lý câu hỏi"
+              className="manage-action-icon-btn"
               icon={<UnorderedListOutlined />}
               onClick={() => {
                 setQuestionManagerState({
@@ -221,10 +210,24 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
             />
           </Tooltip>
           <Tooltip title="Chỉnh sửa">
-            <Button icon={<EditOutlined />} onClick={() => openModal(record)} size="small" />
+            <Button
+              type="text"
+              aria-label="Chỉnh sửa quiz"
+              className="manage-action-icon-btn"
+              icon={<EditOutlined />}
+              onClick={() => openEditModal(record)}
+              size="small"
+            />
           </Tooltip>
           <Popconfirm title="Bạn chắc chắn muốn xóa quiz này?" onConfirm={() => handleDelete(record.id)}>
-            <Button icon={<DeleteOutlined />} danger size="small" />
+            <Button
+              type="text"
+              aria-label="Xóa quiz"
+              className="manage-action-icon-btn"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+            />
           </Popconfirm>
         </Space>
       ),
@@ -259,8 +262,8 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
             className="manage-tab-filter"
           />
 
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>
-            Thêm quiz
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsGenerationDrawerOpen(true)}>
+            Tạo quiz
           </Button>
         </div>
       </div>
@@ -276,11 +279,11 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
       />
 
       <Modal
-        title={editingQuiz ? 'Cập nhật quiz' : 'Thêm quiz mới'}
+        title="Cập nhật quiz"
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={closeEditModal}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
         width={740}
       >
         <Form form={form} layout="vertical" onFinish={handleFinish}>
@@ -316,14 +319,6 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
             >
               <InputNumber min={1} className="w-full" />
             </Form.Item>
-
-            <Form.Item
-              name="totalQuestions"
-              label="Tổng số câu hỏi"
-              rules={[{ required: true, message: 'Vui lòng nhập tổng số câu hỏi.' }]}
-            >
-              <InputNumber min={1} className="w-full" />
-            </Form.Item>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -342,9 +337,9 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
 
           <div className="manage-tab-form-actions">
             <Space>
-              <Button onClick={() => setIsModalOpen(false)}>Hủy</Button>
-              <Button type="primary" htmlType="submit" loading={isCreating || isUpdating}>
-                {editingQuiz ? 'Lưu thay đổi' : 'Tạo quiz'}
+              <Button onClick={closeEditModal}>Hủy</Button>
+              <Button type="primary" htmlType="submit" loading={isUpdating}>
+                Lưu thay đổi
               </Button>
             </Space>
           </div>

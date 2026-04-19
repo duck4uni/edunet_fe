@@ -1,6 +1,4 @@
 import React from 'react';
-import { Button } from 'antd';
-import { ClockCircleOutlined, BookOutlined, DollarCircleOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Button, Tag } from 'antd';
 import {
   ClockCircleOutlined,
