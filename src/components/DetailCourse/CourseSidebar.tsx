@@ -7,6 +7,8 @@ import { useCheckEnrollmentQuery, useEnrollMeMutation } from '../../services/cou
 import { getAccessToken } from '../../services/axiosBaseQuery';
 import type { Course } from '../../models/course';
 
+import { notify } from '../../utils/notify';
+import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -98,16 +100,16 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
 
   const handleEnroll = async () => {
     if (!isLoggedIn) {
-      message.info('Vui lòng đăng nhập để đăng ký khóa học');
+      notify.info('Vui lòng đăng nhập để đăng ký khóa học');
       navigate('/auth/login');
       return;
     }
     try {
       await enrollMe(courseId).unwrap();
-      message.success('Đăng ký khóa học thành công!');
+      notify.success('Đăng ký khóa học thành công!');
     } catch (err: any) {
       const msg = err?.data?.message || 'Đăng ký khóa học thất bại';
-      message.error(msg);
+      notify.error(msg);
     }
   };
 
@@ -117,7 +119,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
 
   const handleReportCourse = (values: CourseReportFormValues) => {
     console.log('Course report submitted:', values);
-    message.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
+    notify.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
     setReportModalOpen(false);
     reportForm.resetFields();
   };

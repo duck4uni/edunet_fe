@@ -109,6 +109,7 @@ export {
   useGetQuizzesByCourseQuery,
   useGetQuizByIdQuery,
   useCreateQuizMutation,
+  useGenerateAiQuizMutation,
   useUpdateQuizMutation,
   useDeleteQuizMutation,
   useStartQuizAttemptMutation,
@@ -136,6 +137,7 @@ export type {
   Material,
   Assignment,
   Quiz,
+  GenerateAiQuizRequest,
   QuizAttempt,
   Schedule,
 } from './learningApi';

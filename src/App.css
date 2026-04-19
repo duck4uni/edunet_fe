@@ -40,3 +40,284 @@
 .read-the-docs {
   color: #888;
 }
+
+/* =========================
+   MyCourse Design System
+   ========================= */
+
+:root {
+  --mycourse-primary: #30c2ec;
+  --mycourse-white: #ffffff;
+  --mycourse-accent: #ffd9b3;
+  --mycourse-soft: rgba(48, 194, 236, 0.08);
+  --mycourse-border: rgba(48, 194, 236, 0.28);
+  --mycourse-text: #30c2ec;
+}
+
+.mycourse-shell {
+  min-height: 100vh;
+  padding: 20px 0;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 217, 179, 0.32) 100%);
+  color: var(--mycourse-text);
+}
+
+.mycourse-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.mycourse-page-title {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 700;
+  color: var(--mycourse-primary);
+}
+
+.mycourse-page-subtitle {
+  margin: 0;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--mycourse-primary);
+  opacity: 0.8;
+}
+
+.mycourse-shell * {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.mycourse-shell,
+.mycourse-shell .ant-typography,
+.mycourse-shell .ant-btn,
+.mycourse-shell .ant-input,
+.mycourse-shell .ant-input-affix-wrapper,
+.mycourse-shell .ant-select,
+.mycourse-shell .ant-select-selector,
+.mycourse-shell .ant-tag,
+.mycourse-shell .ant-breadcrumb,
+.mycourse-shell .ant-table,
+.mycourse-shell .ant-table-thead > tr > th,
+.mycourse-shell .ant-table-tbody > tr > td,
+.mycourse-shell .ant-form-item-label > label {
+  font-size: 12px !important;
+  line-height: 18px !important;
+}
+
+.mycourse-shell .text-xs,
+.mycourse-shell small,
+.mycourse-shell .ant-table-pagination,
+.mycourse-shell .ant-form-item-explain-error {
+  font-size: 11px !important;
+  line-height: 16px !important;
+}
+
+.mycourse-shell,
+.mycourse-shell p,
+.mycourse-shell span,
+.mycourse-shell div,
+.mycourse-shell h1,
+.mycourse-shell h2,
+.mycourse-shell h3,
+.mycourse-shell h4,
+.mycourse-shell h5,
+.mycourse-shell h6,
+.mycourse-shell a,
+.mycourse-shell .anticon {
+  color: var(--mycourse-primary);
+}
+
+.mycourse-shell .ant-card {
+  border: 1px solid var(--mycourse-border);
+  border-radius: 12px;
+  background: var(--mycourse-white);
+  box-shadow: none;
+}
+
+.mycourse-shell .ant-btn {
+  border-radius: 8px;
+}
+
+.mycourse-shell .ant-btn-primary,
+.mycourse-shell .ant-btn-primary:hover,
+.mycourse-shell .ant-btn-primary:focus,
+.mycourse-shell .ant-btn-primary:active {
+  background: var(--mycourse-primary) !important;
+  border-color: var(--mycourse-primary) !important;
+  color: var(--mycourse-white) !important;
+  box-shadow: none !important;
+}
+
+.mycourse-shell .ant-btn-default,
+.mycourse-shell .ant-btn-default:hover,
+.mycourse-shell .ant-btn-default:focus,
+.mycourse-shell .ant-btn-default:active {
+  color: var(--mycourse-primary) !important;
+  border-color: var(--mycourse-border) !important;
+  background: var(--mycourse-white) !important;
+  box-shadow: none !important;
+}
+
+.mycourse-shell .ant-input,
+.mycourse-shell .ant-input-affix-wrapper,
+.mycourse-shell .ant-select-selector,
+.mycourse-shell .ant-input-number,
+.mycourse-shell .ant-picker {
+  border-color: var(--mycourse-border) !important;
+  border-radius: 8px !important;
+}
+
+.mycourse-shell .ant-input:focus,
+.mycourse-shell .ant-input-affix-wrapper-focused,
+.mycourse-shell .ant-select-focused .ant-select-selector,
+.mycourse-shell .ant-input-number-focused,
+.mycourse-shell .ant-picker-focused {
+  border-color: var(--mycourse-primary) !important;
+  box-shadow: 0 0 0 2px rgba(48, 194, 236, 0.18) !important;
+}
+
+.mycourse-shell .ant-table-wrapper .ant-table {
+  border: 1px solid var(--mycourse-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mycourse-shell .ant-table-thead > tr > th {
+  background: var(--mycourse-primary) !important;
+  color: var(--mycourse-white) !important;
+  font-weight: 600 !important;
+  border-bottom: 0 !important;
+  padding: 10px 12px !important;
+}
+
+.mycourse-shell .ant-table-tbody > tr > td {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid rgba(48, 194, 236, 0.14) !important;
+  color: var(--mycourse-primary) !important;
+}
+
+.mycourse-shell .ant-table-tbody > tr:hover > td {
+  background: var(--mycourse-soft) !important;
+}
+
+.mycourse-shell .ant-tag {
+  border-radius: 9999px;
+  border: 1px solid var(--mycourse-border);
+  background: var(--mycourse-soft);
+  color: var(--mycourse-primary);
+}
+
+.mycourse-shell .text-gray-400,
+.mycourse-shell .text-gray-500,
+.mycourse-shell .text-gray-600,
+.mycourse-shell .text-blue-500,
+.mycourse-shell .text-green-500,
+.mycourse-shell .text-red-500,
+.mycourse-shell .text-orange-500,
+.mycourse-shell .text-yellow-500,
+.mycourse-shell .text-purple-500,
+.mycourse-shell .text-cyan-500,
+.mycourse-shell .text-teal-500,
+.mycourse-shell .text-emerald-500,
+.mycourse-shell .text-rose-500,
+.mycourse-shell .text-pink-500 {
+  color: var(--mycourse-primary) !important;
+}
+
+.mycourse-shell .bg-blue-50,
+.mycourse-shell .bg-cyan-50,
+.mycourse-shell .bg-gray-50,
+.mycourse-shell .bg-gray-200,
+.mycourse-shell .bg-white\/20 {
+  background: var(--mycourse-soft) !important;
+}
+
+.mycourse-shell .bg-orange-50,
+.mycourse-shell .bg-yellow-50,
+.mycourse-shell .bg-amber-50,
+.mycourse-shell .bg-green-50 {
+  background: rgba(255, 217, 179, 0.35) !important;
+}
+
+.mycourse-shell .border-gray-100,
+.mycourse-shell .border-gray-200,
+.mycourse-shell .border-blue-200,
+.mycourse-shell .border-orange-200,
+.mycourse-shell .border-orange-400,
+.mycourse-shell .border-blue-500,
+.mycourse-shell .border-cyan-500,
+.mycourse-shell .border-green-500,
+.mycourse-shell .border-red-500 {
+  border-color: var(--mycourse-border) !important;
+}
+
+.mycourse-stat-grid {
+  margin-bottom: 16px;
+}
+
+.mycourse-stat-card {
+  text-align: center;
+  padding: 2px 0;
+}
+
+.mycourse-stat-value {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 700;
+  color: var(--mycourse-primary);
+}
+
+.mycourse-stat-label {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--mycourse-primary);
+  opacity: 0.78;
+}
+
+.mycourse-toolbar-card {
+  margin-bottom: 12px;
+}
+
+.mycourse-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mycourse-filter-left {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mycourse-status-tag--accent {
+  background: rgba(255, 217, 179, 0.45) !important;
+  border-color: rgba(255, 217, 179, 0.8) !important;
+  color: var(--mycourse-primary) !important;
+}
+
+.mycourse-inline-image {
+  width: 54px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--mycourse-border);
+  background: rgba(48, 194, 236, 0.06);
+}
+
+.mycourse-accent-panel {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 217, 179, 0.85);
+  background: rgba(255, 217, 179, 0.32);
+}
+
+@media (min-width: 1024px) {
+  .mycourse-container {
+    padding: 0 24px;
+  }
+}

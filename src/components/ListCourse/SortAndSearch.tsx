@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Select, Button, Segmented, Typography } from 'antd';
+import { Input, Select, Segmented, Typography } from 'antd';
 import { SearchOutlined, AppstoreOutlined, UnorderedListOutlined, SortAscendingOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -10,7 +10,6 @@ export type CourseSortOption = 'newest' | 'popular' | 'rating' | 'price-low' | '
 interface SortAndSearchProps {
   searchValue: string;
   onSearchValueChange: (value: string) => void;
-  onSearch: (value: string) => void;
   view: CourseViewMode;
   onViewChange: (view: CourseViewMode) => void;
   sortValue: CourseSortOption;
@@ -22,7 +21,6 @@ interface SortAndSearchProps {
 const SortAndSearch: React.FC<SortAndSearchProps> = ({
   searchValue,
   onSearchValueChange,
-  onSearch,
   view,
   onViewChange,
   sortValue,
@@ -75,7 +73,6 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({
           prefix={<SearchOutlined className="text-gray-400" />}
           value={searchValue}
           onChange={(event) => onSearchValueChange(event.target.value)}
-          onPressEnter={() => onSearch(searchValue)}
           className="!w-72 !rounded-lg !border-gray-200 hover:!border-[var(--textState500Primary)] focus:!border-[var(--textState500Primary)]"
           allowClear
         />
@@ -95,20 +92,6 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({
             { value: 'price-high', label: 'Giá giảm dần' },
           ]}
         />
-
-        <Button
-          type="primary"
-          size="middle"
-          icon={<SearchOutlined />}
-          onClick={() => onSearch(searchValue)}
-          className="!rounded-lg !px-4"
-          style={{
-            borderColor: 'var(--textState500Secondary)',
-            backgroundColor: 'var(--textState500Secondary)',
-          }}
-        >
-          Tìm
-        </Button>
       </div>
     </div>
   );

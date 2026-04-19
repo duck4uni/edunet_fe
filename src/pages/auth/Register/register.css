@@ -1,0 +1,28 @@
+.register-auth-steps .ant-steps-item-icon {
+  border-color: var(--textState500Primary) !important;
+}
+
+.register-auth-steps .ant-steps-item-icon .ant-steps-icon {
+  color: var(--textState500Primary) !important;
+  font-weight: 600;
+}
+
+.register-auth-steps .ant-steps-item-process .ant-steps-item-icon,
+.register-auth-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background-color: var(--textState500Primary) !important;
+}
+
+.register-auth-steps .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon,
+.register-auth-steps .ant-steps-item-finish .ant-steps-item-icon .ant-steps-icon {
+  color: var(--textStateWhite) !important;
+}
+
+.register-login-link {
+  color: var(--textState500Primary) !important;
+  font-weight: 600;
+}
+
+.register-login-link:hover,
+.register-login-link:focus-visible {
+  color: var(--textState500Secondary) !important;
+}

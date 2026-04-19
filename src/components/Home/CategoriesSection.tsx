@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Card, Typography, Tag, Spin } from 'antd';
+import { Button, Card, Typography, Spin } from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useGetCategoriesQuery } from '../../services/courseApi';
+import Badge from '../common/Tag';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -82,11 +83,11 @@ const CategoriesSection: React.FC = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        <Tag 
+                        <Badge 
                           className="!absolute !top-3 !right-3 !border-0 !bg-white/95 !backdrop-blur-sm !rounded-full !px-3 !py-1 !text-[#00B1F5] !font-medium"
                         >
                           {cat.courses?.length || 0} Khóa học
-                        </Tag>
+                        </Badge>
                       </div>
                       <div className="p-5">
                         <Title level={5} className="!mb-1 !text-[#012643] group-hover:!text-[#00B1F5] transition-colors">

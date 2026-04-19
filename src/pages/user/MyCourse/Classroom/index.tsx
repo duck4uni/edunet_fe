@@ -3,7 +3,6 @@ import {
   Card, 
   Table, 
   Avatar, 
-  Tag, 
   Button, 
   Input, 
   Modal, 
@@ -12,7 +11,6 @@ import {
   Typography, 
   Space, 
   Popconfirm,
-  Breadcrumb,
   Progress,
   Tooltip,
   Row,
@@ -26,7 +24,6 @@ import {
   EditOutlined, 
   DeleteOutlined,
   MailOutlined,
-  HomeOutlined,
   TeamOutlined,
   CrownOutlined,
   MoreOutlined,
@@ -35,9 +32,10 @@ import {
   CheckOutlined,
   CloseOutlined
 } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useClassroom } from '../../../../hooks';
 import type { ClassMember } from '../../../../types/myCourse';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
@@ -115,9 +113,9 @@ const Classroom: React.FC = () => {
       render: (role: string) => {
         const config = getRoleConfig(role);
         return (
-          <Tag color={config.color} icon={getRoleIcon(role)} className="!rounded-full">
+          <Badge color={config.color} icon={getRoleIcon(role)} className="!rounded-full">
             {config.text}
-          </Tag>
+          </Badge>
         );
       },
     },
@@ -140,9 +138,9 @@ const Classroom: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={status === 'active' ? 'success' : status === 'pending' ? 'warning' : 'default'} className="!rounded-full">
+        <Badge color={status === 'active' ? 'success' : status === 'pending' ? 'warning' : 'default'} className="!rounded-full">
           {status === 'active' ? 'Hoạt động' : status === 'pending' ? 'Chờ duyệt' : 'Không hoạt động'}
-        </Tag>
+        </Badge>
       ),
     },
     {
@@ -215,19 +213,8 @@ const Classroom: React.FC = () => {
   ];
 
   return (
-    <div className="py-8 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Breadcrumb */}
-        <Breadcrumb 
-          className="mb-6"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: <Link to={`/my-course/detail/${id}`}>Chi tiết khóa học</Link> },
-            { title: 'Lớp học' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>

@@ -1,199 +1,335 @@
-import React, { useState, useEffect } from 'react';
-import { Drawer, Button, Input, Select, Popconfirm, message, Space, Card, Divider } from 'antd';
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
-import { useUpdateQuizMutation } from '../../../../../services/learningApi';
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, Card, Divider, Drawer, Empty, Input, Popconfirm, Select, Space, Typography } from 'antd';
+import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { type QuizQuestion, useUpdateQuizMutation } from '../../../../../services/learningApi';
+import { notify } from '../../../../../utils/notify';
 
-const { Option } = Select;
+const { Text } = Typography;
 
-export interface QuestionType {
-  id: string;
-  questionText: string;
-  options: string[];
-  correctAnswerIndex: number;
-}
+const OPTION_KEYS = ['A', 'B', 'C', 'D'];
+
+export interface QuestionType extends QuizQuestion {}
 
 interface QuizQuestionManagerProps {
   visible: boolean;
   onClose: () => void;
   quizId: string;
-  initialQuestions: any;
+  initialQuestions: unknown;
 }
+
+const getOptionKey = (index: number) => OPTION_KEYS[index] || `OPT${index + 1}`;
+
+const createEmptyQuestion = (): QuestionType => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+  text: '',
+  options: OPTION_KEYS.map((key) => ({ key, label: '' })),
+  correctAnswer: 'A',
+});
+
+const normalizeOption = (
+  rawOption: unknown,
+  optionIndex: number,
+): { key: string; label: string } | null => {
+  if (typeof rawOption === 'string') {
+    return {
+      key: getOptionKey(optionIndex),
+      label: rawOption,
+    };
+  }
+
+  if (!rawOption || typeof rawOption !== 'object') {
+    return null;
+  }
+
+  const option = rawOption as Record<string, unknown>;
+  const rawLabel = option.label ?? option.text ?? option.value;
+  const label = typeof rawLabel === 'string' ? rawLabel : '';
+  const key =
+    typeof option.key === 'string' && option.key.trim().length > 0
+      ? option.key.trim().toUpperCase()
+      : getOptionKey(optionIndex);
+
+  return { key, label };
+};
+
+const withDefaultOptions = (options: { key: string; label: string }[]): { key: string; label: string }[] => {
+  const normalized = options.slice(0, 4).map((option, index) => ({
+    key: option.key || getOptionKey(index),
+    label: option.label || '',
+  }));
+
+  for (let index = normalized.length; index < 4; index += 1) {
+    normalized.push({
+      key: getOptionKey(index),
+      label: '',
+    });
+  }
+
+  return normalized;
+};
+
+const normalizeQuestion = (rawQuestion: unknown, index: number): QuestionType | null => {
+  if (!rawQuestion || typeof rawQuestion !== 'object') {
+    return null;
+  }
+
+  const source = rawQuestion as Record<string, unknown>;
+  const rawText = source.text ?? source.questionText ?? source.question;
+  const text = typeof rawText === 'string' ? rawText : '';
+
+  const rawOptions = Array.isArray(source.options) ? source.options : [];
+  const options = withDefaultOptions(
+    rawOptions
+      .map((option, optionIndex) => normalizeOption(option, optionIndex))
+      .filter((option): option is { key: string; label: string } => Boolean(option)),
+  );
+
+  let correctAnswer = options[0].key;
+  if (typeof source.correctAnswer === 'string') {
+    const candidate = source.correctAnswer.trim().toUpperCase();
+    if (options.some((option) => option.key === candidate)) {
+      correctAnswer = candidate;
+    }
+  } else if (typeof source.correctAnswerIndex === 'number') {
+    const option = options[source.correctAnswerIndex];
+    if (option) {
+      correctAnswer = option.key;
+    }
+  }
+
+  return {
+    id:
+      typeof source.id === 'string' && source.id.trim().length > 0
+        ? source.id.trim()
+        : `question-${Date.now()}-${index}`,
+    text,
+    options,
+    correctAnswer,
+  };
+};
+
+const parseInitialQuestions = (initialQuestions: unknown): QuestionType[] => {
+  try {
+    const parsedQuestions =
+      typeof initialQuestions === 'string' ? (JSON.parse(initialQuestions) as unknown) : initialQuestions;
+
+    if (!Array.isArray(parsedQuestions)) {
+      return [createEmptyQuestion()];
+    }
+
+    const normalizedQuestions = parsedQuestions
+      .map((question, index) => normalizeQuestion(question, index))
+      .filter((question): question is QuestionType => Boolean(question));
+
+    return normalizedQuestions.length > 0 ? normalizedQuestions : [createEmptyQuestion()];
+  } catch {
+    return [createEmptyQuestion()];
+  }
+};
 
 const QuizQuestionManager: React.FC<QuizQuestionManagerProps> = ({ visible, onClose, quizId, initialQuestions }) => {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [updateQuiz, { isLoading }] = useUpdateQuizMutation();
 
   useEffect(() => {
-    if (visible && initialQuestions) {
-      try {
-        // If it's a string, parse it, otherwise if it's already an object/array, use it directly.
-        const parsed = typeof initialQuestions === 'string' ? JSON.parse(initialQuestions) : initialQuestions;
-        if (Array.isArray(parsed)) {
-          setQuestions(parsed);
-        } else {
-          setQuestions([]);
-        }
-      } catch {
-        setQuestions([]);
-      }
-    } else if (visible && !initialQuestions) {
-      setQuestions([]);
+    if (!visible) {
+      return;
     }
+
+    setQuestions(parseInitialQuestions(initialQuestions));
   }, [visible, initialQuestions]);
 
   const handleAddQuestion = () => {
-    const newQuestion: QuestionType = {
-      id: Date.now().toString(),
-      questionText: '',
-      options: ['', '', '', ''],
-      correctAnswerIndex: 0,
-    };
-    setQuestions([...questions, newQuestion]);
+    setQuestions((previousQuestions) => [...previousQuestions, createEmptyQuestion()]);
   };
 
   const handleDeleteQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q.id !== id));
+    setQuestions((previousQuestions) => {
+      if (previousQuestions.length <= 1) {
+        return previousQuestions;
+      }
+
+      return previousQuestions.filter((question) => question.id !== id);
+    });
   };
 
-  const handleQuestionChange = (id: string, field: string, value: any) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, [field]: value } : q));
+  const handleQuestionTextChange = (questionId: string, value: string) => {
+    setQuestions((previousQuestions) =>
+      previousQuestions.map((question) =>
+        question.id === questionId ? { ...question, text: value } : question,
+      ),
+    );
   };
 
   const handleOptionChange = (questionId: string, optionIndex: number, value: string) => {
-    setQuestions(questions.map(q => {
-      if (q.id === questionId) {
-        const newOptions = [...q.options];
-        newOptions[optionIndex] = value;
-        return { ...q, options: newOptions };
-      }
-      return q;
-    }));
-  };
-
-  const handleAddOption = (questionId: string) => {
-    setQuestions(questions.map(q => {
-      if (q.id === questionId) {
-        return { ...q, options: [...q.options, ''] };
-      }
-      return q;
-    }));
-  };
-
-  const handleDeleteOption = (questionId: string, optionIndex: number) => {
-    setQuestions(questions.map(q => {
-      if (q.id === questionId) {
-        const newOptions = q.options.filter((_, idx) => idx !== optionIndex);
-        // adjust correctAnswerIndex if needed
-        let newCorrect = q.correctAnswerIndex;
-        if (newCorrect === optionIndex) {
-          newCorrect = 0;
-        } else if (newCorrect > optionIndex) {
-          newCorrect -= 1;
+    setQuestions((previousQuestions) =>
+      previousQuestions.map((question) => {
+        if (question.id !== questionId) {
+          return question;
         }
-        return { ...q, options: newOptions, correctAnswerIndex: newCorrect };
-      }
-      return q;
-    }));
+
+        const options = [...question.options];
+        options[optionIndex] = {
+          ...options[optionIndex],
+          key: options[optionIndex]?.key || getOptionKey(optionIndex),
+          label: value,
+        };
+
+        return { ...question, options };
+      }),
+    );
+  };
+
+  const handleCorrectAnswerChange = (questionId: string, value: string) => {
+    setQuestions((previousQuestions) =>
+      previousQuestions.map((question) =>
+        question.id === questionId ? { ...question, correctAnswer: value } : question,
+      ),
+    );
   };
 
   const handleSave = async () => {
+    if (!quizId) {
+      notify.error('Không xác định được quiz để lưu câu hỏi.');
+      return;
+    }
+
+    if (!questions.length) {
+      notify.warning('Vui lòng thêm ít nhất 1 câu hỏi.');
+      return;
+    }
+
+    const cleanedQuestions: QuizQuestion[] = [];
+
+    for (let index = 0; index < questions.length; index += 1) {
+      const question = questions[index];
+      const text = question.text.trim();
+      const options = question.options.slice(0, 4).map((option, optionIndex) => ({
+        key: (option.key || getOptionKey(optionIndex)).trim().toUpperCase(),
+        label: option.label.trim(),
+      }));
+
+      if (!text) {
+        notify.error(`Câu hỏi ${index + 1} chưa có nội dung.`);
+        return;
+      }
+
+      if (options.length !== 4 || options.some((option) => !option.label)) {
+        notify.error(`Câu hỏi ${index + 1} cần đủ 4 đáp án và không được để trống.`);
+        return;
+      }
+
+      const hasValidCorrectAnswer = options.some((option) => option.key === question.correctAnswer);
+      cleanedQuestions.push({
+        id: question.id,
+        text,
+        options,
+        correctAnswer: hasValidCorrectAnswer ? question.correctAnswer : options[0].key,
+      });
+    }
+
     try {
-      await updateQuiz({ id: quizId, data: { questions } }).unwrap();
-      message.success('Đã lưu danh sách câu hỏi');
+      await updateQuiz({
+        id: quizId,
+        data: {
+          questions: cleanedQuestions,
+          totalQuestions: cleanedQuestions.length,
+        },
+      }).unwrap();
+      notify.success('Đã lưu danh sách câu hỏi.');
       onClose();
-    } catch (error) {
-      message.error('Lỗi khi lưu câu hỏi');
+    } catch {
+      notify.error('Không thể lưu câu hỏi. Vui lòng thử lại.');
     }
   };
 
   return (
     <Drawer
-      title="Quản lý Câu hỏi Quiz"
+      title="Quản lý câu hỏi quiz"
       placement="right"
-      width={700}
+      width={760}
       onClose={onClose}
       open={visible}
+      destroyOnHidden
       extra={
         <Space>
           <Button onClick={onClose}>Hủy</Button>
-          <Button type="primary" className="!bg-[#012643]" icon={<SaveOutlined />} onClick={handleSave} loading={isLoading}>
-            Lưu tất cả
+          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave} loading={isLoading}>
+            Lưu câu hỏi
           </Button>
         </Space>
       }
     >
-      <div className="mb-4">
-        <Button type="dashed" block icon={<PlusOutlined />} onClick={handleAddQuestion}>
-          Thêm câu hỏi mới
-        </Button>
-      </div>
+      <Alert
+        type="info"
+        showIcon
+        message="Lưu ý"
+        description="Mỗi câu hỏi cần có nội dung, đủ 4 lựa chọn và một đáp án đúng trước khi lưu."
+        className="mb-4"
+      />
 
-      {questions.map((q, index) => (
-        <Card 
-          key={q.id} 
-          className="mb-4 shadow-sm" 
-          title={`Câu hỏi ${index + 1}`}
-          extra={
-            <Popconfirm title="Xóa câu hỏi này?" onConfirm={() => handleDeleteQuestion(q.id)}>
-              <Button type="text" danger icon={<DeleteOutlined />} />
-            </Popconfirm>
-          }
-        >
-          <div className="mb-4">
-            <div className="font-medium mb-1">Nội dung câu hỏi:</div>
-            <Input.TextArea 
-              rows={2} 
-              value={q.questionText} 
-              onChange={e => handleQuestionChange(q.id, 'questionText', e.target.value)} 
-              placeholder="Nhập nội dung câu hỏi..."
-            />
-          </div>
+      <Button type="dashed" block icon={<PlusOutlined />} onClick={handleAddQuestion} className="mb-4">
+        Thêm câu hỏi mới
+      </Button>
 
-          <Divider plain>Các Lựa chọn</Divider>
-          
-          {q.options.map((opt, optIdx) => (
-            <div key={optIdx} className="flex gap-2 items-center mb-2">
-              <span className="font-semibold text-gray-500 w-6">{optIdx + 1}.</span>
-              <Input 
-                value={opt} 
-                onChange={e => handleOptionChange(q.id, optIdx, e.target.value)} 
-                placeholder={`Lựa chọn ${optIdx + 1}`}
-              />
-              <Button 
-                type="text" 
-                danger 
-                icon={<DeleteOutlined />} 
-                onClick={() => handleDeleteOption(q.id, optIdx)} 
-                disabled={q.options.length <= 2}
+      {questions.length === 0 ? (
+        <Empty description="Chưa có câu hỏi nào." image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      ) : (
+        questions.map((question, index) => (
+          <Card
+            key={question.id}
+            className="mb-4"
+            title={<Text strong>{`Câu hỏi ${index + 1}`}</Text>}
+            extra={
+              <Popconfirm
+                title="Xóa câu hỏi này?"
+                onConfirm={() => handleDeleteQuestion(question.id)}
+                disabled={questions.length <= 1}
+              >
+                <Button type="text" danger icon={<DeleteOutlined />} disabled={questions.length <= 1} />
+              </Popconfirm>
+            }
+          >
+            <div className="mb-4">
+              <Text strong>Nội dung câu hỏi</Text>
+              <Input.TextArea
+                rows={3}
+                value={question.text}
+                onChange={(event) => handleQuestionTextChange(question.id, event.target.value)}
+                placeholder="Nhập nội dung câu hỏi"
+                className="mt-1"
               />
             </div>
-          ))}
 
-          <Button type="link" onClick={() => handleAddOption(q.id)} icon={<PlusOutlined />} size="small">
-            Thêm lựa chọn
-          </Button>
+            <Divider className="!my-3" />
 
-          <div className="mt-4">
-            <div className="font-medium mb-1">Đáp án đúng:</div>
-            <Select 
-              value={q.correctAnswerIndex} 
-              onChange={val => handleQuestionChange(q.id, 'correctAnswerIndex', val)}
-              className="w-full"
-            >
-              {q.options.map((_, optIdx) => (
-                <Option key={optIdx} value={optIdx}>
-                  Lựa chọn {optIdx + 1}
-                </Option>
+            <Text strong>Lựa chọn</Text>
+            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+              {question.options.map((option, optionIndex) => (
+                <Input
+                  key={`${question.id}-option-${option.key}`}
+                  addonBefore={option.key}
+                  value={option.label}
+                  onChange={(event) => handleOptionChange(question.id, optionIndex, event.target.value)}
+                  placeholder={`Nhập đáp án ${option.key}`}
+                />
               ))}
-            </Select>
-          </div>
-        </Card>
-      ))}
+            </div>
 
-      {questions.length === 0 && (
-        <div className="text-center text-gray-400 py-8">
-          Chưa có câu hỏi nào. Hãy bấm "Thêm câu hỏi mới".
-        </div>
+            <div className="mt-3">
+              <Text strong>Đáp án đúng</Text>
+              <Select
+                value={question.correctAnswer}
+                onChange={(value) => handleCorrectAnswerChange(question.id, value)}
+                options={question.options.map((option) => ({
+                  value: option.key,
+                  label: `Đáp án ${option.key}`,
+                }))}
+                className="w-full mt-1"
+              />
+            </div>
+          </Card>
+        ))
       )}
     </Drawer>
   );

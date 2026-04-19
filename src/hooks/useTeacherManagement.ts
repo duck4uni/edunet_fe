@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { Teacher, TableParams } from '../types/admin';
 import {
   useGetTeachersQuery,
@@ -10,6 +10,7 @@ import {
 } from '../services/courseApi';
 import type { QueryParams } from '../services/courseApi';
 
+import { notify } from '../utils/notify';
 interface TeacherFilters {
   status?: string;
   specialization?: string;
@@ -108,10 +109,10 @@ export const useTeacherManagement = () => {
   const approveTeacher = useCallback(async (teacherId: string) => {
     try {
       await approveTeacherApi(teacherId).unwrap();
-      message.success('Đã phê duyệt giáo viên');
+      notify.success('Đã phê duyệt giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể phê duyệt giáo viên');
+      notify.error('Không thể phê duyệt giáo viên');
       return { success: false };
     }
   }, [approveTeacherApi]);
@@ -120,10 +121,10 @@ export const useTeacherManagement = () => {
   const rejectTeacher = useCallback(async (teacherId: string, rejectionReason: string) => {
     try {
       await rejectTeacherApi({ id: teacherId, rejectionReason }).unwrap();
-      message.success('Đã từ chối đăng ký giáo viên');
+      notify.success('Đã từ chối đăng ký giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể từ chối giáo viên');
+      notify.error('Không thể từ chối giáo viên');
       return { success: false };
     }
   }, [rejectTeacherApi]);
@@ -132,10 +133,10 @@ export const useTeacherManagement = () => {
   const suspendTeacher = useCallback(async (teacherId: string, _reason?: string) => {
     try {
       await updateTeacherApi({ id: teacherId, data: { status: 'suspended' } as any }).unwrap();
-      message.success('Đã tạm ngưng giáo viên');
+      notify.success('Đã tạm ngưng giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể tạm ngưng giáo viên');
+      notify.error('Không thể tạm ngưng giáo viên');
       return { success: false };
     }
   }, [updateTeacherApi]);
@@ -144,10 +145,10 @@ export const useTeacherManagement = () => {
   const activateTeacher = useCallback(async (teacherId: string) => {
     try {
       await updateTeacherApi({ id: teacherId, data: { status: 'active' } as any }).unwrap();
-      message.success('Đã kích hoạt giáo viên');
+      notify.success('Đã kích hoạt giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể kích hoạt giáo viên');
+      notify.error('Không thể kích hoạt giáo viên');
       return { success: false };
     }
   }, [updateTeacherApi]);
@@ -156,10 +157,10 @@ export const useTeacherManagement = () => {
   const updateTeacher = useCallback(async (teacherId: string, data: Partial<Teacher>) => {
     try {
       await updateTeacherApi({ id: teacherId, data: data as any }).unwrap();
-      message.success('Đã cập nhật thông tin giáo viên');
+      notify.success('Đã cập nhật thông tin giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể cập nhật giáo viên');
+      notify.error('Không thể cập nhật giáo viên');
       return { success: false };
     }
   }, [updateTeacherApi]);
@@ -168,10 +169,10 @@ export const useTeacherManagement = () => {
   const deleteTeacher = useCallback(async (teacherId: string) => {
     try {
       await deleteTeacherApi(teacherId).unwrap();
-      message.success('Đã xóa giáo viên');
+      notify.success('Đã xóa giáo viên');
       return { success: true };
     } catch {
-      message.error('Không thể xóa giáo viên');
+      notify.error('Không thể xóa giáo viên');
       return { success: false };
     }
   }, [deleteTeacherApi]);
@@ -228,4 +229,3 @@ export const useTeacherManagement = () => {
     getTeacherById,
   };
 };
-

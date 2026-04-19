@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  MailOutlined, 
-  FacebookFilled, 
-  TwitterOutlined, 
-  YoutubeFilled, 
-  SendOutlined,
   UserOutlined,
   LogoutOutlined,
   MenuOutlined,
@@ -108,21 +103,10 @@ const Header: React.FC = () => {
     },
   ];
 
-  const SocialLink = ({ href, icon }: { href: string; icon: React.ReactNode }) => (
-    <a 
-      href={href} 
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-[#30C2EC] hover:text-white hover:border-[#30C2EC] transition-all duration-300"
-    >
-      {icon}
-    </a>
-  );
-
   return (
-    <header className="bg-white sticky top-0 z-50" style={{ boxShadow: "#88a5bf7a 6px 2px 16px, #fffc -6px -2px 16px" }}>
+    <header className="bg-white sticky top-0 z-50" >
       {/* Top Bar */}
-      <div className="border-b border-gray-100 py-2 hidden md:block">
+      {/* <div className="border-b border-gray-100 py-2 hidden md:block">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
@@ -137,20 +121,20 @@ const Header: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Navbar */}
-      <div className="py-4">
+      <div className="py-2">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex items-center gap-2 group">
               <img 
                 src={Logo} 
                 alt="EduNet" 
-                className="w-10 h-10 object-cover rounded-full"
+                className="w-12 h-12 object-cover rounded-full"
               />
-              <span className="text-[#30C2EC] text-3xl font-bold font-roboto mt-1">EduNet</span>
+              <span className="text-[#30C2EC] text-[24px] -mt-1 font-bold font-roboto ">EduNet</span>
             </Link>
 
             {/* Desktop Menu */}
@@ -184,7 +168,6 @@ const Header: React.FC = () => {
                     <Avatar 
                       src={user?.avatar} 
                       icon={<UserOutlined />}
-                      size={36}
                       className="!bg-[#30C2EC]"
                     />
                     <div className="hidden xl:block">

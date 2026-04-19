@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { message } from 'antd';
+
 import {
   useGetAssignmentsByCourseQuery,
   useCreateAssignmentMutation,
@@ -10,6 +10,7 @@ import {
 import { useGetProfileQuery } from '../services/authApi';
 import type { AssignmentItem } from '../types/myCourse';
 
+import { notify } from '../utils/notify';
 export const useAssignment = (courseId: string) => {
   const { data: profileData } = useGetProfileQuery();
   const userRole = (profileData?.data?.role as 'student' | 'teacher') || 'student';
@@ -94,18 +95,18 @@ export const useAssignment = (courseId: string) => {
   const handleDelete = async (assignmentId: string) => {
     try {
       await deleteAssignment(assignmentId).unwrap();
-      message.success('Đã xóa bài tập');
+      notify.success('Đã xóa bài tập');
     } catch {
-      message.error('Xóa bài tập thất bại');
+      notify.error('Xóa bài tập thất bại');
     }
   };
 
   const handleSubmitAssignment = async (assignmentId: string, submissionUrl: string) => {
     try {
       await submitAssignment({ id: assignmentId, submissionUrl }).unwrap();
-      message.success('Đã nộp bài tập');
+      notify.success('Đã nộp bài tập');
     } catch {
-      message.error('Nộp bài tập thất bại');
+      notify.error('Nộp bài tập thất bại');
     }
   };
 
@@ -113,14 +114,14 @@ export const useAssignment = (courseId: string) => {
     try {
       if (selectedAssignment) {
         await updateAssignment({ id: selectedAssignment.id, data: values }).unwrap();
-        message.success('Đã cập nhật bài tập');
+        notify.success('Đã cập nhật bài tập');
       } else {
         await createAssignment({ ...values, courseId }).unwrap();
-        message.success('Đã tạo bài tập');
+        notify.success('Đã tạo bài tập');
       }
       setIsModalOpen(false);
     } catch {
-      message.error(selectedAssignment ? 'Cập nhật thất bại' : 'Tạo bài tập thất bại');
+      notify.error(selectedAssignment ? 'Cập nhật thất bại' : 'Tạo bài tập thất bại');
     }
   };
 

@@ -1,9 +1,10 @@
 // Recruitment Management Hook
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { CVApplication, JobPosting, TableParams } from '../types/admin';
 import { cvApplications as mockApplications, jobPostings as mockJobs } from '../constants/adminData';
 
+import { notify } from '../utils/notify';
 interface CVFilters {
   status?: string;
   position?: string;
@@ -40,7 +41,7 @@ export const useRecruitment = () => {
       setApplications(mockApplications);
       setJobs(mockJobs);
     } catch (error) {
-      message.error('Không thể tải dữ liệu tuyển dụng');
+      notify.error('Không thể tải dữ liệu tuyển dụng');
     } finally {
       setLoading(false);
     }
@@ -120,10 +121,10 @@ export const useRecruitment = () => {
         )
       );
       
-      message.success('Đã cập nhật trạng thái ứng viên');
+      notify.success('Đã cập nhật trạng thái ứng viên');
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật trạng thái');
+      notify.error('Không thể cập nhật trạng thái');
       return { success: false };
     }
   }, []);
@@ -139,10 +140,10 @@ export const useRecruitment = () => {
         )
       );
       
-      message.success('Đã đánh giá ứng viên');
+      notify.success('Đã đánh giá ứng viên');
       return { success: true };
     } catch (error) {
-      message.error('Không thể đánh giá');
+      notify.error('Không thể đánh giá');
       return { success: false };
     }
   }, []);
@@ -158,10 +159,10 @@ export const useRecruitment = () => {
         )
       );
       
-      message.success('Đã lưu ghi chú');
+      notify.success('Đã lưu ghi chú');
       return { success: true };
     } catch (error) {
-      message.error('Không thể lưu ghi chú');
+      notify.error('Không thể lưu ghi chú');
       return { success: false };
     }
   }, []);
@@ -173,10 +174,10 @@ export const useRecruitment = () => {
       
       setApplications(prev => prev.filter(a => a.id !== applicationId));
       
-      message.success('Đã xóa hồ sơ ứng tuyển');
+      notify.success('Đã xóa hồ sơ ứng tuyển');
       return { success: true };
     } catch (error) {
-      message.error('Không thể xóa hồ sơ');
+      notify.error('Không thể xóa hồ sơ');
       return { success: false };
     }
   }, []);
@@ -195,10 +196,10 @@ export const useRecruitment = () => {
       
       setJobs(prev => [...prev, newJob]);
       
-      message.success('Đã tạo tin tuyển dụng mới');
+      notify.success('Đã tạo tin tuyển dụng mới');
       return { success: true, job: newJob };
     } catch (error) {
-      message.error('Không thể tạo tin tuyển dụng');
+      notify.error('Không thể tạo tin tuyển dụng');
       return { success: false };
     }
   }, []);
@@ -214,10 +215,10 @@ export const useRecruitment = () => {
         )
       );
       
-      message.success('Đã cập nhật tin tuyển dụng');
+      notify.success('Đã cập nhật tin tuyển dụng');
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật tin tuyển dụng');
+      notify.error('Không thể cập nhật tin tuyển dụng');
       return { success: false };
     }
   }, []);
@@ -229,10 +230,10 @@ export const useRecruitment = () => {
       
       setJobs(prev => prev.filter(j => j.id !== jobId));
       
-      message.success('Đã xóa tin tuyển dụng');
+      notify.success('Đã xóa tin tuyển dụng');
       return { success: true };
     } catch (error) {
-      message.error('Không thể xóa tin tuyển dụng');
+      notify.error('Không thể xóa tin tuyển dụng');
       return { success: false };
     }
   }, []);
@@ -248,10 +249,10 @@ export const useRecruitment = () => {
         )
       );
       
-      message.success('Đã đóng tin tuyển dụng');
+      notify.success('Đã đóng tin tuyển dụng');
       return { success: true };
     } catch (error) {
-      message.error('Không thể đóng tin tuyển dụng');
+      notify.error('Không thể đóng tin tuyển dụng');
       return { success: false };
     }
   }, []);
@@ -310,4 +311,3 @@ export const useRecruitment = () => {
     closeJob,
   };
 };
-

@@ -1,13 +1,50 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, Switch, Popconfirm, message } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import React, { useMemo, useState } from 'react';
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import QuizQuestionManager from './QuizQuestionManager';
-import { 
-  useGetQuizzesByCourseQuery, 
-  useCreateQuizMutation, 
+import QuizGenerationDrawer from './QuizGenerationDrawer';
+import { notify } from '../../../../../utils/notify';
+import {
+  type Quiz,
+  useDeleteQuizMutation,
+  useGetQuizzesByCourseQuery,
   useUpdateQuizMutation,
-  useDeleteQuizMutation 
 } from '../../../../../services/learningApi';
+
+const { Title, Text } = Typography;
+
+type VisibilityFilter = 'all' | 'visible' | 'hidden';
+
+type QuizFormValues = {
+  title: string;
+  description?: string;
+  duration: number;
+  passingScore: number;
+  maxAttempts: number;
+  shuffleQuestions: boolean;
+  showCorrectAnswers: boolean;
+  isVisible: boolean;
+};
+
+type QuestionManagerState = {
+  quizId: string;
+  questions: unknown;
+};
 
 interface QuizzesTabProps {
   courseId: string;
@@ -15,77 +52,134 @@ interface QuizzesTabProps {
 
 const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
   const { data: quizzesData, isLoading, refetch } = useGetQuizzesByCourseQuery(courseId);
-  const [createQuiz, { isLoading: isCreating }] = useCreateQuizMutation();
   const [updateQuiz, { isLoading: isUpdating }] = useUpdateQuizMutation();
   const [deleteQuiz] = useDeleteQuizMutation();
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [manageQuizId, setManageQuizId] = useState<string | null>(null);
-  const [manageQuestionsData, setManageQuestionsData] = useState<any>(null);
-  const [isQuestionManagerVisible, setIsQuestionManagerVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGenerationDrawerOpen, setIsGenerationDrawerOpen] = useState(false);
+  const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
+  const [searchText, setSearchText] = useState('');
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
+  const [questionManagerState, setQuestionManagerState] = useState<QuestionManagerState | null>(null);
   const [form] = Form.useForm();
 
-  const quizzes = quizzesData?.data || [];
+  const filteredQuizzes = useMemo(() => {
+    const quizzes = quizzesData?.data ?? [];
+    const normalizedKeyword = searchText.trim().toLowerCase();
 
-  const handleOpenModal = (record?: any) => {
-    if (record) {
-      setEditingId(record.id);
-      form.setFieldsValue(record);
-    } else {
-      setEditingId(null);
-      form.resetFields();
-    }
-    setIsModalVisible(true);
+    return quizzes.filter((quiz) => {
+      const matchesKeyword =
+        !normalizedKeyword ||
+        quiz.title.toLowerCase().includes(normalizedKeyword) ||
+        (quiz.description || '').toLowerCase().includes(normalizedKeyword);
+
+      const matchesVisibility =
+        visibilityFilter === 'all' ||
+        (visibilityFilter === 'visible' ? quiz.isVisible : !quiz.isVisible);
+
+      return matchesKeyword && matchesVisibility;
+    });
+  }, [quizzesData?.data, searchText, visibilityFilter]);
+
+  const openEditModal = (quiz: Quiz) => {
+    setEditingQuiz(quiz);
+    form.setFieldsValue({
+      ...quiz,
+      duration: Number(quiz.duration) || 30,
+      passingScore: Number(quiz.passingScore) || 50,
+      maxAttempts: Number(quiz.maxAttempts) || 1,
+      shuffleQuestions: quiz.shuffleQuestions ?? true,
+      showCorrectAnswers: quiz.showCorrectAnswers ?? true,
+      isVisible: quiz.isVisible ?? true,
+    });
+    setIsModalOpen(true);
   };
 
-  const handleFinish = async (values: any) => {
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+    setEditingQuiz(null);
+    form.resetFields();
+  };
+
+  const handleFinish = async (values: QuizFormValues) => {
+    if (!editingQuiz) {
+      return;
+    }
+
+    const payload = {
+      ...values,
+      duration: Number(values.duration) || 0,
+      passingScore: Number(values.passingScore) || 0,
+      maxAttempts: Number(values.maxAttempts) || 1,
+      shuffleQuestions: !!values.shuffleQuestions,
+      showCorrectAnswers: !!values.showCorrectAnswers,
+      isVisible: !!values.isVisible,
+    };
+
     try {
-      if (editingId) {
-        await updateQuiz({ id: editingId, data: values }).unwrap();
-        message.success('Cập nhật Quiz thành công');
-      } else {
-        await createQuiz({ ...values, courseId }).unwrap();
-        message.success('Tạo Quiz thành công');
-      }
-      setIsModalVisible(false);
+      await updateQuiz({ id: editingQuiz.id, data: payload }).unwrap();
+      notify.success('Cập nhật quiz thành công.');
+
+      closeEditModal();
       refetch();
-    } catch (error) {
-      message.error('Có lỗi xảy ra!');
+    } catch {
+      notify.error('Không thể lưu quiz. Vui lòng thử lại.');
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteQuiz(id).unwrap();
-      message.success('Đã xóa Quiz');
-      refetch();
-    } catch (error) {
-      message.error('Không thể xóa Quiz');
-    }
-  };
-
-  const handleToggleVisibility = async (quiz: any) => {
-    try {
-      await updateQuiz({ id: quiz.id, data: { isVisible: !quiz.isVisible } }).unwrap();
-      message.success(quiz.isVisible ? 'Đã ẩn Quiz' : 'Đã hiện Quiz');
+      notify.success('Đã xóa quiz.');
       refetch();
     } catch {
-      message.error('Không thể cập nhật trạng thái hiển thị');
+      notify.error('Không thể xóa quiz.');
     }
   };
 
-  const columns = [
-    { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
-    { title: 'Thời gian (phút)', dataIndex: 'duration', key: 'duration' },
-    { title: 'Số câu hỏi', dataIndex: 'totalQuestions', key: 'totalQuestions' },
-    { title: 'Điểm qua môn', dataIndex: 'passingScore', key: 'passingScore' },
+  const handleToggleVisibility = async (quiz: Quiz) => {
+    try {
+      await updateQuiz({ id: quiz.id, data: { isVisible: !quiz.isVisible } }).unwrap();
+      notify.success(quiz.isVisible ? 'Đã ẩn quiz.' : 'Đã hiển thị quiz.');
+      refetch();
+    } catch {
+      notify.error('Không thể cập nhật trạng thái hiển thị.');
+    }
+  };
+
+  const columns: ColumnsType<Quiz> = [
+    {
+      title: 'Tiêu đề',
+      dataIndex: 'title',
+      key: 'title',
+      render: (_title: string, record: Quiz) => (
+        <div>
+          <Text strong>{record.title}</Text>
+          {record.description ? <div className="manage-tab-subtext">{record.description}</div> : null}
+        </div>
+      ),
+    },
+    { title: 'Thời gian (phút)', dataIndex: 'duration', key: 'duration', width: 130 },
+    {
+      title: 'Số câu hỏi',
+      dataIndex: 'totalQuestions',
+      key: 'totalQuestions',
+      width: 120,
+      render: (totalQuestions: number) => totalQuestions || 0,
+    },
+    {
+      title: 'Điểm qua môn',
+      dataIndex: 'passingScore',
+      key: 'passingScore',
+      width: 130,
+      render: (passingScore: number) => <Tag color="blue">{passingScore || 0}%</Tag>,
+    },
     {
       title: 'Hiển thị',
       dataIndex: 'isVisible',
       key: 'isVisible',
-      width: 100,
-      render: (_: any, record: any) => (
+      width: 120,
+      render: (_value: boolean, record: Quiz) => (
         <Switch
           checked={record.isVisible}
           onChange={() => handleToggleVisibility(record)}
@@ -97,102 +191,176 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
     {
       title: 'Hành động',
       key: 'action',
-      render: (_: any, record: any) => (
-        <div className="flex gap-2">
-          <Button 
-            icon={<UnorderedListOutlined />} 
-            onClick={() => {
-              setManageQuizId(record.id);
-              setManageQuestionsData(record.questions);
-              setIsQuestionManagerVisible(true);
-            }} 
-            size="small" 
-            title="Quản lý câu hỏi"
-          />
-          <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} size="small" />
-          <Popconfirm title="Bạn có chắc muốn xóa?" onConfirm={() => handleDelete(record.id)}>
-            <Button icon={<DeleteOutlined />} danger size="small" />
+      width: 180,
+      render: (_value: unknown, record: Quiz) => (
+        <Space size={4}>
+          <Tooltip title="Quản lý câu hỏi">
+            <Button
+              type="text"
+              aria-label="Quản lý câu hỏi"
+              className="manage-action-icon-btn"
+              icon={<UnorderedListOutlined />}
+              onClick={() => {
+                setQuestionManagerState({
+                  quizId: record.id,
+                  questions: record.questions,
+                });
+              }}
+              size="small"
+            />
+          </Tooltip>
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              type="text"
+              aria-label="Chỉnh sửa quiz"
+              className="manage-action-icon-btn"
+              icon={<EditOutlined />}
+              onClick={() => openEditModal(record)}
+              size="small"
+            />
+          </Tooltip>
+          <Popconfirm title="Bạn chắc chắn muốn xóa quiz này?" onConfirm={() => handleDelete(record.id)}>
+            <Button
+              type="text"
+              aria-label="Xóa quiz"
+              className="manage-action-icon-btn"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+            />
           </Popconfirm>
-        </div>
+        </Space>
       ),
     },
   ];
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-[#012643]">Danh sách Quiz</h3>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={() => handleOpenModal()}
-          className="!bg-[#012643]"
-        >
-          Thêm Quiz
-        </Button>
+      <div className="manage-tab-toolbar">
+        <Title level={4} className="manage-tab-title">
+          Danh sách quiz
+        </Title>
+
+        <div className="manage-tab-toolbar-left">
+          <Input
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            prefix={<SearchOutlined />}
+            placeholder="Tìm kiếm quiz..."
+            allowClear
+            className="manage-tab-search"
+          />
+
+          <Select<VisibilityFilter>
+            value={visibilityFilter}
+            onChange={setVisibilityFilter}
+            options={[
+              { value: 'all', label: 'Tất cả trạng thái' },
+              { value: 'visible', label: 'Đang hiển thị' },
+              { value: 'hidden', label: 'Đang ẩn' },
+            ]}
+            className="manage-tab-filter"
+          />
+
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsGenerationDrawerOpen(true)}>
+            Tạo quiz
+          </Button>
+        </div>
       </div>
 
-      <Table 
-        columns={columns} 
-        dataSource={quizzes} 
-        rowKey="id" 
-        loading={isLoading} 
-        pagination={{ pageSize: 10 }}
+      <Table
+        columns={columns}
+        dataSource={filteredQuizzes}
+        rowKey="id"
+        loading={isLoading}
+        pagination={{ pageSize: 8, showSizeChanger: false }}
+        locale={{ emptyText: 'Chưa có quiz nào.' }}
+        scroll={{ x: 1080 }}
       />
 
       <Modal
-        title={editingId ? "Sửa Quiz" : "Thêm Quiz"}
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
+        title="Cập nhật quiz"
+        open={isModalOpen}
+        onCancel={closeEditModal}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
+        width={740}
       >
         <Form form={form} layout="vertical" onFinish={handleFinish}>
-          <Form.Item name="title" label="Tiêu đề Quiz" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item name="title" label="Tiêu đề quiz" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề quiz.' }]}> 
+            <Input placeholder="Ví dụ: Kiểm tra chương 1" />
           </Form.Item>
+
           <Form.Item name="description" label="Mô tả">
-            <Input.TextArea rows={2} />
+            <Input.TextArea rows={2} placeholder="Mô tả ngắn về quiz" />
           </Form.Item>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item name="duration" label="Thời gian làm bài (phút)" initialValue={30} rules={[{ required: true }]}>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Form.Item
+              name="duration"
+              label="Thời gian làm bài (phút)"
+              rules={[{ required: true, message: 'Vui lòng nhập thời gian làm bài.' }]}
+            >
               <InputNumber min={1} className="w-full" />
             </Form.Item>
-            <Form.Item name="passingScore" label="Điểm qua (%)" initialValue={50} rules={[{ required: true }]}>
+
+            <Form.Item
+              name="passingScore"
+              label="Điểm qua (%)"
+              rules={[{ required: true, message: 'Vui lòng nhập điểm qua.' }]}
+            >
               <InputNumber min={0} max={100} className="w-full" />
             </Form.Item>
-            <Form.Item name="maxAttempts" label="Số lần thi tối đa" initialValue={1} rules={[{ required: true }]}>
-              <InputNumber min={1} className="w-full" />
-            </Form.Item>
-            <Form.Item name="totalQuestions" label="Tổng số câu hỏi" initialValue={10} rules={[{ required: true }]}>
+
+            <Form.Item
+              name="maxAttempts"
+              label="Số lần thi tối đa"
+              rules={[{ required: true, message: 'Vui lòng nhập số lần thi.' }]}
+            >
               <InputNumber min={1} className="w-full" />
             </Form.Item>
           </div>
 
-          <div className="flex gap-8 mb-4">
-            <Form.Item name="shuffleQuestions" label="Xáo trộn câu hỏi" valuePropName="checked" initialValue={true}>
-              <Switch />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Form.Item name="shuffleQuestions" label="Xáo trộn câu hỏi" valuePropName="checked">
+              <Switch checkedChildren="Có" unCheckedChildren="Không" />
             </Form.Item>
-            <Form.Item name="showCorrectAnswers" label="Hiện đáp án đúng" valuePropName="checked" initialValue={true}>
-              <Switch />
+
+            <Form.Item name="showCorrectAnswers" label="Hiện đáp án đúng" valuePropName="checked">
+              <Switch checkedChildren="Có" unCheckedChildren="Không" />
+            </Form.Item>
+
+            <Form.Item name="isVisible" label="Hiển thị cho học viên" valuePropName="checked">
+              <Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" />
             </Form.Item>
           </div>
-          
-          <Button type="primary" htmlType="submit" className="w-full !bg-[#012643]" loading={isCreating || isUpdating}>
-            {editingId ? 'Cập nhật' : 'Thêm mới'}
-          </Button>
+
+          <div className="manage-tab-form-actions">
+            <Space>
+              <Button onClick={closeEditModal}>Hủy</Button>
+              <Button type="primary" htmlType="submit" loading={isUpdating}>
+                Lưu thay đổi
+              </Button>
+            </Space>
+          </div>
         </Form>
       </Modal>
 
+      <QuizGenerationDrawer
+        open={isGenerationDrawerOpen}
+        onClose={() => setIsGenerationDrawerOpen(false)}
+        courseId={courseId}
+        onCreated={refetch}
+      />
+
       <QuizQuestionManager
-        visible={isQuestionManagerVisible}
+        visible={!!questionManagerState}
         onClose={() => {
-          setIsQuestionManagerVisible(false);
-          refetch(); // Refresh to get updated questions list
+          setQuestionManagerState(null);
+          refetch();
         }}
-        quizId={manageQuizId!}
-        initialQuestions={manageQuestionsData}
+        quizId={questionManagerState?.quizId || ''}
+        initialQuestions={questionManagerState?.questions}
       />
     </div>
   );

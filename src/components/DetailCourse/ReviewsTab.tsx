@@ -31,6 +31,8 @@ import {
 import { useReviewForm } from '../../hooks/useReviewForm';
 import type { Review } from '../../models/course';
 
+import { notify } from '../../utils/notify';
+import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -98,7 +100,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
 
   const handleSubmitReport = (values: ReviewReportFormValues) => {
     console.log('Report submitted:', { review: reportingReview, ...values });
-    message.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
+    notify.success('Báo cáo đã được gửi. Chúng tôi sẽ xem xét trong thời gian sớm nhất.');
     setReportModalOpen(false);
     setReportingReview(null);
     reportForm.resetFields();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
   Button,
@@ -7,14 +7,10 @@ import {
   Radio,
   Progress,
   Modal,
-  Breadcrumb,
   Spin,
-  Tag,
   Space,
-  message,
 } from 'antd';
 import {
-  HomeOutlined,
   ClockCircleOutlined,
   LeftOutlined,
   RightOutlined,
@@ -25,6 +21,8 @@ import {
   useGetQuizAttemptByIdQuery,
   useSubmitQuizAttemptMutation,
 } from '../../../../services/learningApi';
+import { notify } from '../../../../utils/notify';
+import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
@@ -34,6 +32,92 @@ interface Question {
   options: { key: string; label: string }[];
   correctAnswer: string;
 }
+
+const OPTION_KEYS = ['A', 'B', 'C', 'D'];
+
+const normalizeQuizQuestions = (rawQuestions: unknown): Question[] => {
+  if (!Array.isArray(rawQuestions)) {
+    return [];
+  }
+
+  return rawQuestions
+    .map((rawQuestion, index) => {
+      if (!rawQuestion || typeof rawQuestion !== 'object') {
+        return null;
+      }
+
+      const question = rawQuestion as Record<string, unknown>;
+      const rawText = question.text ?? question.questionText ?? question.question;
+      const text = typeof rawText === 'string' ? rawText.trim() : '';
+      if (!text) {
+        return null;
+      }
+
+      const rawOptions = question.options;
+      const options = Array.isArray(rawOptions)
+        ? rawOptions
+            .map((rawOption, optionIndex) => {
+              if (typeof rawOption === 'string') {
+                const label = rawOption.trim();
+                if (!label) {
+                  return null;
+                }
+                return {
+                  key: OPTION_KEYS[optionIndex] || `OPT${optionIndex + 1}`,
+                  label,
+                };
+              }
+
+              if (!rawOption || typeof rawOption !== 'object') {
+                return null;
+              }
+
+              const option = rawOption as Record<string, unknown>;
+              const rawLabel = option.label ?? option.text ?? option.value;
+              const label = typeof rawLabel === 'string' ? rawLabel.trim() : '';
+              if (!label) {
+                return null;
+              }
+
+              const key =
+                typeof option.key === 'string' && option.key.trim().length > 0
+                  ? option.key.trim().toUpperCase()
+                  : OPTION_KEYS[optionIndex] || `OPT${optionIndex + 1}`;
+
+              return { key, label };
+            })
+            .filter((option): option is { key: string; label: string } => Boolean(option))
+        : [];
+
+      if (options.length < 2) {
+        return null;
+      }
+
+      let correctAnswer = options[0].key;
+      if (typeof question.correctAnswer === 'string') {
+        const candidate = question.correctAnswer.trim().toUpperCase();
+        if (options.some((option) => option.key === candidate)) {
+          correctAnswer = candidate;
+        }
+      } else if (typeof question.correctAnswerIndex === 'number') {
+        const option = options[question.correctAnswerIndex];
+        if (option) {
+          correctAnswer = option.key;
+        }
+      }
+
+      return {
+        id:
+          typeof question.id === 'string' && question.id.trim().length > 0
+            ? question.id.trim()
+            : `question-${index}`,
+        text,
+        options,
+        correctAnswer,
+      };
+    })
+    .filter((question): question is Question => Boolean(question));
+};
 
 const Practics: React.FC = () => {
   const { id: attemptId } = useParams<{ id: string }>();
@@ -47,10 +131,8 @@ const Practics: React.FC = () => {
   const quiz = attempt?.quiz;
 
   const questions: Question[] = useMemo(() => {
-    if (!quiz?.questions) return [];
-    const raw = quiz.questions as Question[];
-    return Array.isArray(raw) ? raw : [];
-  }, [quiz]);
+    return normalizeQuizQuestions(quiz?.questions);
+  }, [quiz?.questions]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -111,10 +193,10 @@ const Practics: React.FC = () => {
         score,
         correctAnswers: correctCount,
       }).unwrap();
-      message.success('Đã nộp bài kiểm tra!');
+      notify.success('Đã nộp bài kiểm tra!');
       navigate(`/my-course/quizz/answer/detail/${attemptId}`);
     } catch {
-      message.error('Nộp bài thất bại');
+      notify.error('Nộp bài thất bại');
       setIsFinished(false);
     }
   }, [attemptId, answers, questions, isFinished, submitAttempt, navigate]);
@@ -176,27 +258,17 @@ const Practics: React.FC = () => {
   const isTimeWarning = timeLeft < 60;
 
   return (
-    <div className="py-6 bg-gradient-to-br from-gray-50 to-blue-50/30 min-h-screen">
-      <div className="container mx-auto px-4 lg:px-6 max-w-4xl">
-        {/* Breadcrumb */}
-        <Breadcrumb
-          className="mb-4"
-          items={[
-            { title: <Link to="/"><HomeOutlined /> Trang chủ</Link> },
-            { title: <Link to="/my-course">Khóa học của tôi</Link> },
-            { title: 'Làm bài kiểm tra' },
-          ]}
-        />
-
+    <div className="mycourse-shell">
+      <div className="mycourse-container max-w-4xl">
         {/* Header with timer */}
         <Card className="rounded-2xl border-0 shadow-md mb-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <Title level={4} className="!mb-1 !text-[#012643]">{quiz.title}</Title>
               <Space>
-                <Tag color="blue">{questions.length} câu hỏi</Tag>
-                <Tag color="orange">{quiz.duration} phút</Tag>
-                <Tag color="green">{answeredCount}/{questions.length} đã trả lời</Tag>
+                <Badge color="blue">{questions.length} câu hỏi</Badge>
+                <Badge color="orange">{quiz.duration} phút</Badge>
+                <Badge color="green">{answeredCount}/{questions.length} đã trả lời</Badge>
               </Space>
             </div>
             <div className={`text-2xl font-bold flex items-center gap-2 ${isTimeWarning ? 'text-red-500 animate-pulse' : 'text-[#012643]'}`}>
@@ -234,7 +306,7 @@ const Practics: React.FC = () => {
         {/* Current Question */}
         <Card className="rounded-2xl border-0 shadow-lg mb-4">
           <div className="mb-4">
-            <Tag color="blue" className="mb-3">Câu {currentIndex + 1}/{questions.length}</Tag>
+            <Badge color="blue" className="mb-3">Câu {currentIndex + 1}/{questions.length}</Badge>
             <Title level={4} className="!text-[#012643] !mb-0">{currentQuestion.text}</Title>
           </div>
 

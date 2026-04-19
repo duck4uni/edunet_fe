@@ -1,9 +1,10 @@
 // Employee Management Hook
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { Employee, TableParams, AdminRole } from '../types/admin';
 import { employees as mockEmployees } from '../constants/adminData';
 
+import { notify } from '../utils/notify';
 interface EmployeeFilters {
   status?: string;
   department?: string;
@@ -28,7 +29,7 @@ export const useEmployeeManagement = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       setEmployees(mockEmployees);
     } catch (error) {
-      message.error('Không thể tải danh sách nhân viên');
+      notify.error('Không thể tải danh sách nhân viên');
     } finally {
       setLoading(false);
     }
@@ -84,10 +85,10 @@ export const useEmployeeManagement = () => {
       
       setEmployees(prev => [...prev, newEmployee]);
       
-      message.success('Đã thêm nhân viên mới');
+      notify.success('Đã thêm nhân viên mới');
       return { success: true, employee: newEmployee };
     } catch (error) {
-      message.error('Không thể thêm nhân viên');
+      notify.error('Không thể thêm nhân viên');
       return { success: false };
     }
   }, []);
@@ -106,10 +107,10 @@ export const useEmployeeManagement = () => {
         )
       );
       
-      message.success('Đã cập nhật thông tin nhân viên');
+      notify.success('Đã cập nhật thông tin nhân viên');
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật nhân viên');
+      notify.error('Không thể cập nhật nhân viên');
       return { success: false };
     }
   }, []);
@@ -121,10 +122,10 @@ export const useEmployeeManagement = () => {
       
       setEmployees(prev => prev.filter(e => e.id !== employeeId));
       
-      message.success('Đã xóa nhân viên');
+      notify.success('Đã xóa nhân viên');
       return { success: true };
     } catch (error) {
-      message.error('Không thể xóa nhân viên');
+      notify.error('Không thể xóa nhân viên');
       return { success: false };
     }
   }, []);
@@ -146,10 +147,10 @@ export const useEmployeeManagement = () => {
         on_leave: 'Nghỉ phép',
       };
       
-      message.success(`Đã cập nhật trạng thái: ${statusLabels[status]}`);
+      notify.success(`Đã cập nhật trạng thái: ${statusLabels[status]}`);
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật trạng thái');
+      notify.error('Không thể cập nhật trạng thái');
       return { success: false };
     }
   }, []);

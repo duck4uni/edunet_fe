@@ -1,6 +1,6 @@
 // Teacher Management Page - Simplified
 import React, { useState } from 'react';
-import { Card, Table, Button, Space, Avatar, Dropdown, Tag, Modal, Typography, Input } from 'antd';
+import { Card, Table, Button, Space, Avatar, Dropdown, Modal, Typography, Input } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, StarFilled, CheckOutlined, CloseOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTeacherManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
@@ -8,6 +8,7 @@ import { API_BASE_URL } from '../../../services/axiosBaseQuery';
 import { formatDate } from '../../../utils/format';
 import type { Teacher } from '../../../types/admin';
 import { teacherStatuses } from '../../../constants/adminData';
+import Badge from '../../../components/common/Tag';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -98,7 +99,7 @@ const TeacherManagement: React.FC = () => {
     { title: 'Email', dataIndex: 'email', key: 'email', width: 200 },
     {
       title: 'Chuyên môn', dataIndex: 'specialization', key: 'specialization', width: 180,
-      render: (specs: string[]) => specs.slice(0, 2).map((s: string) => <Tag key={s} color="blue">{s}</Tag>),
+      render: (specs: string[]) => specs.slice(0, 2).map((s: string) => <Badge key={s} color="blue">{s}</Badge>),
     },
     { title: 'Kinh nghiệm', dataIndex: 'experience', key: 'experience', width: 100, render: (val: number) => `${val} năm` },
     { title: 'Khóa học', dataIndex: 'totalCourses', key: 'courses', width: 90 },
@@ -128,7 +129,7 @@ const TeacherManagement: React.FC = () => {
     { label: 'Số khóa học', value: selectedTeacher.totalCourses },
     { label: 'Học viên', value: selectedTeacher.totalStudents.toLocaleString() },
     { label: 'Đánh giá', value: <span><StarFilled className="text-yellow-400" /> {selectedTeacher.rating}</span> },
-    { label: 'Chuyên môn', value: selectedTeacher.specialization.map((s: string) => <Tag key={s} color="blue">{s}</Tag>), span: 2 },
+    { label: 'Chuyên môn', value: selectedTeacher.specialization.map((s: string) => <Badge key={s} color="blue">{s}</Badge>), span: 2 },
     ...(selectedTeacher.cvUrl ? [{
       label: 'CV',
       value: (

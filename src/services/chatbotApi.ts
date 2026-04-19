@@ -41,6 +41,36 @@ export interface CreateChatDataRequest {
   date?: string;
 }
 
+export type GenerateContentType = 'material' | 'assignment';
+
+export interface GenerateCourseContentRequest {
+  contentType: GenerateContentType;
+  courseTitle: string;
+  courseDescription?: string;
+  requirement?: string;
+}
+
+export interface GeneratedMaterialSuggestion {
+  title: string;
+  description: string;
+  type: 'pdf' | 'video' | 'document' | 'link' | 'image';
+  size: string;
+  downloadUrl: string;
+  isVisible: boolean;
+}
+
+export interface GeneratedAssignmentSuggestion {
+  title: string;
+  description: string;
+  dueDate: string;
+  maxGrade: number;
+  isVisible: boolean;
+}
+
+export interface GenerateCourseContentResponse {
+  suggestion: GeneratedMaterialSuggestion | GeneratedAssignmentSuggestion;
+}
+
 export const chatbotApi = createApi({
   reducerPath: 'chatbotApi',
   baseQuery: axiosBaseQuery({ baseUrl: CHATBOT_BASE_URL }),
@@ -48,6 +78,16 @@ export const chatbotApi = createApi({
   endpoints: (builder) => ({
     askChatbot: builder.mutation<{ data: AskChatbotResponse }, AskChatbotRequest>({
       query: (body) => ({ url: '/chatbot/ask', method: 'post', data: body }),
+    }),
+    generateCourseContent: builder.mutation<
+      { data: GenerateCourseContentResponse },
+      GenerateCourseContentRequest
+    >({
+      query: (body) => ({
+        url: '/chatbot/generate-content',
+        method: 'post',
+        data: body,
+      }),
     }),
     getChatDataList: builder.query<ChatDataListResponse, { page?: number; limit?: number }>({
       query: ({ page = 1, limit = 20 } = {}) => ({
@@ -73,9 +113,9 @@ export const chatbotApi = createApi({
 
 export const {
   useAskChatbotMutation,
+  useGenerateCourseContentMutation,
   useGetChatDataListQuery,
   useCreateChatDataMutation,
   useUpdateChatDataMutation,
   useDeleteChatDataMutation,
 } = chatbotApi;
-

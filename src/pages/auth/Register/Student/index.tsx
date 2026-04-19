@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Steps, Select, message, InputNumber, Typography } from 'antd';
+import { Form, Input, Button, Steps, Select, InputNumber, Typography } from 'antd';
 import { UserOutlined, LockOutlined, PhoneOutlined, BookOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../../../assets/images/Logo.png';
@@ -8,7 +8,9 @@ import CloudOne from '../../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../../assets/images/cloud-2.png';
 import { useRegisterMutation } from '../../../../services/authApi';
 import { setTokens } from '../../../../services/axiosBaseQuery';
+import '../register.css';
 
+import { notify } from '../../../../utils/notify';
 const { Option } = Select;
 const { Title, Text } = Typography;
 
@@ -97,14 +99,14 @@ const RegisterStudent: React.FC = () => {
 
         if (result.success && result.data) {
           setTokens(result.data.accessToken, result.data.refreshToken);
-          message.success('Đăng ký thành công! Đang chuyển hướng...');
+          notify.success('Đăng ký thành công! Đang chuyển hướng...');
           setTimeout(() => navigate('/'), 1500);
         } else {
-          message.error('Đăng ký thất bại. Vui lòng thử lại.');
+          notify.error('Đăng ký thất bại. Vui lòng thử lại.');
         }
       } catch (err: unknown) {
         const errorMessage = (err as { data?: { message?: string } })?.data?.message || 'Đăng ký thất bại';
-        message.error(errorMessage);
+        notify.error(errorMessage);
       }
     }
   };
@@ -260,7 +262,7 @@ const RegisterStudent: React.FC = () => {
             <Text className="text-gray-600 text-base">Hoàn thành các bước dưới đây để tạo tài khoản.</Text>
           </div>
 
-          <Steps current={current} className="mb-6" size="small" items={steps.map(s => ({ title: s.title }))} />
+          <Steps current={current} className="mb-6 register-auth-steps" size="small" items={steps.map(s => ({ title: s.title }))} />
 
           <Form
             form={form}
@@ -297,7 +299,7 @@ const RegisterStudent: React.FC = () => {
           <div className="text-center mt-5 pt-4 border-t border-gray-100">
             <Text className="text-gray-500 text-sm">
               Đã có tài khoản?
-              <Link to="/auth/login" className="text-[#00B1F5] ml-1 font-semibold hover:text-[#0898cc]">
+              <Link to="/auth/login" className="register-login-link ml-1">
                 Đăng nhập
               </Link>
             </Text>

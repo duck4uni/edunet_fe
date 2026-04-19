@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Layout, theme } from 'antd';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
+import RouteBreadcrumb from './RouteBreadcrumb';
 import FloatingChatBot from '../Chat/FloatingChatBot';
 import socketService from '../../services/socketService';
 import { getAccessToken } from '../../services/axiosBaseQuery';
@@ -59,6 +60,7 @@ const AppLayout: React.FC = () => {
   return (
     <Layout className="min-h-screen bg-white">
       <Header />
+      <RouteBreadcrumb />
       <Content>
         <Outlet />
       </Content>

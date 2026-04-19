@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Button, Table, Tag, Typography, Space, Modal, Form, Input, message,
+  Button, Table, Typography, Space, Modal, Form, Input,
   Popconfirm, Tooltip,
 } from 'antd';
 import {
@@ -15,6 +15,8 @@ import {
   type CreateChatDataRequest,
 } from '../../../services/chatbotApi';
 import { PageHeader } from '../../../components/admin';
+import { notify } from '../../../utils/notify';
+import Badge from '../../../components/common/Tag';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -52,17 +54,17 @@ const ChatbotManagement: React.FC = () => {
     if (editingItem) {
       const res = await updateChatData({ id: editingItem.id, body: values });
       if ('error' in res) {
-        message.error('Cập nhật thất bại');
+        notify.error('Cập nhật thất bại');
         return;
       }
-      message.success('Cập nhật thành công');
+      notify.success('Cập nhật thành công');
     } else {
       const res = await createChatData(values);
       if ('error' in res) {
-        message.error('Thêm mới thất bại');
+        notify.error('Thêm mới thất bại');
         return;
       }
-      message.success('Thêm mới thành công');
+      notify.success('Thêm mới thành công');
     }
     setModalOpen(false);
   };
@@ -70,10 +72,10 @@ const ChatbotManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     const res = await deleteChatData(id);
     if ('error' in res) {
-      message.error('Xóa thất bại');
+      notify.error('Xóa thất bại');
       return;
     }
-    message.success('Đã xóa');
+    notify.success('Đã xóa');
   };
 
   const columns = [
@@ -100,7 +102,7 @@ const ChatbotManagement: React.FC = () => {
       dataIndex: 'fileType',
       key: 'fileType',
       width: 90,
-      render: (t: string) => <Tag color="blue">{t}</Tag>,
+      render: (t: string) => <Badge color="blue">{t}</Badge>,
     },
     {
       title: 'Ngày',

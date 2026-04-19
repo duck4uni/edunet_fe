@@ -98,6 +98,7 @@ argument-hint: 'Feature or page goal, target users, and constraints'
 - Mobile and desktop behavior are validated.
 - Keyboard/focus and basic accessibility checks pass.
 - Code is componentized, readable, and consistent with project patterns.
+- If backend schema changes are required, migration files must be generated via CLI commands only; do not hand-write migration files.
 
 ## Prompt Starters
 

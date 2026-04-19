@@ -1,9 +1,10 @@
 // Permission & Role Management Hook
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { message } from 'antd';
+
 import type { Permission, RoleGroup, TableParams } from '../types/admin';
 import { permissions as mockPermissions, roleGroups as mockRoleGroups } from '../constants/adminData';
 
+import { notify } from '../utils/notify';
 interface RoleFilters {
   search?: string;
   isSystem?: boolean;
@@ -28,7 +29,7 @@ export const usePermissionManagement = () => {
       setPermissions(mockPermissions);
       setRoleGroups(mockRoleGroups);
     } catch (error) {
-      message.error('Không thể tải dữ liệu phân quyền');
+      notify.error('Không thể tải dữ liệu phân quyền');
     } finally {
       setLoading(false);
     }
@@ -80,10 +81,10 @@ export const usePermissionManagement = () => {
       
       setRoleGroups(prev => [...prev, newRole]);
       
-      message.success('Đã tạo nhóm quyền mới');
+      notify.success('Đã tạo nhóm quyền mới');
       return { success: true, role: newRole };
     } catch (error) {
-      message.error('Không thể tạo nhóm quyền');
+      notify.error('Không thể tạo nhóm quyền');
       return { success: false };
     }
   }, []);
@@ -95,7 +96,7 @@ export const usePermissionManagement = () => {
       
       const role = roleGroups.find(r => r.id === roleId);
       if (role?.isSystem && data.permissions) {
-        message.warning('Không thể thay đổi quyền của nhóm hệ thống');
+        notify.warning('Không thể thay đổi quyền của nhóm hệ thống');
         return { success: false };
       }
       
@@ -105,10 +106,10 @@ export const usePermissionManagement = () => {
         )
       );
       
-      message.success('Đã cập nhật nhóm quyền');
+      notify.success('Đã cập nhật nhóm quyền');
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật nhóm quyền');
+      notify.error('Không thể cập nhật nhóm quyền');
       return { success: false };
     }
   }, [roleGroups]);
@@ -118,12 +119,12 @@ export const usePermissionManagement = () => {
     try {
       const role = roleGroups.find(r => r.id === roleId);
       if (role?.isSystem) {
-        message.error('Không thể xóa nhóm quyền hệ thống');
+        notify.error('Không thể xóa nhóm quyền hệ thống');
         return { success: false };
       }
       
       if (role && role.usersCount > 0) {
-        message.error('Không thể xóa nhóm quyền đang có người dùng');
+        notify.error('Không thể xóa nhóm quyền đang có người dùng');
         return { success: false };
       }
       
@@ -131,10 +132,10 @@ export const usePermissionManagement = () => {
       
       setRoleGroups(prev => prev.filter(r => r.id !== roleId));
       
-      message.success('Đã xóa nhóm quyền');
+      notify.success('Đã xóa nhóm quyền');
       return { success: true };
     } catch (error) {
-      message.error('Không thể xóa nhóm quyền');
+      notify.error('Không thể xóa nhóm quyền');
       return { success: false };
     }
   }, [roleGroups]);
@@ -144,7 +145,7 @@ export const usePermissionManagement = () => {
     try {
       const role = roleGroups.find(r => r.id === roleId);
       if (role?.isSystem) {
-        message.warning('Không thể thay đổi quyền của nhóm hệ thống');
+        notify.warning('Không thể thay đổi quyền của nhóm hệ thống');
         return { success: false };
       }
       
@@ -156,10 +157,10 @@ export const usePermissionManagement = () => {
         )
       );
       
-      message.success('Đã cập nhật quyền');
+      notify.success('Đã cập nhật quyền');
       return { success: true };
     } catch (error) {
-      message.error('Không thể cập nhật quyền');
+      notify.error('Không thể cập nhật quyền');
       return { success: false };
     }
   }, [roleGroups]);
@@ -169,7 +170,7 @@ export const usePermissionManagement = () => {
     try {
       const role = roleGroups.find(r => r.id === roleId);
       if (!role) {
-        message.error('Không tìm thấy nhóm quyền');
+        notify.error('Không tìm thấy nhóm quyền');
         return { success: false };
       }
       
@@ -187,10 +188,10 @@ export const usePermissionManagement = () => {
       
       setRoleGroups(prev => [...prev, clonedRole]);
       
-      message.success('Đã sao chép nhóm quyền');
+      notify.success('Đã sao chép nhóm quyền');
       return { success: true, role: clonedRole };
     } catch (error) {
-      message.error('Không thể sao chép nhóm quyền');
+      notify.error('Không thể sao chép nhóm quyền');
       return { success: false };
     }
   }, [roleGroups]);
@@ -244,4 +245,3 @@ export const usePermissionManagement = () => {
     getRoleById,
   };
 };
-
