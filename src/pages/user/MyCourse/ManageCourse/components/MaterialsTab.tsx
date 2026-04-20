@@ -258,10 +258,24 @@ const MaterialsTab: React.FC<MaterialsTabProps> = ({ courseId, courseTitle, cour
       render: (_value: unknown, record: Material) => (
         <Space size={4}>
           <Tooltip title="Chỉnh sửa">
-            <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} size="small" />
+            <Button
+              type="text"
+              aria-label="Chỉnh sửa tài liệu"
+              className="manage-action-icon-btn"
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
+              size="small"
+            />
           </Tooltip>
           <Popconfirm title="Bạn chắc chắn muốn xóa tài liệu này?" onConfirm={() => handleDelete(record.id)}>
-            <Button icon={<DeleteOutlined />} danger size="small" />
+            <Button
+              type="text"
+              aria-label="Xóa tài liệu"
+              className="manage-action-icon-btn"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+            />
           </Popconfirm>
         </Space>
       ),
