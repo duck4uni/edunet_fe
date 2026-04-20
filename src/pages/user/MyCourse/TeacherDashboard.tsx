@@ -423,7 +423,7 @@ const TeacherDashboard: React.FC = () => {
           </Link>
 
           {(record.status === 'published' || record.status === 'approved') && (
-            <Link to={`/course/${record.id}`} target="_blank">
+            <Link to={`/courses/${record.id}`} target="_blank">
               <Button size="small" icon={<EyeOutlined />}>
                 Xem
               </Button>
