@@ -14,7 +14,6 @@ import {
   Tooltip,
   Typography,
   Upload,
-  message,
 } from 'antd';
 import {
   ClockCircleOutlined,
@@ -32,7 +31,6 @@ import { useReviewForm } from '../../hooks/useReviewForm';
 import type { Review } from '../../models/course';
 
 import { notify } from '../../utils/notify';
-import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 

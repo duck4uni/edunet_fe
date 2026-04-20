@@ -8,7 +8,6 @@ import { getAccessToken } from '../../services/axiosBaseQuery';
 import type { Course } from '../../models/course';
 
 import { notify } from '../../utils/notify';
-import Badge from '../common/Tag';
 const { TextArea } = Input;
 const { Text } = Typography;
 

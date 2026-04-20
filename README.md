@@ -43,6 +43,26 @@ export default defineConfig([
 ])
 ```
 
+## Socket.IO on Vercel
+
+When deploying frontend to Vercel, do not point Socket.IO to an API URL that contains a path prefix such as `/api` or `/gateway/.../api`.
+
+Set these environment variables in Vercel Project Settings:
+
+- `VITE_API_BASE_URL`: REST API base URL (example: `https://api.example.com/api`)
+- `VITE_SOCKET_URL`: Socket.IO server origin only (example: `https://api.example.com`)
+- `VITE_SOCKET_PATH` (optional): Socket.IO engine path (default: `/socket.io`)
+
+If your backend is behind a gateway path, keep that path in `VITE_API_BASE_URL` for REST calls, but keep `VITE_SOCKET_URL` as origin only.
+
+Example:
+
+- `VITE_API_BASE_URL=https://vietprodev.duckdns.org/gateway/edunet/api`
+- `VITE_SOCKET_URL=https://vietprodev.duckdns.org`
+- `VITE_SOCKET_PATH=/socket.io`
+
+After updating variables, trigger a new Vercel deployment.
+
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js

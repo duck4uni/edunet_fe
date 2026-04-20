@@ -1,10 +1,44 @@
 import { io, Socket } from 'socket.io-client';
 import { getAccessToken } from './axiosBaseQuery';
 
-const SOCKET_BASE_URL = (
-  import.meta.env?.VITE_API_BASE_URL
-    ? String(import.meta.env.VITE_API_BASE_URL).replace(/\/api\/?$/, '')
-    : 'http://localhost:3000'
+const DEFAULT_API_BASE_URL = 'http://localhost:3000/api';
+
+const toOrigin = (rawUrl: string): string => {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return '';
+
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed
+      .replace(/\/+$/, '')
+      .replace(/\/api(?:\/.*)?$/i, '');
+  }
+};
+
+const getSocketServerUrl = (): string => {
+  const socketEnv = import.meta.env?.VITE_SOCKET_URL
+    ? String(import.meta.env.VITE_SOCKET_URL)
+    : '';
+  const apiEnv = import.meta.env?.VITE_API_BASE_URL
+    ? String(import.meta.env.VITE_API_BASE_URL)
+    : DEFAULT_API_BASE_URL;
+
+  return toOrigin(socketEnv || apiEnv) || 'http://localhost:3000';
+};
+
+const normalizeSocketPath = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) return '/socket.io';
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+};
+
+const SOCKET_SERVER_URL = getSocketServerUrl();
+const SOCKET_NAMESPACE = '/chat';
+const SOCKET_PATH = normalizeSocketPath(
+  import.meta.env?.VITE_SOCKET_PATH
+    ? String(import.meta.env.VITE_SOCKET_PATH)
+    : '/socket.io',
 );
 
 class SocketService {
@@ -20,8 +54,10 @@ class SocketService {
       throw new Error('No access token available');
     }
 
-    this.socket = io(`${SOCKET_BASE_URL}/chat`, {
+    this.socket = io(`${SOCKET_SERVER_URL}${SOCKET_NAMESPACE}`, {
       auth: { token },
+      path: SOCKET_PATH,
+      withCredentials: true,
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,
