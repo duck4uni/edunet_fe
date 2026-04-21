@@ -262,10 +262,24 @@ const AssignmentsTab: React.FC<AssignmentsTabProps> = ({ courseId, courseTitle, 
       render: (_value: unknown, record: Assignment) => (
         <Space size={4}>
           <Tooltip title="Chỉnh sửa">
-            <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} size="small" />
+            <Button
+              type="text"
+              aria-label="Chỉnh sửa bài tập"
+              className="manage-action-icon-btn"
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
+              size="small"
+            />
           </Tooltip>
           <Popconfirm title="Bạn chắc chắn muốn xóa bài tập này?" onConfirm={() => handleDelete(record.id)}>
-            <Button icon={<DeleteOutlined />} danger size="small" />
+            <Button
+              type="text"
+              aria-label="Xóa bài tập"
+              className="manage-action-icon-btn"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+            />
           </Popconfirm>
         </Space>
       ),

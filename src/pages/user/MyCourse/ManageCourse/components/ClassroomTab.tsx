@@ -212,10 +212,24 @@ const ClassroomTab: React.FC<ClassroomTabProps> = ({ courseId }) => {
       render: (_value: unknown, record: Lesson) => (
         <Space size={4}>
           <Tooltip title="Chỉnh sửa">
-            <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} size="small" />
+            <Button
+              type="text"
+              aria-label="Chỉnh sửa bài học"
+              className="manage-action-icon-btn"
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
+              size="small"
+            />
           </Tooltip>
           <Popconfirm title="Bạn chắc chắn muốn xóa bài học này?" onConfirm={() => handleDelete(record.id)}>
-            <Button icon={<DeleteOutlined />} danger size="small" />
+            <Button
+              type="text"
+              aria-label="Xóa bài học"
+              className="manage-action-icon-btn"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+            />
           </Popconfirm>
         </Space>
       ),

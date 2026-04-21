@@ -172,6 +172,20 @@
   border-color: #ff4d4f !important;
 }
 
+.manage-course-shell .ant-pagination .ant-pagination-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.manage-course-shell .ant-pagination .ant-pagination-item a {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1 !important;
+}
+
 .manage-question-option-row {
   display: flex;
   align-items: center;
