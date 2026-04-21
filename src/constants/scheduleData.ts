@@ -14,7 +14,7 @@ export const MOCK_SCHEDULE_EVENTS: ScheduleEvent[] = [
     instructor: 'Nguyễn Văn Minh',
     location: 'Trực tuyến - Zoom',
     status: 'upcoming',
-    color: '#3B82F6',
+    color: '#30C2EC',
   },
   {
     id: '2',
@@ -29,7 +29,7 @@ export const MOCK_SCHEDULE_EVENTS: ScheduleEvent[] = [
     instructor: 'Nguyễn Văn Minh',
     location: 'Trực tuyến - Zoom',
     status: 'upcoming',
-    color: '#3B82F6',
+    color: '#30C2EC',
   },
   {
     id: '3',
@@ -118,7 +118,7 @@ export const MOCK_SCHEDULE_EVENTS: ScheduleEvent[] = [
 ];
 
 export const EVENT_TYPE_CONFIG = {
-  class: { label: 'Lớp học', color: '#3B82F6', bgColor: 'bg-blue-50', textColor: 'text-blue-600', borderColor: 'border-blue-200' },
+  class: { label: 'Lớp học', color: '#30C2EC', bgColor: 'bg-blue-50', textColor: 'text-blue-600', borderColor: 'border-blue-200' },
   assignment: { label: 'Bài tập', color: '#F97316', bgColor: 'bg-orange-50', textColor: 'text-orange-600', borderColor: 'border-orange-200' },
   quiz: { label: 'Kiểm tra', color: '#10B981', bgColor: 'bg-green-50', textColor: 'text-green-600', borderColor: 'border-green-200' },
   meeting: { label: 'Cuộc họp', color: '#EC4899', bgColor: 'bg-pink-50', textColor: 'text-pink-600', borderColor: 'border-pink-200' },

@@ -45,15 +45,15 @@ export default defineConfig([
 
 ## Socket.IO on Vercel
 
-When deploying frontend to Vercel, do not point Socket.IO to an API URL that contains a path prefix such as `/api` or `/gateway/.../api`.
+Socket config is env-only. Frontend no longer uses hardcoded URL/path fallback in code.
 
-Set these environment variables in Vercel Project Settings:
+Set these required environment variables in Vercel Project Settings:
 
 - `VITE_API_BASE_URL`: REST API base URL (example: `https://api.example.com/api`)
 - `VITE_SOCKET_URL`: Socket.IO server origin only (example: `https://api.example.com`)
-- `VITE_SOCKET_PATH` (optional): Socket.IO engine path (default: `/socket.io`)
+- `VITE_SOCKET_PATH`: Socket.IO engine path (example: `/socket.io` or `/gateway/edunet/socket.io`)
 
-If your backend is behind a gateway path, keep that path in `VITE_API_BASE_URL` for REST calls, but keep `VITE_SOCKET_URL` as origin only.
+If any required variable is missing, the app will throw a startup config error.
 
 Example:
 

@@ -24,10 +24,10 @@ type TagProps = React.HTMLAttributes<HTMLSpanElement> & {
 const COLOR_MAP: Record<string, { color: string; borderColor: string; backgroundColor: string }> = {
   default: { color: '#475467', borderColor: '#d0d5dd', backgroundColor: '#f2f4f7' },
   success: { color: '#15803d', borderColor: '#86efac', backgroundColor: '#f0fdf4' },
-  processing: { color: '#1d4ed8', borderColor: '#93c5fd', backgroundColor: '#eff6ff' },
+  processing: { color: '#1d86a5', borderColor: '#82ddf2', backgroundColor: '#eefbfe' },
   error: { color: '#b91c1c', borderColor: '#fca5a5', backgroundColor: '#fef2f2' },
   warning: { color: '#b45309', borderColor: '#fdba74', backgroundColor: '#fff7ed' },
-  blue: { color: '#1d4ed8', borderColor: '#93c5fd', backgroundColor: '#eff6ff' },
+  blue: { color: '#1d86a5', borderColor: '#82ddf2', backgroundColor: '#eefbfe' },
   green: { color: '#15803d', borderColor: '#86efac', backgroundColor: '#f0fdf4' },
   orange: { color: '#c2410c', borderColor: '#fdba74', backgroundColor: '#fff7ed' },
   red: { color: '#b91c1c', borderColor: '#fca5a5', backgroundColor: '#fef2f2' },

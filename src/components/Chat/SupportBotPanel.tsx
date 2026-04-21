@@ -117,7 +117,7 @@ const SupportBotPanel: React.FC<SupportBotPanelProps> = ({ onBack }) => {
 
           <Avatar size={42} className="!bg-[#012643]" icon={<RobotOutlined />} />
           <div>
-            <Title level={5} className="!mb-0 !text-[#012643]">Trợ lý hỗ trợ EduNet</Title>
+            <Title level={5} className="!mb-0 !text-[#012643]">Trợ lý hỗ trợ Academix</Title>
             <Text className="text-xs text-[#6f8ca8]">Hỏi đáp nhanh về khóa học và hệ thống</Text>
           </div>
         </div>

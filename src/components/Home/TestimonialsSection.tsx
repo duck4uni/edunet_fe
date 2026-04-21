@@ -15,7 +15,7 @@ const testimonials = [
     role: 'Nhà thiết kế UX tại FPT Software',
     avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
     rating: 5,
-    comment: "EduNet đã hoàn toàn thay đổi sự nghiệp của tôi. Các khóa học được tổ chức bài bản và giảng viên rất xuất sắc. Tôi rất khuyến khích cho bất kỳ ai muốn nâng cao kỹ năng.",
+    comment: "Academix đã hoàn toàn thay đổi sự nghiệp của tôi. Các khóa học được tổ chức bài bản và giảng viên rất xuất sắc. Tôi rất khuyến khích cho bất kỳ ai muốn nâng cao kỹ năng.",
   },
   {
     id: 2,

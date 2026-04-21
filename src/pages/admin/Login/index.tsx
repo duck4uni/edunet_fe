@@ -96,13 +96,13 @@ const AdminLogin: React.FC = () => {
         {/* Logo & Title */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-white font-bold text-2xl">E</span>
+            <span className="text-white font-bold text-2xl">A</span>
           </div>
           <Title level={2} className="mb-2">
             Trang quản trị
           </Title>
           <Text type="secondary">
-            Đăng nhập để quản lý hệ thống EduNet
+            Đăng nhập để quản lý hệ thống Academix
           </Text>
         </div>
 

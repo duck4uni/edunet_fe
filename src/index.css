@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand-primary: #30C2EC;
+}
+
 @layer utilities {
   .animate-float {
     animation: float 6s ease-in-out infinite;
@@ -24,7 +28,7 @@
   }
 }
 
-/* Swiper pagination colors aligned with EduNet brand */
+/* Swiper pagination colors aligned with Academix brand */
 .swiper-pagination-bullet {
   background-color: var(--textState500Primary35) !important;
 }
@@ -172,8 +176,8 @@ iframe {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus,
 .ant-btn-primary:active {
-  background-color: #1677ff !important;
-  border-color: #1677ff !important;
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
   color: #ffffff !important;
 }
 
@@ -194,13 +198,13 @@ iframe {
 /* Fix default button hover */
 .ant-btn-default:hover,
 .ant-btn-default:focus {
-  color: #1677ff !important;
-  border-color: #1677ff !important;
+  color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
   background-color: #ffffff !important;
 }
 
 .ant-btn-default:active {
-  color: #1677ff !important;
-  border-color: #1677ff !important;
+  color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
   background-color: #ffffff !important;
 }

@@ -1,14 +1,12 @@
 // Employee Management Page - Simplified
 import React, { useState } from 'react';
 import { Row, Col, Card, Table, Button, Space, Avatar, Dropdown, Modal, Typography, Form, Input, Select } from 'antd';
-import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined } from '@ant-design/icons';
+import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, MoreOutlined, ExportOutlined, UserOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, LockOutlined } from '@ant-design/icons';
 import { useEmployeeManagement } from '../../../hooks';
 import { PageHeader, StatusBadge, FilterBar, DetailDrawer } from '../../../components/admin';
 import { formatCurrency, formatDate } from '../../../utils/format';
 import type { Employee } from '../../../types/admin';
 import { employeeStatuses, employeeRoles } from '../../../constants/adminData';
-
-import { notify } from '../../../utils/notify';
 import Badge from '../../../components/common/Tag';
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -33,11 +31,11 @@ const EmployeeManagement: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (editMode && selectedEmployee) {
-        await updateEmployee(selectedEmployee.id, values);
-        notify.success('Cập nhật thành công');
+        const result = await updateEmployee(selectedEmployee.id, values);
+        if (!result.success) return;
       } else {
-        await createEmployee(values);
-        notify.success('Thêm thành công');
+        const result = await createEmployee(values);
+        if (!result.success) return;
       }
       setFormOpen(false);
     } catch (e) { console.error(e); }
@@ -56,7 +54,7 @@ const EmployeeManagement: React.FC = () => {
         Modal.confirm({
           title: 'Xác nhận xóa', content: `Xóa "${record.firstName} ${record.lastName}"?`,
           okText: 'Xóa', okType: 'danger', cancelText: 'Hủy',
-          onOk: () => { deleteEmployee(record.id); notify.success('Đã xóa'); },
+          onOk: async () => { await deleteEmployee(record.id); },
         });
       }},
     ],
@@ -113,7 +111,7 @@ const EmployeeManagement: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-indigo-500">{statistics.total}</div><p className="text-xs text-gray-500 mt-1 m-0">Tổng</p></div>
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-emerald-500">{statistics.active}</div><p className="text-xs text-gray-500 mt-1 m-0">Hoạt động</p></div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-purple-500">{statistics.byDepartment.length}</div><p className="text-xs text-gray-500 mt-1 m-0">Phòng ban</p></div>
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-purple-500">{Object.keys(statistics.byDepartment).length}</div><p className="text-xs text-gray-500 mt-1 m-0">Phòng ban</p></div>
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center"><div className="text-2xl font-bold text-amber-500">{formatCurrency(statistics.totalSalary / (statistics.total || 1))}</div><p className="text-xs text-gray-500 mt-1 m-0">Lương TB</p></div>
       </div>
 
@@ -134,16 +132,33 @@ const EmployeeManagement: React.FC = () => {
             <Col span={12}><Form.Item name="lastName" label="Tên" rules={[{ required: true }]}><Input placeholder="Tên" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}><Input prefix={<MailOutlined />} /></Form.Item></Col>
+            <Col span={12}><Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}><Input prefix={<MailOutlined />} disabled={editMode} /></Form.Item></Col>
             <Col span={12}><Form.Item name="phone" label="SĐT" rules={[{ required: true }]}><Input prefix={<PhoneOutlined />} /></Form.Item></Col>
           </Row>
+          {!editMode && (
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="password"
+                  label="Mật khẩu khởi tạo"
+                  rules={[
+                    { required: true, message: 'Vui lòng nhập mật khẩu' },
+                    { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự' },
+                  ]}
+                >
+                  <Input.Password prefix={<LockOutlined />} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="status" label="Trạng thái" initialValue="active">
+                  <Select options={employeeStatuses.map((s: { label: string; value: string }) => ({ label: s.label, value: s.value }))} />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="department" label="Phòng ban" rules={[{ required: true }]}><Select options={allDepartments.map((d: string) => ({ label: d, value: d }))} /></Form.Item></Col>
-            <Col span={12}><Form.Item name="position" label="Chức vụ" rules={[{ required: true }]}><Select options={allPositions.map((p: string) => ({ label: p, value: p }))} /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="role" label="Quyền" rules={[{ required: true }]}><Select options={employeeRoles.map((r: { label: string; value: string }) => ({ label: r.label, value: r.value }))} /></Form.Item></Col>
-            <Col span={12}><Form.Item name="salary" label="Lương"><Input type="number" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="department" label="Phòng ban"><Select options={allDepartments.map((d: string) => ({ label: d, value: d }))} disabled /></Form.Item></Col>
+            <Col span={12}><Form.Item name="position" label="Chức vụ"><Select options={allPositions.map((p: string) => ({ label: p, value: p }))} disabled /></Form.Item></Col>
           </Row>
           <Form.Item name="address" label="Địa chỉ"><TextArea rows={2} /></Form.Item>
         </Form>

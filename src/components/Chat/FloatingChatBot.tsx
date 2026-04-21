@@ -85,7 +85,7 @@ const FloatingChatBot: React.FC = () => {
           type="button"
           onClick={() => setOpen(true)}
           className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#012643] to-[#0b4a79] text-white shadow-lg shadow-[#012643]/40 transition-transform hover:scale-110 active:scale-95"
-          title="Trợ lý EduNet"
+          title="Trợ lý Academix"
         >
           <RobotOutlined style={{ fontSize: 24 }} />
           <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#30C2EC] text-[9px] font-bold text-white">AI</span>
@@ -99,7 +99,7 @@ const FloatingChatBot: React.FC = () => {
           <div className="flex shrink-0 items-center gap-3 border-b border-[#d8ecf8] bg-gradient-to-r from-[#012643] to-[#0b4a79] px-4 py-3">
             <Avatar size={36} className="!bg-[#30C2EC]" icon={<RobotOutlined />} />
             <div className="min-w-0 flex-1">
-              <Title level={5} className="!mb-0 !text-white !leading-tight">Trợ lý EduNet</Title>
+              <Title level={5} className="!mb-0 !text-white !leading-tight">Trợ lý Academix</Title>
               <Text className="!text-[11px] !text-[#9dd4ef]">Hỏi đáp về khóa học &amp; hệ thống</Text>
             </div>
             <Button

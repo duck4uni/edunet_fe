@@ -10,6 +10,7 @@ import Classroom from '../pages/user/MyCourse/Classroom';
 import Material from '../pages/user/MyCourse/Material';
 import Assignment from '../pages/user/MyCourse/Assignment';
 import Quizz from '../pages/user/MyCourse/Quizz';
+import Notifications from '../pages/user/MyCourse/Notifications';
 import Practics from '../pages/user/MyCourse/Quizz/Practics';
 import Answer from '../pages/user/MyCourse/Quizz/Answer';
 import DetailAnswer from '../pages/user/MyCourse/Quizz/DetailAnswer';
@@ -41,6 +42,7 @@ import {
   ReviewManagement,
   AdminProfile,
   ChatbotManagement,
+  AssistantManagement,
 } from '../pages/admin';
 
 export const router = createBrowserRouter([
@@ -116,6 +118,11 @@ export const router = createBrowserRouter([
             path: 'quizz/:id',
             element: <Quizz />,
             handle: { breadcrumb: 'Bài kiểm tra' },
+          },
+          {
+            path: 'notifications/:id',
+            element: <Notifications />,
+            handle: { breadcrumb: 'Thông báo' },
           },
           {
             path: 'quizz/practics/:id',
@@ -215,6 +222,10 @@ export const router = createBrowserRouter([
       {
         path: 'chatbot',
         element: <ChatbotManagement />,
+      },
+      {
+        path: 'assistant',
+        element: <AssistantManagement />,
       },
       {
         path: 'reviews',

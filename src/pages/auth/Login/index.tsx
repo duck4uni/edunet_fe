@@ -15,10 +15,10 @@ const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
 const SUPPORT_CATEGORIES = [
-  { value: 'login', label: 'Vấn đề đăng nhập' },
-  { value: 'registration', label: 'Vấn đề đăng ký' },
-  { value: 'password', label: 'Khôi phục mật khẩu' },
-  { value: 'account', label: 'Truy cập tài khoản' },
+  { value: 'account', label: 'Đăng nhập / Tài khoản' },
+  { value: 'technical', label: 'Sự cố kỹ thuật' },
+  { value: 'course', label: 'Khóa học' },
+  { value: 'billing', label: 'Thanh toán / Hóa đơn' },
   { value: 'other', label: 'Khác' },
 ];
 
@@ -120,7 +120,7 @@ const Login: React.FC = () => {
     try {
       await createTicket({
         subject: values.subject,
-        description: values.description,
+        message: values.description,
         category: values.category as 'technical' | 'billing' | 'course' | 'account' | 'other',
       }).unwrap();
       notify.success('Ticket hỗ trợ đã được gửi! Chúng tôi sẽ liên hệ sớm.');
@@ -166,8 +166,8 @@ const Login: React.FC = () => {
         <div className="w-full h-full">
           {/* Mobile Logo */}
           <div className="text-center py-1 lg:hidden">
-            <img src={Logo} alt="EduNet" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
-            <Title level={4} className="!text-[#0c4055] !mb-0">EduNet</Title>
+            <img src={Logo} alt="Academix" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
+            <Title level={4} className="!text-[#0c4055] !mb-0">Academix</Title>
           </div>
 
           {/* Form Card */}

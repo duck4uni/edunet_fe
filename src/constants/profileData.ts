@@ -27,7 +27,7 @@ export const MOCK_ACHIEVEMENTS: Achievement[] = [
   {
     id: '1',
     title: 'Hoàn thành khóa học đầu tiên',
-    description: 'Hoàn thành khóa học đầu tiên trên EduNet',
+    description: 'Hoàn thành khóa học đầu tiên trên Academix',
     icon: '🎓',
     earnedAt: '2024-02-15',
     type: 'course',
@@ -59,7 +59,7 @@ export const MOCK_ACHIEVEMENTS: Achievement[] = [
   {
     id: '5',
     title: 'Người tiên phong',
-    description: 'Tham gia EduNet trong năm đầu tiên',
+    description: 'Tham gia Academix trong năm đầu tiên',
     icon: '⭐',
     earnedAt: '2024-01-01',
     type: 'special',

@@ -12,7 +12,11 @@ import {
   TrophyOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useAskAssistantMutation } from '../../services/personalAssistantApi';
+import {
+  useAskAssistantMutation,
+  useGetAssistantQuickActionsQuery,
+} from '../../services/personalAssistantApi';
+import type { PersonalAssistantQuickAction } from '../../services/personalAssistantApi';
 
 const { Text, Title } = Typography;
 
@@ -27,15 +31,15 @@ interface AssistantBotPanelProps {
   onBack?: () => void;
 }
 
-const quickActions = [
-  { label: 'Khóa học của tôi', icon: <BookOutlined />, question: 'Khóa học của tôi' },
-  { label: 'Bài tập', icon: <FileTextOutlined />, question: 'Bài tập của tôi' },
-  { label: 'Lịch học', icon: <CalendarOutlined />, question: 'Lịch học của tôi' },
-  { label: 'Deadline', icon: <CalendarOutlined />, question: 'Deadline sắp tới' },
-  { label: 'Điểm số', icon: <TrophyOutlined />, question: 'Điểm của tôi' },
-  { label: 'Tiến độ', icon: <TrophyOutlined />, question: 'Tiến độ học tập' },
-  { label: 'Tìm khóa học', icon: <SearchOutlined />, question: 'Tìm khóa học' },
-  { label: 'Gợi ý', icon: <QuestionCircleOutlined />, question: 'Gợi ý khóa học cho tôi' },
+const defaultQuickActions: PersonalAssistantQuickAction[] = [
+  { id: 'qa-my-courses', label: 'Khóa học của tôi', question: 'Khóa học của tôi', icon: 'BookOutlined', enabled: true, order: 1 },
+  { id: 'qa-assignments', label: 'Bài tập', question: 'Bài tập của tôi', icon: 'FileTextOutlined', enabled: true, order: 2 },
+  { id: 'qa-schedule', label: 'Lịch học', question: 'Lịch học của tôi', icon: 'CalendarOutlined', enabled: true, order: 3 },
+  { id: 'qa-deadline', label: 'Deadline', question: 'Deadline sắp tới', icon: 'CalendarOutlined', enabled: true, order: 4 },
+  { id: 'qa-grades', label: 'Điểm số', question: 'Điểm của tôi', icon: 'TrophyOutlined', enabled: true, order: 5 },
+  { id: 'qa-progress', label: 'Tiến độ', question: 'Tiến độ học tập', icon: 'TrophyOutlined', enabled: true, order: 6 },
+  { id: 'qa-search', label: 'Tìm khóa học', question: 'Tìm khóa học', icon: 'SearchOutlined', enabled: true, order: 7 },
+  { id: 'qa-recommend', label: 'Gợi ý', question: 'Gợi ý khóa học cho tôi', icon: 'QuestionCircleOutlined', enabled: true, order: 8 },
 ];
 
 const AssistantBotPanel: React.FC<AssistantBotPanelProps> = ({ onBack }) => {
@@ -44,6 +48,13 @@ const AssistantBotPanel: React.FC<AssistantBotPanelProps> = ({ onBack }) => {
   const [showGuide, setShowGuide] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [askAssistant, { isLoading }] = useAskAssistantMutation();
+  const { data: quickActionsRes } = useGetAssistantQuickActionsQuery();
+
+  const quickActions = React.useMemo(() => {
+    const rows = quickActionsRes?.data ?? [];
+    if (rows.length > 0) return rows;
+    return defaultQuickActions;
+  }, [quickActionsRes]);
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     setTimeout(() => {
@@ -167,7 +178,7 @@ const AssistantBotPanel: React.FC<AssistantBotPanelProps> = ({ onBack }) => {
                   onClick={() => handleSend(action.question)}
                   className="inline-flex items-center gap-1.5 rounded-full border border-[#d5e9f8] bg-white px-3 py-1.5 text-xs font-medium text-[#2d5f8a] shadow-sm transition hover:border-[#30C2EC] hover:bg-[#30C2EC]/10 hover:text-[#012643]"
                 >
-                  {action.icon}
+                  {renderQuickActionIcon(action.icon)}
                   {action.label}
                 </button>
               ))}
@@ -231,7 +242,7 @@ const AssistantBotPanel: React.FC<AssistantBotPanelProps> = ({ onBack }) => {
                 disabled={isLoading}
                 className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#e3f0fa] bg-[#f5fbff] px-2.5 py-1 text-[11px] text-[#5a8aab] transition hover:border-[#30C2EC] hover:text-[#012643] disabled:opacity-50"
               >
-                {action.icon}
+                {renderQuickActionIcon(action.icon)}
                 {action.label}
               </button>
             ))}
@@ -351,6 +362,25 @@ function intentLabel(intent: string): string {
     help: 'Trợ giúp',
   };
   return map[intent] ?? intent;
+}
+
+function renderQuickActionIcon(icon: string): React.ReactNode {
+  switch (icon) {
+    case 'BookOutlined':
+      return <BookOutlined />;
+    case 'FileTextOutlined':
+      return <FileTextOutlined />;
+    case 'CalendarOutlined':
+      return <CalendarOutlined />;
+    case 'TrophyOutlined':
+      return <TrophyOutlined />;
+    case 'SearchOutlined':
+      return <SearchOutlined />;
+    case 'QuestionCircleOutlined':
+      return <QuestionCircleOutlined />;
+    default:
+      return <QuestionCircleOutlined />;
+  }
 }
 
 export default AssistantBotPanel;

@@ -1,10 +1,12 @@
-// Employee Management Hook
-import { useState, useEffect, useCallback, useMemo } from 'react';
+// Employee Management Hook — connected to real API
+import { useState, useCallback, useMemo } from 'react';
 
 import type { Employee, TableParams, AdminRole } from '../types/admin';
-import { employees as mockEmployees } from '../constants/adminData';
+import { useGetUsersQuery, useUpdateUserMutation, useDeleteUserMutation } from '../services/userApi';
+import { useRegisterMutation } from '../services/authApi';
 
 import { notify } from '../utils/notify';
+
 interface EmployeeFilters {
   status?: string;
   department?: string;
@@ -12,9 +14,48 @@ interface EmployeeFilters {
   search?: string;
 }
 
+interface CreateEmployeeInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  password: string;
+  status?: Employee['status'];
+  address?: string;
+}
+
+const DEFAULT_DEPARTMENT = 'Vận hành';
+const DEFAULT_POSITION = 'Quản trị viên';
+
+const mapToEmployee = (user: {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  isActive: boolean;
+  createdAt: string;
+  address?: string;
+}, index: number): Employee => ({
+  id: user.id,
+  employeeId: `EMP${String(index + 1).padStart(3, '0')}`,
+  firstName: user.firstName || '',
+  lastName: user.lastName || '',
+  email: user.email,
+  phone: user.phone || '',
+  avatar: user.avatar,
+  department: DEFAULT_DEPARTMENT,
+  position: DEFAULT_POSITION,
+  role: 'admin',
+  status: user.isActive ? 'active' : 'inactive',
+  hireDate: user.createdAt,
+  salary: undefined,
+  address: user.address || '',
+  createdAt: user.createdAt,
+});
+
 export const useEmployeeManagement = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [filters, setFilters] = useState<EmployeeFilters>({});
   const [tableParams, setTableParams] = useState<TableParams>({
@@ -22,181 +63,182 @@ export const useEmployeeManagement = () => {
     pageSize: 10,
   });
 
-  // Fetch employees
-  const fetchEmployees = useCallback(async () => {
-    setLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setEmployees(mockEmployees);
-    } catch (error) {
-      notify.error('Không thể tải danh sách nhân viên');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const {
+    data: usersData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useGetUsersQuery({
+    size: 'unlimited',
+    filter: 'role:eq:admin',
+    sort: 'createdAt:desc',
+  });
 
-  // Filter employees
+  const [registerUser] = useRegisterMutation();
+  const [updateUserApi] = useUpdateUserMutation();
+  const [deleteUserApi] = useDeleteUserMutation();
+
+  const allEmployeesData = useMemo(() => {
+    const rows = usersData?.data?.rows || [];
+    return rows.map((user, index) => mapToEmployee(user, index));
+  }, [usersData]);
+
   const filteredEmployees = useMemo(() => {
-    let result = [...employees];
+    let result = [...allEmployeesData];
 
     if (filters.status) {
-      result = result.filter(e => e.status === filters.status);
+      result = result.filter((employee) => employee.status === filters.status);
     }
 
     if (filters.department) {
-      result = result.filter(e => e.department === filters.department);
+      result = result.filter((employee) => employee.department === filters.department);
     }
 
     if (filters.role) {
-      result = result.filter(e => e.role === filters.role);
+      result = result.filter((employee) => employee.role === filters.role);
     }
 
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       result = result.filter(
-        e =>
-          `${e.firstName} ${e.lastName}`.toLowerCase().includes(searchLower) ||
-          e.email.toLowerCase().includes(searchLower) ||
-          e.employeeId.toLowerCase().includes(searchLower) ||
-          e.position.toLowerCase().includes(searchLower)
+        (employee) =>
+          `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchLower) ||
+          employee.email.toLowerCase().includes(searchLower) ||
+          employee.employeeId.toLowerCase().includes(searchLower) ||
+          employee.position.toLowerCase().includes(searchLower),
       );
     }
 
     return result;
-  }, [employees, filters]);
+  }, [allEmployeesData, filters]);
 
-  // Paginated employees
   const paginatedEmployees = useMemo(() => {
     const { page, pageSize } = tableParams;
     const start = (page - 1) * pageSize;
     return filteredEmployees.slice(start, start + pageSize);
   }, [filteredEmployees, tableParams]);
 
-  // Create employee
-  const createEmployee = useCallback(async (data: Omit<Employee, 'id' | 'createdAt'>) => {
+  const fetchEmployees = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const createEmployee = useCallback(async (data: CreateEmployeeInput) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const newEmployee: Employee = {
-        ...data,
-        id: `emp-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-      };
-      
-      setEmployees(prev => [...prev, newEmployee]);
-      
+      const created = await registerUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        role: 'admin',
+      }).unwrap();
+
+      const createdUserId = created?.data?.user?.id;
+      if (createdUserId && (data.status === 'inactive' || data.address)) {
+        await updateUserApi({
+          id: createdUserId,
+          data: {
+            isActive: data.status !== 'inactive',
+            address: data.address,
+          },
+        }).unwrap();
+      }
+
+      await refetch();
       notify.success('Đã thêm nhân viên mới');
-      return { success: true, employee: newEmployee };
-    } catch (error) {
+      return { success: true };
+    } catch {
       notify.error('Không thể thêm nhân viên');
       return { success: false };
     }
-  }, []);
+  }, [registerUser, updateUserApi, refetch]);
 
-  // Add employee (alias for createEmployee)
   const addEmployee = createEmployee;
 
-  // Update employee
   const updateEmployee = useCallback(async (employeeId: string, data: Partial<Employee>) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setEmployees(prev =>
-        prev.map(e =>
-          e.id === employeeId ? { ...e, ...data } : e
-        )
-      );
-      
+      const payload: {
+        firstName?: string;
+        lastName?: string;
+        phone?: string;
+        avatar?: string;
+        address?: string;
+        city?: string;
+        country?: string;
+        isActive?: boolean;
+      } = {};
+
+      if (data.firstName !== undefined) payload.firstName = data.firstName;
+      if (data.lastName !== undefined) payload.lastName = data.lastName;
+      if (data.phone !== undefined) payload.phone = data.phone;
+      if (data.avatar !== undefined) payload.avatar = data.avatar;
+      if (data.address !== undefined) payload.address = data.address;
+      if (data.status !== undefined) payload.isActive = data.status !== 'inactive';
+
+      if (Object.keys(payload).length === 0) {
+        return { success: true };
+      }
+
+      await updateUserApi({ id: employeeId, data: payload }).unwrap();
+      await refetch();
       notify.success('Đã cập nhật thông tin nhân viên');
       return { success: true };
-    } catch (error) {
+    } catch {
       notify.error('Không thể cập nhật nhân viên');
       return { success: false };
     }
-  }, []);
+  }, [updateUserApi, refetch]);
 
-  // Delete employee
   const deleteEmployee = useCallback(async (employeeId: string) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setEmployees(prev => prev.filter(e => e.id !== employeeId));
-      
+      await deleteUserApi(employeeId).unwrap();
+      await refetch();
       notify.success('Đã xóa nhân viên');
       return { success: true };
-    } catch (error) {
+    } catch {
       notify.error('Không thể xóa nhân viên');
       return { success: false };
     }
-  }, []);
+  }, [deleteUserApi, refetch]);
 
-  // Change employee status
   const changeEmployeeStatus = useCallback(async (employeeId: string, status: Employee['status']) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setEmployees(prev =>
-        prev.map(e =>
-          e.id === employeeId ? { ...e, status } : e
-        )
-      );
-      
-      const statusLabels = {
-        active: 'Đang làm việc',
-        inactive: 'Nghỉ việc',
-        on_leave: 'Nghỉ phép',
-      };
-      
-      notify.success(`Đã cập nhật trạng thái: ${statusLabels[status]}`);
-      return { success: true };
-    } catch (error) {
-      notify.error('Không thể cập nhật trạng thái');
-      return { success: false };
-    }
-  }, []);
+    return updateEmployee(employeeId, { status });
+  }, [updateEmployee]);
 
-  // Get employee by ID
   const getEmployeeById = useCallback((employeeId: string) => {
-    return employees.find(e => e.id === employeeId) || null;
-  }, [employees]);
+    return allEmployeesData.find((employee) => employee.id === employeeId) || null;
+  }, [allEmployeesData]);
 
-  useEffect(() => {
-    fetchEmployees();
-  }, [fetchEmployees]);
-
-  // Statistics
   const statistics = useMemo(() => ({
-    total: employees.length,
-    active: employees.filter(e => e.status === 'active').length,
-    onLeave: employees.filter(e => e.status === 'on_leave').length,
-    inactive: employees.filter(e => e.status === 'inactive').length,
-    totalSalary: employees
-      .filter(e => e.status === 'active')
-      .reduce((sum, e) => sum + (e.salary || 0), 0),
-    byDepartment: employees.reduce((acc, e) => {
-      acc[e.department] = (acc[e.department] || 0) + 1;
+    total: allEmployeesData.length,
+    active: allEmployeesData.filter((employee) => employee.status === 'active').length,
+    onLeave: allEmployeesData.filter((employee) => employee.status === 'on_leave').length,
+    inactive: allEmployeesData.filter((employee) => employee.status === 'inactive').length,
+    totalSalary: allEmployeesData
+      .filter((employee) => employee.status === 'active')
+      .reduce((sum, employee) => sum + (employee.salary || 0), 0),
+    byDepartment: allEmployeesData.reduce((acc, employee) => {
+      acc[employee.department] = (acc[employee.department] || 0) + 1;
       return acc;
     }, {} as Record<string, number>),
-  }), [employees]);
+  }), [allEmployeesData]);
 
-  // Get all departments for filters
   const allDepartments = useMemo(() => {
-    const depts = new Set<string>();
-    employees.forEach(e => depts.add(e.department));
-    return Array.from(depts).sort();
-  }, [employees]);
+    const departments = new Set<string>();
+    allEmployeesData.forEach((employee) => departments.add(employee.department));
+    return Array.from(departments).sort();
+  }, [allEmployeesData]);
 
-  // Get all positions for filters  
   const allPositions = useMemo(() => {
     const positions = new Set<string>();
-    employees.forEach(e => positions.add(e.position));
+    allEmployeesData.forEach((employee) => positions.add(employee.position));
     return Array.from(positions).sort();
-  }, [employees]);
+  }, [allEmployeesData]);
 
   return {
     employees: paginatedEmployees,
     allEmployees: filteredEmployees,
-    loading,
+    loading: isLoading || isFetching,
     selectedEmployee,
     setSelectedEmployee,
     filters,

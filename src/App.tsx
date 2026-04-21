@@ -51,7 +51,7 @@ const App: React.FC = () => {
         }
 
         .app-notify-item.is-info .app-notify-icon {
-          color: #2563eb;
+          color: #30c2ec;
         }
 
         .app-notify-item.is-warning .app-notify-icon {

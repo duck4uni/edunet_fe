@@ -13,7 +13,7 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   phone?: string;
-  role?: 'student' | 'teacher';
+  role?: 'student' | 'teacher' | 'admin';
 }
 
 export interface AuthResponse {

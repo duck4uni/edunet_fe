@@ -99,7 +99,7 @@ export const useProfile = () => {
     try {
       await createTicket({
         subject: values.subject,
-        description: values.description,
+        message: values.description,
         category: values.category as 'technical' | 'billing' | 'course' | 'account' | 'other',
         priority: (values.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
       }).unwrap();
@@ -115,6 +115,7 @@ export const useProfile = () => {
     switch (status) {
       case 'open':
         return { color: 'blue', text: 'Đang mở' };
+      case 'in_progress':
       case 'in-progress':
         return { color: 'orange', text: 'Đang xử lý' };
       case 'resolved':

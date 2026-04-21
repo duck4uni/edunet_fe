@@ -32,7 +32,11 @@ import {
   useUnfriendMutation,
 } from '../../../services/friendChatApi';
 
-const FriendsPage: React.FC = () => {
+interface FriendsPageProps {
+  embedded?: boolean;
+}
+
+const FriendsPage: React.FC<FriendsPageProps> = ({ embedded = false }) => {
   const navigate = useNavigate();
 
   const { data: friendsRes, refetch: refetchFriends, isLoading: loadingFriends } = useGetFriendsQuery();
@@ -360,19 +364,25 @@ const FriendsPage: React.FC = () => {
     },
   ];
 
+  const friendsContent = (
+    <div className="rounded-3xl bg-white shadow-[0_20px_45px_-28px_rgba(1,38,67,0.2)] border border-[#d5ebf8] overflow-hidden">
+      <Tabs
+        defaultActiveKey="friends"
+        items={tabItems}
+        className="!px-6 pt-4"
+        size="large"
+      />
+    </div>
+  );
+
+  if (embedded) {
+    return friendsContent;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f3fbff] via-[#eef8ff] to-[#e8f6ff] px-4 py-6 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl">
-
-        {/* Main card */}
-        <div className="rounded-3xl bg-white shadow-[0_20px_45px_-28px_rgba(1,38,67,0.2)] border border-[#d5ebf8] overflow-hidden">
-          <Tabs
-            defaultActiveKey="friends"
-            items={tabItems}
-            className="!px-6 pt-4"
-            size="large"
-          />
-        </div>
+        {friendsContent}
       </div>
     </div>
   );

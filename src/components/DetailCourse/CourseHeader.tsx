@@ -59,7 +59,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
       <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-gray-500 md:text-sm">
         <div className="detail-course-meta-chip">
           <Avatar src={course.teacher?.avatar} size="small" />
-          <span className="font-medium text-[var(--primaryColor)]">{course.teacher?.name || 'Giảng viên EduNet'}</span>
+          <span className="font-medium text-[var(--primaryColor)]">{course.teacher?.name || 'Giảng viên Academix'}</span>
         </div>
         <div className="detail-course-meta-chip">
           <ClockCircleOutlined className="text-state-500-primary" />

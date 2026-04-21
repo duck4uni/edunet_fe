@@ -31,7 +31,8 @@ export interface SupportTicket {
 
 export interface CreateTicketRequest {
   subject: string;
-  description: string;
+  message?: string;
+  description?: string;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   category?: 'technical' | 'billing' | 'course' | 'account' | 'other';
   attachments?: object;
@@ -114,7 +115,13 @@ export const supportApi = createApi({
       query: (data) => ({
         url: '/support-tickets',
         method: 'post',
-        data,
+        data: {
+          subject: data.subject,
+          message: data.message ?? data.description,
+          priority: data.priority,
+          category: data.category,
+          attachments: data.attachments,
+        },
       }),
       invalidatesTags: [{ type: 'SupportTickets', id: 'LIST' }],
     }),

@@ -106,11 +106,11 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   );
 
   const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: <Link to="/admin/settings">Hồ sơ</Link>,
-    },
+    // {
+    //   key: 'profile',
+    //   icon: <UserOutlined />,
+    //   label: <Link to="/admin/settings">Hồ sơ</Link>,
+    // },
     {
       key: 'settings',
       icon: <SettingOutlined />,

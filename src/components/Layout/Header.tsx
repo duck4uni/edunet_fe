@@ -5,7 +5,6 @@ import {
   LogoutOutlined,
   MenuOutlined,
   PlusOutlined,
-  SettingOutlined,
   SafetyCertificateOutlined
 } from '@ant-design/icons';
 import { Avatar, Badge, Button, Drawer, Dropdown, message } from 'antd';
@@ -13,7 +12,7 @@ import type { MenuProps } from 'antd';
 import { useGetProfileQuery } from '../../services/authApi';
 import { getAccessToken, clearTokens } from '../../services/axiosBaseQuery';
 import { useLogoutMutation } from '../../services/authApi';
-import { useGetUnreadCountsQuery, useGetPendingRequestsQuery } from '../../services/friendChatApi';
+import { useGetUnreadCountsQuery } from '../../services/friendChatApi';
 
 import Logo from '../../assets/images/Logo.png';
 
@@ -33,12 +32,10 @@ const Header: React.FC = () => {
 
   // Notification queries
   const { data: unreadRes } = useGetUnreadCountsQuery(undefined, { skip: !hasToken });
-  const { data: pendingRes } = useGetPendingRequestsQuery(undefined, { skip: !hasToken });
 
   const totalUnreadMessages = ((unreadRes as any)?.data ?? []).reduce(
     (sum: number, u: any) => sum + parseInt(u.count || '0'), 0
   );
-  const pendingFriendCount = ((pendingRes as any)?.data ?? []).length;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -47,7 +44,6 @@ const Header: React.FC = () => {
     { title: 'Khóa học', path: '/courses' },
     { title: 'Khóa học của tôi', path: '/my-course', requiresAuth: true },
     { title: 'Lịch học', path: '/schedule', requiresAuth: true },
-    { title: 'Bạn bè', path: '/friends', badge: pendingFriendCount, requiresAuth: true },
     { title: 'Tin nhắn', path: '/chat', badge: totalUnreadMessages, requiresAuth: true },
   ];
 
@@ -87,12 +83,12 @@ const Header: React.FC = () => {
       label: 'Hồ sơ cá nhân',
       onClick: () => navigate('/profile'),
     },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: 'Cài đặt',
-      onClick: () => navigate('/profile'),
-    },
+    // {
+    //   key: 'settings',
+    //   icon: <SettingOutlined />,
+    //   label: 'Cài đặt',
+    //   onClick: () => navigate('/profile'),
+    // },
     { type: 'divider' },
     {
       key: 'logout',
@@ -131,10 +127,10 @@ const Header: React.FC = () => {
             <Link to="/" className="flex items-center gap-2 group">
               <img 
                 src={Logo} 
-                alt="EduNet" 
+                alt="Academix" 
                 className="w-12 h-12 object-cover rounded-full"
               />
-              <span className="text-[#30C2EC] text-[24px] -mt-1 font-bold font-roboto ">EduNet</span>
+              <span className="text-[#30C2EC] text-[24px] -mt-1 font-bold font-roboto ">Academix</span>
             </Link>
 
             {/* Desktop Menu */}
@@ -203,7 +199,7 @@ const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       <Drawer
-        title={<span className="text-[#30C2EC] font-bold text-xl">EduNet</span>}
+        title={<span className="text-[#30C2EC] font-bold text-xl">Academix</span>}
         placement="right"
         onClose={() => setMobileMenuOpen(false)}
         open={mobileMenuOpen}

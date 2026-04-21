@@ -574,7 +574,7 @@ export const jobPostings: JobPosting[] = [
     department: 'Marketing',
     location: 'TP. Hồ Chí Minh',
     type: 'internship',
-    description: 'Cơ hội thực tập tại bộ phận Marketing của EduNet, học hỏi từ các chuyên gia.',
+    description: 'Cơ hội thực tập tại bộ phận Marketing của Academix, học hỏi từ các chuyên gia.',
     requirements: [
       'Sinh viên năm cuối ngành Marketing/Truyền thông',
       'Năng động, sáng tạo',

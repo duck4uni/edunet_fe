@@ -3,23 +3,23 @@
   --primaryColor50: #EBF3FE;
   --primaryColor300: #7CABF9;
   --primaryColor100: #C2D8FC;
-  --primaryColor500: #3B82F6;
+  --primaryColor500: #30C2EC;
   --primaryColor32: #c0d7fc;
   --primaryColor600: #3676E0;
   --primaryColor700: #2A5CAF;
   --primaryColor900:  #098D94;
   --secondColor: #FFFFFF;
   --thirdColor: #D9D9D9;
-  --sematicColor:#1677FF;
+  --sematicColor:#30C2EC;
   --sematicSuccessColor: #389E0D;
   --sematicSuccessColor500: #31A168;
-  --sematicPrimaryColor:#002C8C;
+  --sematicPrimaryColor:#30C2EC;
   --sematicErrorColor: #D9363E;
   --sematicErrorColor500: #FF5454;
   --sematicWarningColor: #F5B40B;
   --sematicWarningColorCus: #f1af07;
   --sematicErrorColor600:  #F77138;
-  --sematicInfoColor: #0958D9;
+  --sematicInfoColor: #30C2EC;
   --cyanColor: #006D75;
   --textBlack: #000000;
   --textBlack16: #00000029;
@@ -85,8 +85,8 @@
   --colorRed1:#FF7875;
   --blueColor1:#0B82DC;
   --colorMain :linear-gradient(90deg, #17EAD9 0%, #6078EA 100%);
-  --colorSecond : linear-gradient(to right, #22d3ee, #2563eb);
-  --colorThird : linear-gradient(to right, #2563EB, #4F46E5);
+  --colorSecond : linear-gradient(to right, #22d3ee, #30C2EC);
+  --colorThird : linear-gradient(to right, #30C2EC, #23ACED);
   --borderColor: #EBEBEB;
   --dataColor: #2EBEAA;
   --highlightColor: var(--textStateLightOrange);
@@ -431,8 +431,8 @@ p {
 }
 
 .mycourse-inline-tab.is-active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: #30C2EC;
+  border-bottom-color: #30C2EC;
 }
 
 .mycourse-header-block {
@@ -768,9 +768,9 @@ p {
 
 .mycourse-pill {
   border-radius: 999px !important;
-  border: 1px solid #bfdbfe !important;
-  background: #eff6ff !important;
-  color: #2563eb !important;
+  border: 1px solid #9be4f6 !important;
+  background: #ecfafe !important;
+  color: #30C2EC !important;
   font-size: 10px !important;
   line-height: 14px !important;
   padding: 2px 10px !important;

@@ -1,45 +1,36 @@
 import { io, Socket } from 'socket.io-client';
 import { getAccessToken } from './axiosBaseQuery';
 
-const DEFAULT_API_BASE_URL = 'http://localhost:3000/api';
-
 const toOrigin = (rawUrl: string): string => {
   const trimmed = rawUrl.trim();
-  if (!trimmed) return '';
-
   try {
     return new URL(trimmed).origin;
   } catch {
-    return trimmed
-      .replace(/\/+$/, '')
-      .replace(/\/api(?:\/.*)?$/i, '');
+    throw new Error(
+      `[Config] VITE_SOCKET_URL must be a valid absolute URL. Received: "${rawUrl}"`,
+    );
   }
 };
 
-const getSocketServerUrl = (): string => {
-  const socketEnv = import.meta.env?.VITE_SOCKET_URL
-    ? String(import.meta.env.VITE_SOCKET_URL)
-    : '';
-  const apiEnv = import.meta.env?.VITE_API_BASE_URL
-    ? String(import.meta.env.VITE_API_BASE_URL)
-    : DEFAULT_API_BASE_URL;
-
-  return toOrigin(socketEnv || apiEnv) || 'http://localhost:3000';
+const getRequiredEnv = (name: string): string => {
+  const value = import.meta.env?.[name];
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error(`[Config] Missing required environment variable: ${name}`);
+  }
+  return value.trim();
 };
 
 const normalizeSocketPath = (value: string): string => {
   const trimmed = value.trim();
-  if (!trimmed) return '/socket.io';
+  if (!trimmed) {
+    throw new Error('[Config] VITE_SOCKET_PATH cannot be empty');
+  }
   return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 };
 
-const SOCKET_SERVER_URL = getSocketServerUrl();
+const SOCKET_SERVER_URL = toOrigin(getRequiredEnv('VITE_SOCKET_URL'));
 const SOCKET_NAMESPACE = '/chat';
-const SOCKET_PATH = normalizeSocketPath(
-  import.meta.env?.VITE_SOCKET_PATH
-    ? String(import.meta.env.VITE_SOCKET_PATH)
-    : '/socket.io',
-);
+const SOCKET_PATH = normalizeSocketPath(getRequiredEnv('VITE_SOCKET_PATH'));
 
 class SocketService {
   private socket: Socket | null = null;
@@ -73,7 +64,12 @@ class SocketService {
     });
 
     this.socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error.message);
+      console.error('Socket connection error:', {
+        message: error.message,
+        serverUrl: SOCKET_SERVER_URL,
+        namespace: SOCKET_NAMESPACE,
+        path: SOCKET_PATH,
+      });
     });
 
     return this.socket;
@@ -116,11 +112,11 @@ class SocketService {
   }
 
   // Event listeners
-  onMessage(callback: (data: any) => void): void {
+  onMessage(callback: (data: unknown) => void): void {
     this.socket?.on('message:receive', callback);
   }
 
-  onMessageSent(callback: (data: any) => void): void {
+  onMessageSent(callback: (data: unknown) => void): void {
     this.socket?.on('message:sent', callback);
   }
 
@@ -150,11 +146,11 @@ class SocketService {
     this.socket?.on('online:status', callback);
   }
 
-  onFriendRequest(callback: (data: any) => void): void {
+  onFriendRequest(callback: (data: unknown) => void): void {
     this.socket?.on('friend:request', callback);
   }
 
-  onFriendAccepted(callback: (data: any) => void): void {
+  onFriendAccepted(callback: (data: unknown) => void): void {
     this.socket?.on('friend:accepted', callback);
   }
 

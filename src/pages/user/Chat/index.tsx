@@ -23,7 +23,7 @@ const SWIPE_MAX_VERTICAL_DRIFT_PX = 72;
 const supportBotContact: Contact = {
   id: SUPPORT_BOT_CONTACT_ID,
   name: 'Trợ lý học tập',
-  avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=EduNetAssistant',
+  avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=AcademixAssistant',
   isOnline: true,
   unreadCount: 0,
   isPinned: true,

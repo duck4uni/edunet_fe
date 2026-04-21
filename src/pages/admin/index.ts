@@ -15,3 +15,4 @@ export { default as ReviewManagement } from './Reviews';
 export { default as AdminProfile } from './Profile';
 export { default as TeacherRegistrationManagement } from './TeacherRegistrations';
 export { default as ChatbotManagement } from './Chatbot';
+export { default as AssistantManagement } from './Assistant';

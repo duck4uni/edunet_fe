@@ -80,6 +80,11 @@ const menuItems = [
     icon: <RobotOutlined />,
     label: 'Chatbot AI',
   },
+  {
+    key: '/admin/assistant',
+    icon: <RobotOutlined />,
+    label: 'Trợ lý học tập',
+  },
   // {
   //   key: '/admin/permissions',
   //   icon: <LockOutlined />,
@@ -192,11 +197,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       <div className="h-16 shrink-0 flex items-center justify-center border-b border-gray-200">
         <Link to="/admin" className="flex items-center gap-2">
           <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">E</span>
+            <span className="text-white font-bold text-lg">A</span>
           </div>
           {!collapsed && (
             <span className="text-xl font-bold text-gray-800">
-              EduNet
+              Academix
             </span>
           )}
         </Link>

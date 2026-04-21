@@ -154,7 +154,7 @@ const AdminDashboard: React.FC = () => {
         {[
           { label: 'Người dùng hôm nay', value: stats?.newUsersToday ?? 0, color: 'bg-indigo-50 text-indigo-600', to: null },
           { label: 'Khóa học mới', value: stats?.newCoursesToday ?? 0, color: 'bg-emerald-50 text-emerald-600', to: null },
-          { label: 'Chờ duyệt', value: stats?.pendingApprovals ?? 0, color: 'bg-amber-50 text-amber-600', to: '/admin/courses/pending' },
+          { label: 'Chờ duyệt', value: stats?.pendingApprovals ?? 0, color: 'bg-amber-50 text-amber-600', to: '/admin/courses/review' },
           { label: 'Ticket mở', value: stats?.openTickets ?? 0, color: 'bg-red-50 text-red-600', to: '/admin/support' },
         ].map((item) => (
           <div

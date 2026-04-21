@@ -349,8 +349,8 @@ const RegisterTeacher: React.FC = () => {
       <div className="w-full lg:w-2/5 flex items-center justify-center p-2 md:p-4 lg:p-5 xl:p-6 overflow-y-auto">
         <div className="w-full max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-9 rounded-2xl lg:rounded-[2rem]">
           <div className="text-center mb-4 lg:hidden">
-            <img src={Logo} alt="EduNet" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
-            <Title level={4} className="!text-[#0c4055] !mb-0">EduNet</Title>
+            <img src={Logo} alt="Academix" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
+            <Title level={4} className="!text-[#0c4055] !mb-0">Academix</Title>
           </div>
 
           <div className="mb-5">

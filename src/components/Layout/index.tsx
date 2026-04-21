@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Layout, theme } from 'antd';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
@@ -8,6 +8,7 @@ import socketService from '../../services/socketService';
 import { getAccessToken } from '../../services/axiosBaseQuery';
 import { friendChatApi } from '../../services/friendChatApi';
 import { useAppDispatch } from '../../redux/hooks';
+import { notify } from '../../utils/notify';
 
 const { Content, Footer } = Layout;
 
@@ -15,9 +16,14 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const hasToken = !!getAccessToken();
+  const pathnameRef = useRef(location.pathname);
   const {
     token: { },
   } = theme.useToken();
+
+  useEffect(() => {
+    pathnameRef.current = location.pathname;
+  }, [location.pathname]);
 
   useEffect(() => {
     // Scroll to top when route changes
@@ -35,14 +41,22 @@ const AppLayout: React.FC = () => {
       return;
     }
 
-    const handleNewMessage = () => {
+    const handleNewMessage = (payload?: { senderName?: string }) => {
       dispatch(friendChatApi.util.invalidateTags(['UnreadCounts']));
+
+      if (pathnameRef.current !== '/chat') {
+        notify.info(payload?.senderName ? `${payload.senderName} vừa gửi tin nhắn mới` : 'Bạn có tin nhắn mới');
+      }
     };
+
     const handleFriendRequest = () => {
       dispatch(friendChatApi.util.invalidateTags(['PendingRequests']));
+      notify.info('Bạn vừa nhận được một lời mời kết bạn');
     };
+
     const handleFriendAccepted = () => {
       dispatch(friendChatApi.util.invalidateTags(['Friends', 'PendingRequests']));
+      notify.success('Lời mời kết bạn của bạn đã được chấp nhận');
     };
 
     socket.on('message:receive', handleNewMessage);
@@ -65,7 +79,7 @@ const AppLayout: React.FC = () => {
         <Outlet />
       </Content>
       <Footer style={{ textAlign: 'center', background: '#f0f2f5' }}>
-        EduNet ©{new Date().getFullYear()} Được phát triển bởi EduNet Team
+        Academix ©{new Date().getFullYear()} Được phát triển bởi Academix Team
       </Footer>
       <FloatingChatBot />
     </Layout>

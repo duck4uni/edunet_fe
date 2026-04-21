@@ -36,11 +36,13 @@ import {
   EnvironmentOutlined,
   DownloadOutlined,
   EyeOutlined,
-  PlusOutlined
+  PlusOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 import Badge from '../../../components/common/Tag';
 import dayjs from 'dayjs';
 import { useProfile } from '../../../hooks/useProfile';
+import FriendsPage from '../Friends';
 import { 
   SUPPORT_CATEGORIES,
   TICKET_PRIORITIES
@@ -491,6 +493,16 @@ const Profile: React.FC = () => {
           </Card>
         </div>
       ),
+    },
+    {
+      key: 'friends',
+      label: (
+        <span className="flex items-center gap-2">
+          <TeamOutlined />
+          Bạn bè
+        </span>
+      ),
+      children: <FriendsPage embedded />,
     },
   ];
 
