@@ -24,7 +24,6 @@ import RegisterTeacher from '../pages/auth/Register/Teacher';
 import NotFound from '../pages/NotFound';
 import AdminNotFound from '../pages/NotFound/AdminNotFound';
 
-// Admin imports
 import { AdminLayout } from '../components/admin';
 import {
   AdminForgotPassword,
