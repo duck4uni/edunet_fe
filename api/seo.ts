@@ -76,11 +76,11 @@ const getOrigin = (req: any): string => {
 };
 
 const toAbsoluteUrl = (url: string | undefined, origin: string): string => {
-  if (!url) return `${origin}/vite.svg`;
+  if (!url) return `${origin}/academix-seo.png`;
   try {
     return new URL(url, origin).toString();
   } catch {
-    return `${origin}/vite.svg`;
+    return `${origin}/academix-seo.png`;
   }
 };
 
@@ -153,12 +153,14 @@ const buildHtml = (seo: SeoPayload, canonicalUrl: string, imageUrl: string) => {
   const type = escapeHtml(seo.type || 'website');
   const escapedCanonical = escapeHtml(canonicalUrl);
   const escapedImage = escapeHtml(imageUrl);
+  const escapedFavicon = escapeHtml(new URL('/academix.ico', canonicalUrl).toString());
 
   return `<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="${escapedFavicon}" />
     <title>${title}</title>
     <meta name="description" content="${description}" />
     <meta name="keywords" content="${keywords}" />

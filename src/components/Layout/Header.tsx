@@ -14,8 +14,6 @@ import { getAccessToken, clearTokens } from '../../services/axiosBaseQuery';
 import { useLogoutMutation } from '../../services/authApi';
 import { useGetUnreadCountsQuery } from '../../services/friendChatApi';
 
-import Logo from '../../assets/images/Logo.png';
-
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -126,7 +124,7 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
               <img 
-                src={Logo} 
+                src="/academix.png"
                 alt="Academix" 
                 className="w-12 h-12 object-cover rounded-full"
               />

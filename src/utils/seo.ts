@@ -10,7 +10,7 @@ export interface SeoOptions {
 }
 
 const SEO_MARKER = 'data-academix-seo';
-const DEFAULT_OG_IMAGE = '/vite.svg';
+const DEFAULT_OG_IMAGE = '/academix-seo.png';
 
 const getAbsoluteUrl = (pathOrUrl?: string): string => {
   if (!pathOrUrl) return window.location.href;

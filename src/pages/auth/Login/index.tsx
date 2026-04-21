@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Form, Input, Button, Modal, Typography, Select } from 'antd';
 import { UserOutlined, LockOutlined, QuestionCircleOutlined, SendOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../../../assets/images/Logo.png';
 import BookPanda from '../../../assets/images/Panda/BookPanda.png';
 import CloudOne from '../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../assets/images/cloud-2.png';
@@ -169,7 +168,7 @@ const Login: React.FC = () => {
         <div className="w-full h-full">
           {/* Mobile Logo */}
           <div className="text-center py-1 lg:hidden">
-            <img src={Logo} alt="Academix" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
+            <img src="/academix.png" alt="Academix" className="w-14 h-14 rounded-xl mb-2 mx-auto shadow-lg" />
             <Title level={4} className="!text-[#0c4055] !mb-0">Academix</Title>
           </div>
 

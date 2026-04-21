@@ -95,9 +95,11 @@ const AdminLogin: React.FC = () => {
       >
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-white font-bold text-2xl">A</span>
-          </div>
+          <img
+            src="/academix.png"
+            alt="Academix"
+            className="w-16 h-16 object-cover rounded-2xl mx-auto mb-4 shadow-lg"
+          />
           <Title level={2} className="mb-2">
             Trang quản trị
           </Title>
