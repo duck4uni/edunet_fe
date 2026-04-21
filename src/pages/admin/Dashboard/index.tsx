@@ -5,7 +5,6 @@ import {
   GraduationCap,
   BookOpen,
   Star,
-  TrendingUp,
   ArrowRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -93,8 +92,8 @@ const AdminDashboard: React.FC = () => {
         <div className="flex items-start justify-between mb-6">
           <Skeleton.Input active style={{ width: 200 }} />
         </div>
-        <div className="grid grid-cols-4 gap-5 mb-6">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid grid-cols-3 gap-5 mb-6">
+          {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <Skeleton active paragraph={{ rows: 2 }} />
             </div>
@@ -112,7 +111,7 @@ const AdminDashboard: React.FC = () => {
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
         <StatsCard
           title="Tổng người dùng"
           value={stats?.totalUsers ?? 0}
@@ -139,13 +138,6 @@ const AdminDashboard: React.FC = () => {
           trend={stats?.coursesGrowth}
           trendLabel="tháng trước"
           formatter={(v) => Number(v).toLocaleString()}
-        />
-        <StatsCard
-          title="Doanh thu"
-          value={stats?.totalRevenue ?? 0}
-          icon={<TrendingUp size={20} />}
-          color="#ef4444"
-          formatter={(v) => `${(Number(v) / 1_000_000).toFixed(1)}M ₫`}
         />
       </div>
 
