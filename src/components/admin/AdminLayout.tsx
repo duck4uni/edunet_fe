@@ -4,6 +4,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { useAuth, useDashboard } from '../../hooks';
+import { useRouteSeo } from '../../hooks/useRouteSeo';
 
 const MIN_ADMIN_WIDTH = 1024;
 const isDesktopWidth = () =>
@@ -19,6 +20,8 @@ const AdminLayout: React.FC = () => {
   const { data: dashboardData, markNotificationRead, markAllNotificationsRead } = useDashboard();
   const isAdmin = user?.role === 'admin';
   const isInitialized = !isLoading;
+
+  useRouteSeo();
 
   useEffect(() => {
     if (!isInitialized) return;

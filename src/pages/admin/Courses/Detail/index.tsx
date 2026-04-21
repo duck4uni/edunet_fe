@@ -43,6 +43,7 @@ import {
 import type { Course, Lesson, Review } from '../../../../services/courseApi';
 import { formatCurrency, formatDate, formatDateTime } from '../../../../utils/format';
 import { notify } from '../../../../utils/notify';
+import { useSeo } from '../../../../hooks/useSeo';
 import Badge from '../../../../components/common/Tag';
 
 const { Paragraph, Text, Title } = Typography;
@@ -116,6 +117,24 @@ const AdminCourseDetail: React.FC = () => {
     [course?.lessons]
   );
   const reviews = course?.reviews || [];
+
+  useSeo({
+    title: course?.title
+      ? `${course.title} | Quản trị khóa học | Academix`
+      : 'Chi tiết khóa học quản trị | Academix',
+    description: course?.description
+      ? course.description.slice(0, 180)
+      : 'Khu vực quản trị chi tiết khóa học trong hệ thống Academix.',
+    keywords: [
+      'Academix',
+      'admin',
+      'quản trị khóa học',
+      course?.category?.name || '',
+      course?.status || '',
+    ].filter(Boolean),
+    robots: 'noindex, nofollow',
+    canonicalPath: id ? `/admin/courses/${id}` : '/admin/courses',
+  });
 
   const price = toNumber(course?.price);
   const discountPrice = toNumber(course?.discountPrice);

@@ -4,6 +4,7 @@ import { Form, Input, Button, Typography, Card, Steps, Result } from 'antd';
 import { MailOutlined, SafetyOutlined, LockOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../hooks';
+import { useRouteSeo } from '../../../hooks/useRouteSeo';
 
 const { Title, Text, Paragraph } = Typography;
 const MIN_ADMIN_WIDTH = 1024;
@@ -22,6 +23,8 @@ interface ResetPasswordForm {
 }
 
 const AdminForgotPassword: React.FC = () => {
+  useRouteSeo();
+
   const [currentStep, setCurrentStep] = useState(0);
   const [email, setEmail] = useState('');
   const [isDesktop, setIsDesktop] = useState(

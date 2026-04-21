@@ -9,6 +9,7 @@ import CloudTwo from '../../../assets/images/cloud-2.png';
 import { useAuth } from '../../../hooks/useAuth';
 import { useCreateTicketMutation } from '../../../services/supportApi';
 import { useForgotPasswordMutation } from '../../../services/authApi';
+import { useRouteSeo } from '../../../hooks/useRouteSeo';
 
 import { notify } from '../../../utils/notify';
 const { Title, Text, Paragraph } = Typography;
@@ -25,6 +26,8 @@ const SUPPORT_CATEGORIES = [
 const BRAND_TITLE = 'Khai phá tiềm năng với nền tảng học tập đẳng cấp';
 
 const Login: React.FC = () => {
+  useRouteSeo();
+
   React.useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `

@@ -16,6 +16,7 @@ import Logo from '../../../../assets/images/Logo.png';
 import BookPanda from '../../../../assets/images/Panda/BookPanda.png';
 import CloudOne from '../../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../../assets/images/cloud-2.png';
+import { useRouteSeo } from '../../../../hooks/useRouteSeo';
 import { useRegisterTeacherMutation } from '../../../../services/authApi';
 import '../register.css';
 
@@ -26,6 +27,8 @@ const { Dragger } = Upload;
 const BRAND_TITLE = 'Khai phá tiềm năng với nền tảng học tập đẳng cấp';
 
 const RegisterTeacher: React.FC = () => {
+  useRouteSeo();
+
   React.useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `

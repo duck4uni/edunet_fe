@@ -15,6 +15,12 @@ interface MessagesResponse {
   totalPages: number;
 }
 
+interface SendMessagePayload {
+  receiverId: string;
+  content: string;
+  type?: string;
+}
+
 export const friendChatApi = createApi({
   reducerPath: 'friendChatApi',
   baseQuery: axiosBaseQuery({ baseUrl: API_BASE_URL }),
@@ -76,6 +82,18 @@ export const friendChatApi = createApi({
       providesTags: ['Messages'],
     }),
 
+    sendMessage: builder.mutation<
+      SuccessResponse<ChatMessageFromServer>,
+      SendMessagePayload
+    >({
+      query: (body) => ({
+        url: '/chat/messages',
+        method: 'POST',
+        data: body,
+      }),
+      invalidatesTags: ['Messages', 'LastMessages', 'UnreadCounts'],
+    }),
+
     getUnreadCounts: builder.query<
       SuccessResponse<{ senderId: string; count: string }[]>,
       void
@@ -130,6 +148,7 @@ export const {
   useUnfriendMutation,
   useGetMessagesQuery,
   useLazyGetMessagesQuery,
+  useSendMessageMutation,
   useGetUnreadCountsQuery,
   useMarkAsReadMutation,
   useGetLastMessagesQuery,

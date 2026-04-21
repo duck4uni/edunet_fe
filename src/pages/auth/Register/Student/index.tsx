@@ -8,6 +8,7 @@ import CloudOne from '../../../../assets/images/cloud-1.png';
 import CloudTwo from '../../../../assets/images/cloud-2.png';
 import { useRegisterMutation } from '../../../../services/authApi';
 import { setTokens } from '../../../../services/axiosBaseQuery';
+import { useRouteSeo } from '../../../../hooks/useRouteSeo';
 import '../register.css';
 
 import { notify } from '../../../../utils/notify';
@@ -17,6 +18,8 @@ const { Title, Text } = Typography;
 const BRAND_TITLE = 'Khai phá tiềm năng với nền tảng học tập đẳng cấp';
 
 const RegisterStudent: React.FC = () => {
+  useRouteSeo();
+
   React.useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `

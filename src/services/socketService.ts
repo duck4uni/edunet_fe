@@ -1,48 +1,66 @@
 import { io, Socket } from 'socket.io-client';
-import { getAccessToken } from './axiosBaseQuery';
+import { API_BASE_URL, getAccessToken } from './axiosBaseQuery';
 
-const toOrigin = (rawUrl: string): string => {
+const toOrigin = (rawUrl: string): string | null => {
   const trimmed = rawUrl.trim();
+  if (!trimmed) return null;
+
   try {
     return new URL(trimmed).origin;
   } catch {
-    throw new Error(
+    console.error(
       `[Config] VITE_SOCKET_URL must be a valid absolute URL. Received: "${rawUrl}"`,
     );
+    return null;
   }
 };
 
-const getRequiredEnv = (name: string): string => {
+const getOptionalEnv = (name: string): string | null => {
   const value = import.meta.env?.[name];
   if (typeof value !== 'string' || !value.trim()) {
-    throw new Error(`[Config] Missing required environment variable: ${name}`);
+    return null;
   }
   return value.trim();
 };
 
 const normalizeSocketPath = (value: string): string => {
   const trimmed = value.trim();
-  if (!trimmed) {
-    throw new Error('[Config] VITE_SOCKET_PATH cannot be empty');
-  }
   return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 };
 
-const SOCKET_SERVER_URL = toOrigin(getRequiredEnv('VITE_SOCKET_URL'));
+const inferSocketPathFromApiBaseUrl = (apiBaseUrl: string): string => {
+  try {
+    const apiPathname = new URL(apiBaseUrl).pathname.replace(/\/+$/, '');
+    if (apiPathname.endsWith('/api')) {
+      return `${apiPathname.slice(0, -4)}/socket.io`;
+    }
+  } catch {
+    console.warn('[Config] Could not infer socket path from VITE_API_BASE_URL, using /socket.io');
+  }
+
+  return '/socket.io';
+};
+
+const SOCKET_SERVER_URL =
+  toOrigin(getOptionalEnv('VITE_SOCKET_URL') || API_BASE_URL) ||
+  toOrigin(API_BASE_URL) ||
+  window.location.origin;
 const SOCKET_NAMESPACE = '/chat';
-const SOCKET_PATH = normalizeSocketPath(getRequiredEnv('VITE_SOCKET_PATH'));
+const SOCKET_PATH = normalizeSocketPath(
+  getOptionalEnv('VITE_SOCKET_PATH') || inferSocketPathFromApiBaseUrl(API_BASE_URL),
+);
 
 class SocketService {
   private socket: Socket | null = null;
 
-  connect(): Socket {
+  connect(): Socket | null {
     if (this.socket?.connected) {
       return this.socket;
     }
 
     const token = getAccessToken();
     if (!token) {
-      throw new Error('No access token available');
+      return null;
     }
 
     this.socket = io(`${SOCKET_SERVER_URL}${SOCKET_NAMESPACE}`, {

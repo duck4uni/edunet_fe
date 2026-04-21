@@ -7,8 +7,10 @@ import { useGetProfileQuery } from '../../../services/authApi';
 import {
   useGetFriendsQuery,
   useLazyGetMessagesQuery,
+  useMarkAsReadMutation,
   useGetUnreadCountsQuery,
   useGetLastMessagesQuery,
+  useSendMessageMutation,
   useTogglePinConversationMutation,
   useHideConversationMutation,
 } from '../../../services/friendChatApi';
@@ -57,6 +59,8 @@ const ChatPage: React.FC = () => {
   });
 
   const [fetchMessages] = useLazyGetMessagesQuery();
+  const [sendMessageApi] = useSendMessageMutation();
+  const [markAsReadApi] = useMarkAsReadMutation();
   const [togglePin] = useTogglePinConversationMutation();
   const [hideConversation] = useHideConversationMutation();
 
@@ -147,10 +151,17 @@ const ChatPage: React.FC = () => {
 
     const handleMessage = (data: ChatMessageFromServer) => {
       const uiMsg = toUIMessage(data, currentUserId);
-      setMessages((prev) => ({
-        ...prev,
-        [data.senderId]: [...(prev[data.senderId] || []), uiMsg],
-      }));
+      setMessages((prev) => {
+        const existingMessages = prev[data.senderId] || [];
+        if (existingMessages.some((msg) => msg.id === uiMsg.id)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [data.senderId]: [...existingMessages, uiMsg],
+        };
+      });
       setLastMessages((prev) => ({ ...prev, [data.senderId]: uiMsg }));
     };
 
@@ -165,6 +176,10 @@ const ChatPage: React.FC = () => {
       };
       setMessages((prev) => {
         const receiverMsgs = prev[data.receiverId] || [];
+        if (receiverMsgs.some((m) => m.id === data.id)) {
+          return prev;
+        }
+
         const pendingIdx = receiverMsgs.findIndex(
           (m) => m.status === 'sending' && m.content === data.content,
         );
@@ -256,13 +271,23 @@ const ChatPage: React.FC = () => {
             [friendId]: uiMsgs[uiMsgs.length - 1],
           }));
         }
-        socketService.markAsRead(friendId);
+
+        try {
+          await markAsReadApi(friendId).unwrap();
+        } catch (markErr) {
+          console.error('Failed to mark messages as read via API:', markErr);
+        }
+
+        if (socketService.isConnected()) {
+          socketService.markAsRead(friendId);
+        }
+
         refetchUnread();
       } catch (err) {
         console.error('Failed to load messages:', err);
       }
     },
-    [currentUserId, fetchMessages, refetchUnread],
+    [currentUserId, fetchMessages, markAsReadApi, refetchUnread],
   );
 
   // Layout resize
@@ -363,11 +388,16 @@ const ChatPage: React.FC = () => {
     touchCurrentYRef.current = null;
   };
 
-  const handleSendMessage = (content: string, type: string = 'text') => {
-    if (!selectedContact || selectedContact.id === SUPPORT_BOT_CONTACT_ID) return;
+  const handleSendMessage = async (content: string, type: string = 'text') => {
+    if (!selectedContact || selectedContact.id === SUPPORT_BOT_CONTACT_ID || !currentUserId) {
+      return;
+    }
+
+    const targetContactId = selectedContact.id;
+    const optimisticId = `sending-${Date.now()}`;
 
     const optimistic: Message = {
-      id: `sending-${Date.now()}`,
+      id: optimisticId,
       senderId: 'me',
       content,
       timestamp: new Date().toISOString(),
@@ -377,10 +407,61 @@ const ChatPage: React.FC = () => {
 
     setMessages((prev) => ({
       ...prev,
-      [selectedContact.id]: [...(prev[selectedContact.id] || []), optimistic],
+      [targetContactId]: [...(prev[targetContactId] || []), optimistic],
     }));
 
-    socketService.sendMessage(selectedContact.id, content, type);
+    try {
+      const res = await sendMessageApi({
+        receiverId: targetContactId,
+        content,
+        type,
+      }).unwrap();
+
+      const serverMessage = (res as any)?.data ?? res;
+      const savedMessage = toUIMessage(serverMessage as ChatMessageFromServer, currentUserId);
+      const senderMessage: Message = {
+        ...savedMessage,
+        senderId: 'me',
+        status: 'sent',
+      };
+
+      setMessages((prev) => {
+        const conversation = prev[targetContactId] || [];
+        const optimisticIndex = conversation.findIndex((msg) => msg.id === optimisticId);
+
+        if (optimisticIndex >= 0) {
+          const nextConversation = [...conversation];
+          nextConversation[optimisticIndex] = senderMessage;
+          return {
+            ...prev,
+            [targetContactId]: nextConversation,
+          };
+        }
+
+        if (conversation.some((msg) => msg.id === senderMessage.id)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [targetContactId]: [...conversation, senderMessage],
+        };
+      });
+
+      setLastMessages((prev) => ({
+        ...prev,
+        [targetContactId]: senderMessage,
+      }));
+    } catch (err) {
+      console.error('Failed to send message via API:', err);
+
+      setMessages((prev) => ({
+        ...prev,
+        [targetContactId]: (prev[targetContactId] || []).map((msg) =>
+          msg.id === optimisticId ? { ...msg, status: 'failed' as const } : msg,
+        ),
+      }));
+    }
   };
 
   const handleReaction = (messageId: string, reaction: string) => {

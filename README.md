@@ -45,21 +45,38 @@ export default defineConfig([
 
 ## Socket.IO on Vercel
 
-Socket config is env-only. Frontend no longer uses hardcoded URL/path fallback in code.
+Socket works in a resilient mode:
 
-Set these required environment variables in Vercel Project Settings:
+- `VITE_API_BASE_URL` is required for REST API.
+- `VITE_SOCKET_URL` is optional. If omitted, client reuses origin from `VITE_API_BASE_URL`.
+- `VITE_SOCKET_PATH` is optional. If omitted, client auto-inferrs path from `VITE_API_BASE_URL`:
+  - `.../api` -> `.../socket.io`
+  - fallback default -> `/socket.io`
 
-- `VITE_API_BASE_URL`: REST API base URL (example: `https://api.example.com/api`)
-- `VITE_SOCKET_URL`: Socket.IO server origin only (example: `https://api.example.com`)
-- `VITE_SOCKET_PATH`: Socket.IO engine path (example: `/socket.io` or `/gateway/edunet/socket.io`)
+If socket cannot connect, chat still sends via REST API and data persists; realtime updates resume automatically when socket reconnects.
 
-If any required variable is missing, the app will throw a startup config error.
+## Share Link SEO on Vercel
+
+Project is configured so social bots (Facebook, Zalo, Messenger, Twitter/X, LinkedIn, Discord, Telegram, WhatsApp, etc.) receive server-rendered Open Graph/Twitter metadata instead of client-side SPA HTML.
+
+How it works:
+
+- Bot user agents are rewritten to `api/seo` via `vercel.json`.
+- `api/seo` returns HTML with dynamic `<title>`, `description`, `og:*`, `twitter:*`, and canonical tags.
+- For course detail routes (`/courses/:id`), function fetches real course data from backend API to build per-course share metadata.
+
+Environment variables (Vercel):
+
+- `SEO_API_BASE_URL` (recommended): backend API base URL (example: `https://your-domain.com/gateway/edunet/api`)
+- Fallbacks if missing: `VITE_API_BASE_URL`, then `API_BASE_URL`
+
+After adding/updating env vars, redeploy FE project so share metadata function uses the latest values.
 
 Example:
 
 - `VITE_API_BASE_URL=https://vietprodev.duckdns.org/gateway/edunet/api`
 - `VITE_SOCKET_URL=https://vietprodev.duckdns.org`
-- `VITE_SOCKET_PATH=/socket.io`
+- `VITE_SOCKET_PATH=/gateway/edunet/socket.io`
 
 After updating variables, trigger a new Vercel deployment.
 

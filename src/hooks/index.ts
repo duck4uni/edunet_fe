@@ -27,3 +27,5 @@ export { useRecruitment } from './useRecruitment';
 export { useSupportManagement, useSupportManagement as useSupport } from './useSupportManagement';
 export { usePermissionManagement, usePermissionManagement as usePermissions } from './usePermissionManagement';
 export { useRevenue } from './useRevenue';
+export { useSeo } from './useSeo';
+export { useRouteSeo } from './useRouteSeo';

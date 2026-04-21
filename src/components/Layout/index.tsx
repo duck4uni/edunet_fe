@@ -9,6 +9,7 @@ import { getAccessToken } from '../../services/axiosBaseQuery';
 import { friendChatApi } from '../../services/friendChatApi';
 import { useAppDispatch } from '../../redux/hooks';
 import { notify } from '../../utils/notify';
+import { useRouteSeo } from '../../hooks/useRouteSeo';
 
 const { Content, Footer } = Layout;
 
@@ -20,6 +21,8 @@ const AppLayout: React.FC = () => {
   const {
     token: { },
   } = theme.useToken();
+
+  useRouteSeo();
 
   useEffect(() => {
     pathnameRef.current = location.pathname;
@@ -38,6 +41,10 @@ const AppLayout: React.FC = () => {
     try {
       socket = socketService.connect();
     } catch {
+      return;
+    }
+
+    if (!socket) {
       return;
     }
 
