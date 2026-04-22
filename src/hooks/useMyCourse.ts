@@ -20,17 +20,37 @@ export interface MyCourseItem {
   enrolledAt?: string;
 }
 
-/** Map backend enrollment status to UI status (only called for active/completed enrollments) */
+/** Keep UI status consistent with backend enrollment status values. */
 const mapEnrollmentStatus = (enrollment: Enrollment): 'learning' | 'completed' | 'pending' => {
-  if (enrollment.status === 'completed') return 'completed';
-  if (enrollment.status === 'active' && enrollment.progress > 0) return 'learning';
-  return 'pending';
+  switch (enrollment.status) {
+    case 'completed':
+      return 'completed';
+    case 'active':
+      return 'learning';
+    case 'pending':
+    default:
+      return 'pending';
+  }
+};
+
+const getTeacherDisplayName = (enrollment: Enrollment): string => {
+  const teacher = enrollment.course?.teacher;
+  if (!teacher) return 'Chưa rõ';
+
+  const fullName = [teacher.firstName, teacher.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+
+  return fullName || teacher.email || 'Chưa rõ';
 };
 
 const mapEnrollmentToCourse = (enrollment: Enrollment): MyCourseItem => {
   const course = enrollment.course;
-  const totalLessons = course?.totalLessons || course?.lessons?.length || 0;
-  const completedLessons = totalLessons > 0 ? Math.round((enrollment.progress / 100) * totalLessons) : 0;
+  const lessonsFromRelation = course?.lessons?.length ?? 0;
+  const totalLessons = (course?.totalLessons ?? 0) > 0 ? (course?.totalLessons ?? 0) : lessonsFromRelation;
+  const progress = Math.min(100, Math.max(0, enrollment.progress ?? 0));
+  const completedLessons = totalLessons > 0 ? Math.round((progress / 100) * totalLessons) : 0;
 
   return {
     key: enrollment.id,
@@ -38,12 +58,10 @@ const mapEnrollmentToCourse = (enrollment: Enrollment): MyCourseItem => {
     enrollmentId: enrollment.id,
     image: course?.thumbnail || 'https://placehold.co/400x250?text=Course',
     title: course?.title || 'Khóa học chưa có tên',
-    teacher: course?.teacher
-      ? `${course.teacher.firstName} ${course.teacher.lastName}`
-      : 'Chưa rõ',
+    teacher: getTeacherDisplayName(enrollment),
     status: mapEnrollmentStatus(enrollment),
     lessons: `${completedLessons}/${totalLessons}`,
-    progress: enrollment.progress,
+    progress,
     category: course?.category?.name || 'Chung',
     completedDate: enrollment.completedAt,
     startDate: course?.startDate,

@@ -21,6 +21,11 @@ import Badge from '../../../../components/common/Tag';
 
 const { Title, Text } = Typography;
 
+const clampProgress = (value?: number) => {
+  if (typeof value !== 'number' || Number.isNaN(value)) return 0;
+  return Math.min(100, Math.max(0, value));
+};
+
 const DetailMyCourse: React.FC = () => {
   const { id: courseId } = useParams<{ id: string }>();
   const { data: profileData } = useGetProfileQuery();
@@ -42,10 +47,16 @@ const DetailMyCourse: React.FC = () => {
   const materialCount = materialsData?.data?.length || 0;
   const assignmentCount = assignmentsData?.data?.length || 0;
   const quizCount = quizzesData?.data?.length || 0;
-  const totalLessons = course?.totalLessons || course?.lessons?.length || 0;
-  const progressValue = enrollment?.progress || 0;
-  const completedLessons = totalLessons > 0 ? Math.round((progressValue / 100) * totalLessons) : 0;
-  const teacherName = course?.teacher ? `${course.teacher.firstName} ${course.teacher.lastName}` : '';
+  const totalLessonsFromCourse = course?.totalLessons ?? 0;
+  const totalLessonsFromRelation = course?.lessons?.length ?? 0;
+  const totalLessons = totalLessonsFromCourse > 0 ? totalLessonsFromCourse : totalLessonsFromRelation;
+  const progressValue = clampProgress(enrollment?.progress);
+  const completedLessons = totalLessons > 0 ? Math.floor((progressValue / 100) * totalLessons) : 0;
+  const remainingLessons = Math.max(totalLessons - completedLessons, 0);
+  const teacherName = [course?.teacher?.firstName, course?.teacher?.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim() || course?.teacher?.email || 'Chưa rõ';
 
   if (courseLoading || enrollmentLoading) {
     return (
@@ -182,7 +193,7 @@ const DetailMyCourse: React.FC = () => {
                 />
                 <div className="flex justify-between mt-2 text-sm text-gray-500">
                   <span><TrophyOutlined className="mr-1" />{completedLessons} đã hoàn thành</span>
-                  <span>{totalLessons - completedLessons} còn lại</span>
+                  <span>{remainingLessons} còn lại</span>
                 </div>
               </div>
 
