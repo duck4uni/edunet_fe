@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery, API_BASE_URL } from './axiosBaseQuery';
 
-// Chatbot uses BFF gateway prefix (same as Swagger)
 const CHATBOT_BASE_URL = API_BASE_URL.replace(/\/api$/, '/gateway/edunet/api');
 
 export interface ChatData {
