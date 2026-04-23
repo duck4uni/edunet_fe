@@ -237,6 +237,14 @@ export const ROUTE_SEO_CONFIG: RouteSeoConfig[] = [
     robots: 'noindex, nofollow',
   },
   {
+    path: '/admin/students',
+    title: 'Quản lý học viên | Academix Admin',
+    description:
+      'Quản lý tài khoản học viên, trạng thái học và các khóa học đang theo dõi trên Academix.',
+    keywords: ['Academix', 'admin students', 'quản lý học viên'],
+    robots: 'noindex, nofollow',
+  },
+  {
     path: '/admin/teacher-registrations',
     title: 'Đăng ký giảng viên | Academix Admin',
     description:

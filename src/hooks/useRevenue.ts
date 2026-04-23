@@ -1,125 +1,203 @@
-// Revenue & Statistics Hook
-import { useState, useEffect, useCallback, useMemo } from 'react';
-
-import type { RevenueData, ChartData } from '../types/admin';
-import { revenueData as mockRevenueData, adminCourses, teachers } from '../constants/adminData';
-
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import dayjs from 'dayjs';
+import type { ChartData, RevenueData } from '../types/admin';
+import {
+  useGetDashboardReportQuery,
+  useLazyExportDashboardReportQuery,
+  type ReportGroupBy,
+  type ReportQueryParams,
+} from '../services/reportsApi';
 import { notify } from '../utils/notify';
-interface DateRange {
-  startDate: string;
-  endDate: string;
-}
 
-interface RevenueFilters {
-  dateRange?: DateRange;
-  category?: string;
-  teacher?: string;
-}
+type RevenueFilters = {
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  groupBy: ReportGroupBy;
+  userRole?: ReportQueryParams['userRole'];
+  courseStatus?: ReportQueryParams['courseStatus'];
+  enrollmentStatus?: ReportQueryParams['enrollmentStatus'];
+  ticketStatus?: ReportQueryParams['ticketStatus'];
+  categoryId?: string;
+};
+
+type ReportPreset = {
+  id: string;
+  name: string;
+  filters: RevenueFilters;
+  compareEnabled: boolean;
+  createdAt: string;
+};
+
+const PRESET_STORAGE_KEY = 'edunet_admin_report_presets';
+
+const buildDateRangeByMonth = (month: dayjs.Dayjs) => {
+  return {
+    startDate: month.startOf('month').format('YYYY-MM-DD'),
+    endDate: month.endOf('month').format('YYYY-MM-DD'),
+  };
+};
+
+const loadPresets = (): ReportPreset[] => {
+  try {
+    const raw = localStorage.getItem(PRESET_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as ReportPreset[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch {
+    return [];
+  }
+};
+
+const savePresets = (presets: ReportPreset[]): void => {
+  localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presets));
+};
 
 export const useRevenue = () => {
-  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<RevenueFilters>({});
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+  const [selectedMonth, setSelectedMonth] = useState<string>(dayjs().format('YYYY-MM'));
+  const [savedPresets, setSavedPresets] = useState<ReportPreset[]>(() => loadPresets());
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
 
-  // Fetch revenue data
-  const fetchRevenueData = useCallback(async () => {
-    setLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setRevenueData(mockRevenueData);
-    } catch (error) {
-      notify.error('Không thể tải dữ liệu doanh thu');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [filters, setFilters] = useState<RevenueFilters>({
+    dateRange: buildDateRangeByMonth(dayjs()),
+    groupBy: 'month',
+  });
 
-  // Summary statistics
+  useEffect(() => {
+    const month = dayjs(`${selectedMonth}-01`);
+    if (!month.isValid()) return;
+
+    setFilters((prev) => ({
+      ...prev,
+      dateRange: buildDateRangeByMonth(month),
+      groupBy: 'month',
+    }));
+  }, [selectedMonth]);
+
+  const comparisonRange = useMemo(() => {
+    const currentMonth = dayjs(`${selectedMonth}-01`);
+    const previousMonth = currentMonth.subtract(1, 'month');
+
+    return {
+      compareStartDate: previousMonth.startOf('month').format('YYYY-MM-DD'),
+      compareEndDate: previousMonth.endOf('month').format('YYYY-MM-DD'),
+    };
+  }, [selectedMonth]);
+
+  const queryArgs = useMemo<ReportQueryParams>(() => ({
+    startDate: filters.dateRange.startDate,
+    endDate: filters.dateRange.endDate,
+    groupBy: 'month',
+    userRole: filters.userRole,
+    courseStatus: filters.courseStatus,
+    enrollmentStatus: filters.enrollmentStatus,
+    ticketStatus: filters.ticketStatus,
+    categoryId: filters.categoryId,
+    compareStartDate: comparisonRange.compareStartDate,
+    compareEndDate: comparisonRange.compareEndDate,
+  }), [comparisonRange, filters]);
+
+  const {
+    data: reportResponse,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetDashboardReportQuery(queryArgs);
+
+  const [triggerExport, { isFetching: isExporting }] = useLazyExportDashboardReportQuery();
+
+  const report = reportResponse?.data;
+  const loading = isLoading || isFetching;
+
+  useEffect(() => {
+    if (!report?.warnings?.length) return;
+    report.warnings.forEach((warning) => notify.warning(warning.message));
+  }, [report?.generatedAt]);
+
+  useEffect(() => {
+    if (!isError) return;
+
+    const apiError = error as { status?: number; data?: unknown } | undefined;
+    const message =
+      typeof apiError?.data === 'string'
+        ? apiError.data
+        : `Không thể tải dữ liệu báo cáo (mã lỗi: ${apiError?.status ?? 'unknown'})`;
+
+    notify.error(message);
+  }, [isError, error]);
+
+  const revenueData: RevenueData[] = useMemo(() => (
+    (report?.trends.labels ?? []).map((label, index) => ({
+      date: label,
+      revenue: report?.trends.revenue[index] ?? 0,
+      orders: report?.trends.enrollments[index] ?? 0,
+      refunds: 0,
+      netRevenue: report?.trends.revenue[index] ?? 0,
+    }))
+  ), [report]);
+
   const summary = useMemo(() => {
-    const totalRevenue = revenueData.reduce((sum, r) => sum + r.revenue, 0);
-    const totalNetRevenue = revenueData.reduce((sum, r) => sum + r.netRevenue, 0);
-    const totalOrders = revenueData.reduce((sum, r) => sum + r.orders, 0);
-    const totalRefunds = revenueData.reduce((sum, r) => sum + r.refunds, 0);
-    
-    const currentMonth = revenueData[revenueData.length - 1];
-    const previousMonth = revenueData[revenueData.length - 2];
-    
-    const revenueGrowth = previousMonth
-      ? ((currentMonth.revenue - previousMonth.revenue) / previousMonth.revenue) * 100
-      : 0;
-    
-    const ordersGrowth = previousMonth
-      ? ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100
-      : 0;
+    const totalRevenue = report?.overview.grossRevenue ?? 0;
+    const totalOrders = report?.overview.revenueEnrollments ?? 0;
+    const totalRefunds = 0;
+    const totalNetRevenue = totalRevenue;
 
     return {
       totalRevenue,
       totalNetRevenue,
       totalOrders,
       totalRefunds,
-      refundRate: totalOrders > 0 ? (totalRefunds / totalOrders) * 100 : 0,
+      refundRate: 0,
       averageOrderValue: totalOrders > 0 ? totalNetRevenue / totalOrders : 0,
-      revenueGrowth,
-      ordersGrowth,
-      currentMonthRevenue: currentMonth?.revenue || 0,
-      currentMonthOrders: currentMonth?.orders || 0,
+      revenueGrowth: report?.comparison?.delta.revenuePct ?? 0,
+      ordersGrowth: report?.comparison?.delta.enrollmentsPct ?? 0,
+      currentMonthRevenue: revenueData[revenueData.length - 1]?.revenue ?? 0,
+      currentMonthOrders: revenueData[revenueData.length - 1]?.orders ?? 0,
     };
-  }, [revenueData]);
+  }, [report, revenueData]);
 
-  // Revenue chart data
   const revenueChartData: ChartData = useMemo(() => ({
-    labels: revenueData.map(r => r.date),
+    labels: report?.trends.labels ?? [],
     datasets: [
       {
         label: 'Doanh thu',
-        data: revenueData.map(r => r.revenue / 1000000),
+        data: (report?.trends.revenue ?? []).map((value) => value / 1000000),
         borderColor: '#1890ff',
         backgroundColor: 'rgba(24, 144, 255, 0.1)',
         fill: true,
       },
-      {
-        label: 'Doanh thu ròng',
-        data: revenueData.map(r => r.netRevenue / 1000000),
-        borderColor: '#52c41a',
-        backgroundColor: 'rgba(82, 196, 26, 0.1)',
-        fill: true,
-      },
     ],
-  }), [revenueData]);
+  }), [report]);
 
-  // Orders chart data
   const ordersChartData: ChartData = useMemo(() => ({
-    labels: revenueData.map(r => r.date),
+    labels: report?.trends.labels ?? [],
     datasets: [
       {
-        label: 'Đơn hàng',
-        data: revenueData.map(r => r.orders),
+        label: 'Ghi danh',
+        data: report?.trends.enrollments ?? [],
         backgroundColor: '#1890ff',
       },
       {
-        label: 'Hoàn tiền',
-        data: revenueData.map(r => r.refunds),
-        backgroundColor: '#f5222d',
+        label: 'Ticket hỗ trợ',
+        data: report?.trends.tickets ?? [],
+        backgroundColor: '#faad14',
       },
     ],
-  }), [revenueData]);
+  }), [report]);
 
-  // Revenue by category
   const revenueByCategoryData: ChartData = useMemo(() => {
-    const categoryRevenue: Record<string, number> = {};
-    adminCourses.forEach(course => {
-      categoryRevenue[course.category] = (categoryRevenue[course.category] || 0) + course.revenue;
-    });
+    const labels = report?.breakdowns.revenueByCategory.map((item) => item.categoryName) ?? [];
+    const data = report?.breakdowns.revenueByCategory.map((item) => item.revenue / 1000000) ?? [];
 
-    const labels = Object.keys(categoryRevenue);
-    const data = Object.values(categoryRevenue).map(v => v / 1000000);
-    
     return {
       labels,
       datasets: [
         {
-          label: 'Doanh thu theo danh mục',
+          label: 'Doanh thu theo danh mục (triệu VND)',
           data,
           backgroundColor: [
             '#1890ff',
@@ -134,97 +212,141 @@ export const useRevenue = () => {
         },
       ],
     };
-  }, []);
+  }, [report]);
 
-  // Top performing courses
-  const topCourses = useMemo(() => {
-    return [...adminCourses]
-      .filter(c => c.status === 'published')
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 10)
-      .map(c => ({
-        id: c.id,
-        title: c.title,
-        teacher: c.teacher.name,
-        revenue: c.revenue,
-        students: c.totalStudents,
-        rating: c.rating,
-      }));
-  }, []);
+  const topCourses = useMemo(() => (
+    (report?.widgets.topCourses ?? []).map((course) => ({
+      id: course.id,
+      title: course.title,
+      teacher: course.teacher.name,
+      revenue: 0,
+      students: course.totalStudents,
+      rating: course.rating,
+    }))
+  ), [report]);
 
-  // Top performing teachers
-  const topTeachers = useMemo(() => {
-    return [...teachers]
-      .filter(t => t.status === 'active')
-      .sort((a, b) => b.earnings - a.earnings)
-      .slice(0, 10)
-      .map(t => ({
-        id: t.id,
-        name: `${t.firstName} ${t.lastName}`,
-        avatar: t.avatar,
-        earnings: t.earnings,
-        courses: t.totalCourses,
-        students: t.totalStudents,
-        rating: t.rating,
-      }));
-  }, []);
+  const topTeachers = useMemo(() => (
+    (report?.widgets.topTeachers ?? []).map((teacher) => ({
+      id: teacher.id,
+      name: `${teacher.firstName} ${teacher.lastName}`.trim(),
+      avatar: teacher.avatar,
+      earnings: 0,
+      courses: teacher.totalCourses,
+      students: teacher.totalStudents,
+      rating: teacher.rating,
+    }))
+  ), [report]);
 
-  // Monthly comparison
   const monthlyComparison = useMemo(() => {
-    if (revenueData.length < 2) return null;
-    
-    const current = revenueData[revenueData.length - 1];
-    const previous = revenueData[revenueData.length - 2];
-    
+    if (!report?.comparison) return null;
+
     return {
       current: {
-        month: current.date,
-        revenue: current.revenue,
-        orders: current.orders,
-        netRevenue: current.netRevenue,
+        month: `${report.range.startDate} - ${report.range.endDate}`,
+        revenue: report.overview.grossRevenue,
+        orders: report.overview.enrollments,
+        netRevenue: report.overview.grossRevenue,
       },
       previous: {
-        month: previous.date,
-        revenue: previous.revenue,
-        orders: previous.orders,
-        netRevenue: previous.netRevenue,
+        month: `${report.comparison.range.startDate} - ${report.comparison.range.endDate}`,
+        revenue: report.comparison.overview.grossRevenue,
+        orders: report.comparison.overview.enrollments,
+        netRevenue: report.comparison.overview.grossRevenue,
       },
       change: {
-        revenue: ((current.revenue - previous.revenue) / previous.revenue) * 100,
-        orders: ((current.orders - previous.orders) / previous.orders) * 100,
-        netRevenue: ((current.netRevenue - previous.netRevenue) / previous.netRevenue) * 100,
+        revenue: report.comparison.delta.revenuePct,
+        orders: report.comparison.delta.enrollmentsPct,
+        netRevenue: report.comparison.delta.revenuePct,
       },
     };
-  }, [revenueData]);
+  }, [report]);
 
-  // Export report
-  const exportReport = useCallback(async (format: 'excel' | 'pdf') => {
+  const fetchRevenueData = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const exportReport = useCallback(async (format: 'csv' | 'json') => {
     try {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulate file download
-      notify.success(`Đã xuất báo cáo ${format.toUpperCase()}`);
+      const response = await triggerExport({ ...queryArgs, format }).unwrap();
+      const exported = response.data;
+
+      const blob = typeof exported.content === 'string'
+        ? new Blob([exported.content], { type: exported.mimeType })
+        : new Blob([JSON.stringify(exported.content, null, 2)], { type: exported.mimeType });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = exported.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      notify.success(`Đã xuất báo cáo ${format.toUpperCase()} thành công`);
       return { success: true };
-    } catch (error) {
+    } catch {
       notify.error('Không thể xuất báo cáo');
       return { success: false };
-    } finally {
-      setLoading(false);
     }
-  }, []);
+  }, [queryArgs, triggerExport]);
 
-  useEffect(() => {
-    fetchRevenueData();
-  }, [fetchRevenueData]);
+  const saveCurrentPreset = useCallback((name: string) => {
+    if (!name.trim()) {
+      notify.warning('Vui lòng nhập tên bộ lọc');
+      return;
+    }
+
+    const nextPreset: ReportPreset = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      name: name.trim(),
+      filters,
+      compareEnabled: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    const nextPresets = [nextPreset, ...savedPresets].slice(0, 20);
+    setSavedPresets(nextPresets);
+    savePresets(nextPresets);
+    setActivePresetId(nextPreset.id);
+    notify.success('Đã lưu bộ lọc báo cáo');
+  }, [filters, savedPresets]);
+
+  const applyPreset = useCallback((id: string) => {
+    const preset = savedPresets.find((item) => item.id === id);
+    if (!preset) return;
+
+    const presetMonth = dayjs(preset.filters.dateRange.startDate);
+    const normalizedMonth = (presetMonth.isValid() ? presetMonth : dayjs()).format('YYYY-MM');
+
+    setSelectedMonth(normalizedMonth);
+    setFilters({
+      ...preset.filters,
+      dateRange: buildDateRangeByMonth(dayjs(`${normalizedMonth}-01`)),
+      groupBy: 'month',
+    });
+    setActivePresetId(preset.id);
+  }, [savedPresets]);
+
+  const deletePreset = useCallback((id: string) => {
+    const next = savedPresets.filter((item) => item.id !== id);
+    setSavedPresets(next);
+    savePresets(next);
+
+    if (activePresetId === id) {
+      setActivePresetId(null);
+    }
+  }, [activePresetId, savedPresets]);
 
   return {
+    report,
     revenueData,
     loading,
+    exporting: isExporting,
     filters,
     setFilters,
-    selectedPeriod,
-    setSelectedPeriod,
+    selectedMonth,
+    setSelectedMonth,
     summary,
     revenueChartData,
     ordersChartData,
@@ -234,5 +356,10 @@ export const useRevenue = () => {
     monthlyComparison,
     fetchRevenueData,
     exportReport,
+    savedPresets,
+    activePresetId,
+    saveCurrentPreset,
+    applyPreset,
+    deletePreset,
   };
 };

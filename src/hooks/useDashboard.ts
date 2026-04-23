@@ -1,206 +1,292 @@
-// Dashboard Hook — connected to real API
-import { useState, useCallback, useMemo } from 'react';
-import type { DashboardStats, ChartData } from '../types/admin';
-import {
-  useGetCoursesQuery,
-  useGetTeachersQuery,
-} from '../services/courseApi';
-import { useGetUsersQuery } from '../services/userApi';
-import { useGetTicketsQuery, useGetTicketStatsQuery } from '../services/supportApi';
-import {
-  revenueData as mockRevenueData,
-  adminNotifications,
-  activityLogs,
-} from '../constants/adminData';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import dayjs from 'dayjs';
+import type { DashboardStats, ChartData, AdminNotification } from '../types/admin';
+import { useGetDashboardReportQuery } from '../services/reportsApi';
+import { useGetTeachersQuery } from '../services/courseApi';
+import { useGetTicketsQuery } from '../services/supportApi';
+import { activityLogs } from '../constants/adminData';
+
+const ADMIN_READ_NOTIFICATIONS_STORAGE_KEY = 'admin-read-notifications';
 
 export const useDashboard = () => {
-  const [dateRange, setDateRange] = useState<[string, string]>(['2024-01-01', '2024-12-31']);
+  const [dateRange, setDateRange] = useState<[string, string]>([
+    dayjs().subtract(29, 'day').format('YYYY-MM-DD'),
+    dayjs().format('YYYY-MM-DD'),
+  ]);
 
-  // ── Real API calls ──────────────────────────────────────────────────────
-  const { data: coursesData, isLoading: isCoursesLoading } = useGetCoursesQuery({
-    size: 'unlimited',
-    include: 'category|teacher',
-    sort: 'createdAt:desc',
-  });
-  const { data: teachersData, isLoading: isTeachersLoading } = useGetTeachersQuery({
-    size: 'unlimited',
-    include: 'user',
-  });
-  const { data: usersData, isLoading: isUsersLoading } = useGetUsersQuery({ size: 'unlimited' });
-  const { data: ticketsData, isLoading: isTicketsLoading } = useGetTicketsQuery({ size: 5, sort: 'createdAt:desc' });
-  const { data: ticketStatsData } = useGetTicketStatsQuery();
+  const comparisonRange = useMemo(() => {
+    const start = dayjs(dateRange[0]);
+    const end = dayjs(dateRange[1]);
+    const days = Math.max(end.diff(start, 'day') + 1, 1);
+    const compareEnd = start.subtract(1, 'day');
+    const compareStart = compareEnd.subtract(days - 1, 'day');
 
-  const courses = coursesData?.data?.rows || [];
-  const allTeachers = teachersData?.data?.rows || [];
-  const allUsers = usersData?.data?.rows || [];
-  const recentTicketRows = ticketsData?.data?.rows || [];
-  const ticketStats = ticketStatsData?.data;
-
-  const loading = isCoursesLoading || isTeachersLoading || isUsersLoading || isTicketsLoading;
-
-  // ── Derived stats ─────────────────────────────────────────────────────
-  const stats: DashboardStats = useMemo(() => {
-    const totalRevenue = courses.reduce((s, c) => s + (c.price || 0) * (c.totalStudents || 0), 0);
     return {
-      totalUsers: allUsers.length,
-      totalTeachers: allTeachers.length,
-      totalCourses: courses.length,
-      totalRevenue,
-      newUsersToday: 0,
-      newCoursesToday: 0,
-      pendingApprovals: courses.filter(c => c.status === 'pending').length,
-      openTickets: ticketStats?.open ?? 0,
-      usersGrowth: 0,
-      revenueGrowth: 0,
-      coursesGrowth: 0,
-      teachersGrowth: 0,
+      compareStartDate: compareStart.format('YYYY-MM-DD'),
+      compareEndDate: compareEnd.format('YYYY-MM-DD'),
     };
-  }, [courses, allTeachers, allUsers, ticketStats]);
+  }, [dateRange]);
 
-  // ── Chart data ────────────────────────────────────────────────────────
+  const {
+    data: reportData,
+    isLoading: isLoadingReport,
+    isFetching: isFetchingReport,
+    refetch: refetchReport,
+  } = useGetDashboardReportQuery(
+    {
+      startDate: dateRange[0],
+      endDate: dateRange[1],
+      compareStartDate: comparisonRange.compareStartDate,
+      compareEndDate: comparisonRange.compareEndDate,
+      groupBy: 'auto',
+    },
+    {
+      pollingInterval: 120000,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
+
+  const {
+    data: ticketsData,
+    isLoading: isLoadingTickets,
+    isFetching: isFetchingTickets,
+    refetch: refetchTickets,
+  } = useGetTicketsQuery(
+    {
+      size: 20,
+      include: 'user',
+      sort: 'createdAt:desc',
+    },
+    {
+      pollingInterval: 120000,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
+
+  const {
+    data: pendingTeachersData,
+    isLoading: isLoadingPendingTeachers,
+    isFetching: isFetchingPendingTeachers,
+    refetch: refetchPendingTeachers,
+  } = useGetTeachersQuery(
+    {
+      size: 10,
+      include: 'user',
+      filter: 'status:eq:pending',
+      sort: 'createdAt:desc',
+    },
+    {
+      pollingInterval: 120000,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
+
+  const report = reportData?.data;
+  const tickets = useMemo(() => ticketsData?.data?.rows ?? [], [ticketsData?.data?.rows]);
+  const pendingTeachers = useMemo(
+    () => pendingTeachersData?.data?.rows ?? [],
+    [pendingTeachersData?.data?.rows],
+  );
+
+  const stats: DashboardStats = useMemo(() => {
+    const legacy = report?.legacyStats;
+    return {
+      totalUsers: legacy?.totalUsers ?? 0,
+      totalTeachers: legacy?.totalTeachers ?? 0,
+      totalCourses: legacy?.totalCourses ?? 0,
+      totalRevenue: legacy?.totalRevenue ?? 0,
+      newUsersToday: legacy?.newUsersToday ?? 0,
+      newCoursesToday: legacy?.newCoursesToday ?? 0,
+      pendingApprovals: legacy?.pendingApprovals ?? 0,
+      openTickets: legacy?.openTickets ?? 0,
+      usersGrowth: legacy?.usersGrowth ?? 0,
+      revenueGrowth: legacy?.revenueGrowth ?? 0,
+      coursesGrowth: legacy?.coursesGrowth ?? 0,
+      teachersGrowth: legacy?.teachersGrowth ?? 0,
+    };
+  }, [report]);
+
   const revenueChart: ChartData = useMemo(() => ({
-    labels: mockRevenueData.map(r => r.date),
+    labels: report?.trends.labels ?? [],
     datasets: [
       {
         label: 'Doanh thu',
-        data: mockRevenueData.map(r => r.revenue / 1000000),
+        data: (report?.trends.revenue ?? []).map((value) => value / 1000000),
         borderColor: '#1890ff',
         backgroundColor: 'rgba(24, 144, 255, 0.1)',
         fill: true,
       },
-      {
-        label: 'Doanh thu ròng',
-        data: mockRevenueData.map(r => r.netRevenue / 1000000),
-        borderColor: '#52c41a',
-        backgroundColor: 'rgba(82, 196, 26, 0.1)',
-        fill: true,
-      },
     ],
-  }), []);
+  }), [report]);
 
   const usersChart: ChartData = useMemo(() => ({
-    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+    labels: report?.trends.labels ?? [],
     datasets: [
       {
         label: 'Người dùng mới',
-        data: [820, 932, 1101, 1234, 1450, 1580, 1620, 1750, 1890, 2050, 2200, 2350],
+        data: report?.trends.users ?? [],
         backgroundColor: '#1890ff',
       },
     ],
-  }), []);
+  }), [report]);
 
-  const coursesChart: ChartData = useMemo(() => {
-    // Group courses by category name
-    const catMap: Record<string, number> = {};
-    courses.forEach(c => {
-      const cat = c.category?.name || 'Khác';
-      catMap[cat] = (catMap[cat] || 0) + 1;
+  const coursesChart: ChartData = useMemo(() => ({
+    labels: report?.widgets.coursesChart.labels ?? [],
+    datasets: report?.widgets.coursesChart.datasets ?? [{ label: 'Số lượng khóa học', data: [] }],
+  }), [report]);
+
+  const topCourses = report?.widgets.topCourses ?? [];
+  const topTeachers = report?.widgets.topTeachers ?? [];
+  const recentTickets = report?.widgets.recentTickets ?? [];
+
+  const dynamicNotifications = useMemo<AdminNotification[]>(() => {
+    const generatedAt = report?.generatedAt || new Date().toISOString();
+    const notifications: AdminNotification[] = [];
+
+    if ((stats?.pendingApprovals ?? 0) > 0) {
+      notifications.push({
+        id: `pending-courses-${stats.pendingApprovals}`,
+        title: 'Khóa học đang chờ duyệt',
+        message: `Hiện có ${stats.pendingApprovals} khóa học đang chờ phê duyệt.`,
+        type: 'info',
+        category: 'course',
+        isRead: false,
+        link: '/admin/courses/review',
+        createdAt: generatedAt,
+      });
+    }
+
+    if (pendingTeachers.length > 0) {
+      notifications.push({
+        id: `pending-teachers-${pendingTeachers.length}`,
+        title: 'Yêu cầu đăng ký giảng viên mới',
+        message: `Có ${pendingTeachers.length} hồ sơ giảng viên đang chờ xử lý.`,
+        type: 'warning',
+        category: 'user',
+        isRead: false,
+        link: '/admin/teacher-registrations',
+        createdAt: pendingTeachers[0]?.createdAt || generatedAt,
+      });
+    }
+
+    const urgentTicketCount = tickets.filter(
+      (ticket) =>
+        (ticket.priority === 'high' || ticket.priority === 'urgent') &&
+        (ticket.status === 'open' || ticket.status === 'in_progress'),
+    ).length;
+
+    if (urgentTicketCount > 0) {
+      notifications.push({
+        id: `urgent-tickets-${urgentTicketCount}`,
+        title: 'Ticket ưu tiên cao cần xử lý',
+        message: `Có ${urgentTicketCount} ticket ưu tiên cao/khẩn cấp cần xử lý ngay.`,
+        type: 'error',
+        category: 'support',
+        isRead: false,
+        link: '/admin/support',
+        createdAt: tickets[0]?.createdAt || generatedAt,
+      });
+    }
+
+    (report?.widgets.recentTickets || []).slice(0, 3).forEach((ticket) => {
+      notifications.push({
+        id: `recent-ticket-${ticket.id}`,
+        title: `Ticket #${ticket.ticketId}`,
+        message: ticket.subject,
+        type: ticket.status === 'open' ? 'warning' : 'info',
+        category: 'support',
+        isRead: false,
+        link: '/admin/support',
+        createdAt: ticket.createdAt,
+      });
     });
-    const labels = Object.keys(catMap);
-    const data = Object.values(catMap);
-    const colors = ['#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#13c2c2', '#eb2f96', '#fa8c16'];
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Số lượng khóa học',
-          data,
-          backgroundColor: colors.slice(0, labels.length),
-        },
-      ],
-    };
-  }, [courses]);
 
-  // ── Top courses ───────────────────────────────────────────────────────
-  const topCourses = useMemo(() =>
-    [...courses]
-      .filter(c => c.status === 'published')
-      .sort((a, b) => (b.totalStudents || 0) - (a.totalStudents || 0))
-      .slice(0, 5)
-      .map(c => ({
-        id: c.id,
-        title: c.title,
-        description: c.description,
-        thumbnail: c.thumbnail || '',
-        category: c.category?.name || 'Khác',
-        teacher: {
-          id: c.teacherId,
-          name: c.teacher ? `${c.teacher.firstName} ${c.teacher.lastName}` : '',
-          avatar: c.teacher?.avatar,
-        },
-        price: c.price,
-        duration: c.duration || '',
-        totalLessons: c.totalLessons,
-        totalStudents: c.totalStudents || 0,
-        rating: c.rating || 0,
-        totalReviews: c.totalReviews || 0,
-        status: c.status,
-        level: c.level,
-        language: c.language || 'vi',
-        tags: c.tags || [],
-        revenue: (c.price || 0) * (c.totalStudents || 0),
-        createdAt: c.createdAt,
-        updatedAt: c.updatedAt,
+    (report?.warnings || []).forEach((warning, index) => {
+      notifications.push({
+        id: `report-warning-${warning.code}-${index}`,
+        title: 'Cảnh báo dữ liệu báo cáo',
+        message: warning.message,
+        type: 'warning',
+        category: 'system',
+        isRead: false,
+        link: '/admin/revenue',
+        createdAt: generatedAt,
+      });
+    });
+
+    return notifications.sort(
+      (a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf(),
+    );
+  }, [report, stats, tickets, pendingTeachers]);
+
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(ADMIN_READ_NOTIFICATIONS_STORAGE_KEY);
+      if (!saved) return;
+      const ids = JSON.parse(saved) as string[];
+      setReadIds(new Set(ids));
+    } catch {
+      setReadIds(new Set());
+    }
+  }, []);
+
+  useEffect(() => {
+    const validIds = new Set(dynamicNotifications.map((notification) => notification.id));
+    setReadIds((previous) => {
+      const next = new Set<string>();
+      previous.forEach((id) => {
+        if (validIds.has(id)) {
+          next.add(id);
+        }
+      });
+
+      if (next.size === previous.size) {
+        let same = true;
+        previous.forEach((id) => {
+          if (!next.has(id)) {
+            same = false;
+          }
+        });
+        if (same) {
+          return previous;
+        }
+      }
+
+      return next;
+    });
+  }, [dynamicNotifications]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      ADMIN_READ_NOTIFICATIONS_STORAGE_KEY,
+      JSON.stringify(Array.from(readIds)),
+    );
+  }, [readIds]);
+
+  const notifications = useMemo(
+    () =>
+      dynamicNotifications.map((notification) => ({
+        ...notification,
+        isRead: readIds.has(notification.id),
       })),
-    [courses],
+    [dynamicNotifications, readIds],
   );
 
-  // ── Top teachers ──────────────────────────────────────────────────────
-  const topTeachers = useMemo(() =>
-    [...allTeachers]
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 5)
-      .map(t => ({
-        id: t.id,
-        teacherId: t.teacherId,
-        firstName: t.user?.firstName || '',
-        lastName: t.user?.lastName || '',
-        email: t.user?.email || '',
-        phone: '',
-        avatar: t.user?.avatar,
-        specialization: t.specialization || [],
-        qualification: t.qualification || '',
-        experience: t.experience || 0,
-        rating: t.rating || 0,
-        totalCourses: t.totalCourses || 0,
-        totalStudents: t.totalStudents || 0,
-        status: (t.status as 'active' | 'inactive' | 'pending' | 'suspended') || 'active',
-        bio: t.bio,
-        socialLinks: t.socialLinks,
-        joinedDate: t.createdAt || '',
-        earnings: t.earnings || 0,
-      })),
-    [allTeachers],
-  );
-
-  // ── Recent tickets (mapped to AdminSupportTicket shape) ───────────────
-  const recentTickets = useMemo(() =>
-    recentTicketRows.map(t => ({
-      id: t.id,
-      ticketId: t.id.slice(0, 8).toUpperCase(),
-      userId: t.userId,
-      userName: t.user ? `${t.user.firstName} ${t.user.lastName}` : '',
-      userEmail: t.user?.email || '',
-      userAvatar: t.user?.avatar,
-      subject: t.subject,
-      description: t.message,
-      category: t.category,
-      priority: t.priority,
-      status: t.status === 'in_progress' ? 'in_progress' as const : t.status,
-      assignedTo: t.assignedToId,
-      assignedName: t.assignedTo ? `${t.assignedTo.firstName} ${t.assignedTo.lastName}` : undefined,
-      responses: [] as { id: string; message: string; authorId: string; authorName: string; authorAvatar?: string; isStaff: boolean; attachments?: string[]; createdAt: string }[],
-      createdAt: t.createdAt,
-      updatedAt: t.updatedAt,
-    })),
-    [recentTicketRows],
-  );
-
-  // ── Assemble final data object matching the page contract ─────────────
   const data = useMemo(() => ({
     stats,
-    revenueData: mockRevenueData,
-    notifications: adminNotifications,
+    revenueData: (report?.trends.labels ?? []).map((label, index) => ({
+      date: label,
+      revenue: report?.trends.revenue[index] ?? 0,
+      orders: report?.trends.enrollments[index] ?? 0,
+      refunds: 0,
+      netRevenue: report?.trends.revenue[index] ?? 0,
+    })),
+    notifications,
     activities: activityLogs,
     revenueChart,
     usersChart,
@@ -208,24 +294,45 @@ export const useDashboard = () => {
     topCourses,
     topTeachers,
     recentTickets,
-  }), [stats, revenueChart, usersChart, coursesChart, topCourses, topTeachers, recentTickets]);
-
-  // ── Notification helpers (local state, no backend) ────────────────────
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+    warnings: report?.warnings ?? [],
+    availability: report?.availability,
+  }), [
+    notifications,
+    stats,
+    report,
+    revenueChart,
+    usersChart,
+    coursesChart,
+    topCourses,
+    topTeachers,
+    recentTickets,
+  ]);
 
   const markNotificationRead = useCallback((id: string) => {
-    setReadIds(prev => new Set(prev).add(id));
+    setReadIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   }, []);
 
   const markAllNotificationsRead = useCallback(() => {
-    setReadIds(new Set(adminNotifications.map(n => n.id)));
-  }, []);
+    setReadIds(new Set(dynamicNotifications.map((notification) => notification.id)));
+  }, [dynamicNotifications]);
 
   const refreshData = useCallback(() => {
-    // RTK Query handles refetching automatically via cache invalidation
-  }, []);
+    void Promise.all([refetchReport(), refetchTickets(), refetchPendingTeachers()]);
+  }, [refetchReport, refetchTickets, refetchPendingTeachers]);
 
-  const unreadNotificationsCount = adminNotifications.filter(n => !n.isRead && !readIds.has(n.id)).length;
+  const unreadNotificationsCount = notifications.filter((notification) => !notification.isRead).length;
+
+  const loading =
+    isLoadingReport ||
+    isFetchingReport ||
+    isLoadingTickets ||
+    isFetchingTickets ||
+    isLoadingPendingTeachers ||
+    isFetchingPendingTeachers;
 
   return {
     data,

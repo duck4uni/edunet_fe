@@ -98,8 +98,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
         )}
       </div>
       <div className="p-2 border-t border-gray-200 text-center">
-        <Link to="/admin/notifications" className="text-blue-500 text-sm hover:text-blue-600">
-          Xem tất cả
+        <Link to="/admin/dashboard" className="text-blue-500 text-sm hover:text-blue-600">
+          Xem bảng điều khiển
         </Link>
       </div>
     </div>
@@ -134,7 +134,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
       style={{
         padding: '0 24px',
         backgroundColor: '#ffffff',
-        borderBottom: '1px solid #d9d9d9',
+        borderBottom: '1px solid #bdeaf8',
         position: 'sticky',
         top: 0,
         zIndex: 100,
@@ -152,7 +152,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           placeholder="Tìm kiếm..."
           prefix={<SearchOutlined className="text-gray-400" />}
           className="rounded-lg"
-          style={{ backgroundColor: '#f5f5f5' }}
+          style={{ backgroundColor: '#f3fbff' }}
         />
       </div>
 
@@ -175,7 +175,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
 
         {/* User Menu */}
         <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
-          <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded-lg px-2 py-1 transition-colors">
+          <div className="flex items-center gap-2 cursor-pointer hover:bg-cyan-50 rounded-lg px-2 py-1 transition-colors">
             <Avatar 
               src={user?.avatar} 
               icon={<UserOutlined />}

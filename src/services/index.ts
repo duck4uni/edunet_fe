@@ -208,5 +208,22 @@ export {
   useMarkAsReadMutation,
 } from './friendChatApi';
 
+// Reports API
+export {
+  reportsApi,
+  useGetDashboardReportQuery,
+  useLazyGetDashboardReportQuery,
+  useLazyExportDashboardReportQuery,
+} from './reportsApi';
+
+export type {
+  ReportGroupBy,
+  ReportExportFormat,
+  ReportQueryParams,
+  ReportWarning,
+  DashboardReport,
+  ExportReportResponse,
+} from './reportsApi';
+
 // Socket service
 export { socketService } from './socketService';

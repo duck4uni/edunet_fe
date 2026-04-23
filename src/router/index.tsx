@@ -32,6 +32,7 @@ import {
   PendingRejectedManagement,
   AdminCourseDetail,
   TeacherManagement,
+  StudentManagement,
   TeacherRegistrationManagement,
   EmployeeManagement,
   RecruitmentManagement,
@@ -201,6 +202,10 @@ export const router = createBrowserRouter([
       {
         path: 'teachers',
         element: <TeacherManagement />,
+      },
+      {
+        path: 'students',
+        element: <StudentManagement />,
       },
       {
         path: 'teacher-registrations',

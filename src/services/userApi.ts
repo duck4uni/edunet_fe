@@ -5,9 +5,12 @@ import type { ApiResponse, PaginatedResponse, User } from './authApi';
 // Student Types
 export interface Student {
   id: string;
+  studentId?: string;
   userId: string;
   school?: string;
   grade?: string;
+  totalCoursesEnrolled?: number;
+  totalCoursesCompleted?: number;
   user?: User;
   createdAt?: string;
   updatedAt?: string;

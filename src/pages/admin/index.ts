@@ -6,6 +6,7 @@ export { default as CourseManagement } from './Courses';
 export { default as PendingRejectedManagement } from './Courses/PendingRejected';
 export { default as AdminCourseDetail } from './Courses/Detail';
 export { default as TeacherManagement } from './Teachers';
+export { default as StudentManagement } from './Students';
 export { default as EmployeeManagement } from './Employees';
 export { default as RecruitmentManagement } from './Recruitment';
 export { default as SupportManagement } from './Support';

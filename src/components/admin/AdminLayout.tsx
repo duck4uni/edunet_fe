@@ -71,16 +71,27 @@ const AdminLayout: React.FC = () => {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#6366f1',
+          colorPrimary: '#30C2EC',
+          colorInfo: '#30C2EC',
+          colorLink: '#1599c6',
           borderRadius: 8,
           borderRadiusLG: 16,
           colorBgContainer: '#ffffff',
-          colorBorder: '#e2e8f0',
-          colorBorderSecondary: '#f1f5f9',
+          colorBorder: '#bdeaf8',
+          colorBorderSecondary: '#e8f7fc',
           fontFamily: '\'Inter\', \'Segoe UI\', sans-serif',
         },
         components: {
-          Menu: { itemBg: 'transparent', darkItemBg: 'transparent' },
+          Menu: {
+            itemBg: 'transparent',
+            darkItemBg: 'transparent',
+            itemColor: '#0f5f7a',
+            itemHoverColor: '#1599c6',
+            itemHoverBg: 'rgba(48, 194, 236, 0.12)',
+            itemSelectedColor: '#0b7fa5',
+            itemSelectedBg: 'rgba(48, 194, 236, 0.2)',
+            subMenuItemBg: 'transparent',
+          },
           Table: { headerBg: '#f8fafc', headerSplitColor: 'transparent' },
           Card: {
             boxShadowTertiary: '0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07)',
@@ -89,7 +100,7 @@ const AdminLayout: React.FC = () => {
         },
       }}
     >
-      <div className="min-h-screen bg-slate-50 flex">
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-sky-50 to-white flex">
         {/* Sidebar */}
         <AdminSidebar
           collapsed={collapsed}

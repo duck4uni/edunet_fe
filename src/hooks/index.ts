@@ -22,6 +22,7 @@ export { useAdminAuth } from './useAdminAuth';
 export { useDashboard } from './useDashboard';
 export { useCourseManagement } from './useCourseManagement';
 export { useTeacherManagement } from './useTeacherManagement';
+export { useStudentManagement } from './useStudentManagement';
 export { useEmployeeManagement } from './useEmployeeManagement';
 export { useRecruitment } from './useRecruitment';
 export { useSupportManagement, useSupportManagement as useSupport } from './useSupportManagement';

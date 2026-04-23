@@ -7,12 +7,14 @@ import {
   BookOutlined,
   UserOutlined,
   CustomerServiceOutlined,
+  BarChartOutlined,
   SettingOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   IdcardOutlined,
   RobotOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -56,6 +58,11 @@ const menuItems = [
       { key: '/admin/teacher-registrations', label: 'Đăng ký giáo viên' },
     ],
   },
+  {
+    key: '/admin/students',
+    icon: <TeamOutlined />,
+    label: 'Quản lý học viên',
+  },
   // {
   //   key: '/admin/employees',
   //   icon: <TeamOutlined />,
@@ -74,6 +81,11 @@ const menuItems = [
     key: '/admin/support',
     icon: <CustomerServiceOutlined />,
     label: 'Hỗ trợ',
+  },
+  {
+    key: '/admin/revenue',
+    icon: <BarChartOutlined />,
+    label: 'Báo cáo',
   },
   {
     key: '/admin/chatbot',
@@ -189,12 +201,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
         bottom: 0,
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
-        borderRight: '1px solid #d9d9d9',
+        backgroundColor: '#f8fdff',
+        borderRight: '1px solid #bdeaf8',
       }}
     >
       {/* Logo */}
-      <div className="h-16 shrink-0 flex items-center justify-center border-b border-gray-200">
+      <div className="h-16 shrink-0 flex items-center justify-center border-b border-cyan-100">
         <Link to="/admin" className="flex items-center gap-2">
           <img
             src="/academix.png"
@@ -202,7 +214,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             className="w-10 h-10 object-cover rounded-lg"
           />
           {!collapsed && (
-            <span className="text-xl font-bold text-gray-800">
+            <span className="text-xl font-bold text-cyan-700">
               Academix
             </span>
           )}
@@ -211,7 +223,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
       {/* User Info */}
       {user && (
-        <div className={`shrink-0 p-4 border-b border-gray-200 ${collapsed ? 'text-center' : ''}`}>
+        <div className={`shrink-0 p-4 border-b border-cyan-100 ${collapsed ? 'text-center' : ''}`}>
           <div className={`flex ${collapsed ? 'justify-center' : 'items-center gap-3'}`}>
             <Tooltip title={collapsed ? `${user.firstName} ${user.lastName}` : ''} placement="right">
               <Avatar
@@ -222,10 +234,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             </Tooltip>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <Text strong className="block truncate text-gray-800">
+                <Text strong className="block truncate text-cyan-800">
                   {user.firstName} {user.lastName}
                 </Text>
-                <Text type="secondary" className="block text-xs truncate">
+                <Text type="secondary" className="block text-xs truncate text-cyan-600">
                   {roleLabels[user.role] || user.role}
                 </Text>
               </div>
@@ -257,7 +269,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       </div>
 
       {/* Collapse Button & Logout */}
-      <div className="shrink-0 border-t border-gray-200">
+      <div className="shrink-0 border-t border-cyan-100">
         <Menu
           mode="inline"
           selectable={false}
