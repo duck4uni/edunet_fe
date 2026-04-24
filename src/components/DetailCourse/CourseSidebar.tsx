@@ -138,31 +138,31 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
   };
 
   return (
-    <div className="detail-course-sidebar-card">
-      <div className="group relative mb-4 overflow-hidden rounded-xl border border-[rgba(48,194,236,0.2)]">
+    <div className="detail-course-sidebar-card detail-course-sidebar-stack">
+      <div className="group relative overflow-hidden rounded-lg border border-[rgba(48,194,236,0.2)]">
         <Image
           src={course.image}
           alt="Course"
           preview={false}
-          className="h-44 w-full object-cover"
+          className="h-32 w-full object-cover md:h-[136px]"
         />
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
           <Button
             type="default"
             shape="round"
-            className="detail-course-secondary-btn opacity-0 transition-all duration-300 group-hover:opacity-100"
+            className="detail-course-secondary-btn !h-8 !px-3 !text-xs opacity-0 transition-all duration-300 group-hover:opacity-100"
           >
             Xem trước
           </Button>
         </div>
 
-        <div className="absolute top-3 right-3 flex gap-2">
+        <div className="absolute right-2 top-2 flex gap-1.5">
           <Tooltip title={isWishlisted ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'}>
             <Button
               shape="circle"
               icon={isWishlisted ? <HeartFilled className="text-state-light-orange" /> : <HeartOutlined />}
               onClick={() => setIsWishlisted(!isWishlisted)}
-              className="detail-course-icon-fab"
+              className="detail-course-icon-fab !h-7 !w-7"
             />
           </Tooltip>
           <Tooltip title="Chia sẻ">
@@ -170,15 +170,15 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
               shape="circle"
               icon={<ShareAltOutlined />}
               onClick={handleShare}
-              className="detail-course-icon-fab"
+              className="detail-course-icon-fab !h-7 !w-7"
             />
           </Tooltip>
         </div>
       </div>
 
-      <div className="mb-5 text-center">
-        <div className="mb-2 flex items-center justify-center gap-3">
-          <span className="text-3xl font-bold text-state-500-secondary">
+      <div className="text-center">
+        <div className="mb-1.5 flex items-center justify-center gap-2">
+          <span className="text-[22px] font-bold leading-none text-state-500-secondary">
             {formatCurrency(displayPrice)}
           </span>
           {hasDiscount && discountPercent !== null && (
@@ -186,11 +186,11 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
           )}
         </div>
         {hasDiscount && (
-          <span className="text-gray-400 line-through text-lg">
+          <span className="text-[14px] text-gray-400 line-through">
             {formatCurrency(course.price)}
           </span>
         )}
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-gray-500 md:text-sm">
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] text-gray-500">
           <span className="inline-flex items-center gap-1">
             <StarFilled className="text-state-light-orange" />
             {(course.rating || 0).toFixed(1)} ({course.totalReviews || 0})
@@ -202,9 +202,9 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
         </div>
       </div>
 
-      <div className="mb-5 space-y-2.5">
+      <div className="space-y-1.5">
         {isCheckingEnrollment ? (
-          <div className="flex justify-center py-4"><Spin /></div>
+          <div className="flex justify-center py-2"><Spin /></div>
         ) : isEnrolled ? (
           <>
             <Button
@@ -213,11 +213,11 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
               block
               icon={<BookOutlined />}
               onClick={handleGoToCourse}
-              className="detail-course-primary-btn !h-12 !rounded-xl !text-sm !font-semibold md:!text-base"
+              className="detail-course-primary-btn !h-9 !rounded-lg !text-[12px] !font-semibold"
             >
               Vào học ngay
             </Button>
-            <Text className="block text-center text-state-500-secondary text-sm">
+            <Text className="block text-center text-state-500-secondary text-xs">
               <CheckCircleOutlined className="mr-1" />
               Bạn đã đăng ký khóa học này
             </Text>
@@ -229,11 +229,11 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
               block
               disabled
               icon={<HourglassOutlined />}
-              className="detail-course-pending-btn !h-12 !rounded-xl !text-sm !font-semibold md:!text-base"
+              className="detail-course-pending-btn !h-9 !rounded-lg !text-[12px] !font-semibold"
             >
               Đang chờ phê duyệt
             </Button>
-            <Text className="block text-center text-state-light-orange text-sm">
+            <Text className="block text-center text-state-light-orange text-xs">
               <HourglassOutlined className="mr-1" />
               Yêu cầu đăng ký đang chờ giảng viên phê duyệt
             </Text>
@@ -245,57 +245,60 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
             block
             loading={isEnrolling}
             onClick={handleEnroll}
-            className="detail-course-primary-btn !h-12 !rounded-xl !text-sm !font-semibold md:!text-base"
+            className="detail-course-primary-btn !h-9 !rounded-lg !text-[12px] !font-semibold"
           >
             Đăng ký ngay
           </Button>
         )}
       </div>
 
-      <div className="detail-course-soft-banner mb-5">
-        <SafetyCertificateOutlined className="text-state-500-secondary text-xl" />
-        <Text className="text-sm text-[var(--primaryColor)]">Đảm bảo hoàn tiền trong 30 ngày</Text>
+      <div className="detail-course-soft-banner">
+        <SafetyCertificateOutlined className="text-state-500-secondary text-base" />
+        <Text className="text-xs text-[var(--primaryColor)]">Đảm bảo hoàn tiền trong 30 ngày</Text>
       </div>
 
-      <div className="mb-5 space-y-3">
-        <h4 className="text-base font-bold text-[var(--primaryColor)]">Khóa học bao gồm:</h4>
-        <div className="space-y-2.5 text-sm">
-          <div className="flex items-center gap-3 text-gray-600">
+      <div className="space-y-1.5">
+        <h4 className="text-[13px] font-bold text-[var(--primaryColor)]">Khóa học bao gồm:</h4>
+        <div className="grid grid-cols-1 gap-x-2.5 gap-y-1.5 text-[12px] sm:grid-cols-2">
+          <div className="flex items-center gap-2.5 text-gray-600">
             <CheckCircleOutlined className="text-state-500-primary" />
             <span>{course.duration || '12h 30m'} video theo yêu cầu</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-600">
+          <div className="flex items-center gap-2.5 text-gray-600">
             <CheckCircleOutlined className="text-state-500-primary" />
             <span>{course.lessons} bài học</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-600">
+          <div className="flex items-center gap-2.5 text-gray-600">
             <CheckCircleOutlined className="text-state-500-primary" />
             <span>Tài liệu tải xuống</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-600">
+          <div className="flex items-center gap-2.5 text-gray-600">
             <CheckCircleOutlined className="text-state-500-primary" />
             <span>Chứng chỉ hoàn thành</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-600">
+          <div className="flex items-center gap-2.5 text-gray-600">
             <CheckCircleOutlined className="text-state-500-primary" />
             <span>Truy cập trọn đời</span>
           </div>
         </div>
       </div>
 
-      <div className="detail-course-surface mb-5 space-y-2.5 p-3.5">
-        <h5 className="text-sm font-semibold uppercase tracking-wide text-[var(--primaryColor)]">Thông tin khóa học</h5>
-        {detailFacts.map((item) => (
-          <div key={item.key} className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2 text-gray-500">
-              {item.icon} {item.label}
-            </span>
-            <span className="text-right font-semibold text-[var(--primaryColor)]">{item.value}</span>
-          </div>
-        ))}
+      <div className="detail-course-surface space-y-2 p-2.5">
+        <h5 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--primaryColor)]">Thông tin khóa học</h5>
+        <div className="detail-course-facts-grid">
+          {detailFacts.map((item) => (
+            <div key={item.key} className="detail-course-fact-item">
+              <span className="detail-course-fact-label">
+                {item.icon}
+                {item.label}
+              </span>
+              <p className="detail-course-fact-value">{item.value}</p>
+            </div>
+          ))}
+        </div>
 
-        <div className="flex items-start justify-between gap-3">
-          <span className="flex items-center gap-2 text-gray-500">
+        <div className="detail-course-schedule-row">
+          <span className="flex items-center gap-1 text-[11px] text-gray-500">
             <ClockCircleOutlined className="text-state-500-primary" /> Lịch học
           </span>
           {course.schedule?.length ? (
@@ -305,13 +308,13 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
               ))}
             </div>
           ) : (
-            <span className="text-right text-sm font-semibold text-[var(--primaryColor)]">Linh hoạt</span>
+            <span className="text-right text-[12px] font-semibold text-[var(--primaryColor)]">Linh hoạt</span>
           )}
         </div>
       </div>
 
       {course.tags?.length ? (
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {course.tags.map((tag) => (
             <Tag key={tag} className="detail-course-tag-pill">
               #{tag}
@@ -320,12 +323,12 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
         </div>
       ) : null}
 
-      <div className="detail-course-surface mb-5 p-3.5">
-        <div className="flex items-center gap-3">
-          <Avatar src={course.teacher?.avatar} size={48} />
+      <div className="detail-course-surface p-2.5">
+        <div className="flex items-center gap-2.5">
+          <Avatar src={course.teacher?.avatar} size={34} />
           <div>
-            <Text className="block font-semibold text-[var(--primaryColor)]">{course.teacher?.name}</Text>
-            <Text className="text-gray-500 text-sm">Giảng viên</Text>
+            <Text className="block text-[12px] font-semibold text-[var(--primaryColor)]">{course.teacher?.name}</Text>
+            <Text className="text-xs text-gray-500">Giảng viên</Text>
           </div>
         </div>
       </div>
@@ -334,23 +337,23 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course }) => {
         type="text"
         icon={<FlagOutlined />}
         onClick={() => setReportModalOpen(true)}
-        className="!text-gray-400 hover:!text-red-500 w-full"
+        className="w-full !text-xs !text-gray-400 hover:!text-red-500"
       >
         Báo cáo khóa học
       </Button>
 
-      <div className="flex justify-center gap-3 pt-6 border-t border-gray-100 mt-4">
+      <div className="flex justify-center gap-2 border-t border-gray-100 pt-2.5">
         <Tooltip title="Chia sẻ trên Facebook">
-          <Button shape="circle" icon={<FacebookOutlined />} className="detail-course-social-btn" />
+          <Button shape="circle" icon={<FacebookOutlined />} className="detail-course-social-btn !h-7 !w-7" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên Twitter">
-          <Button shape="circle" icon={<TwitterOutlined />} className="detail-course-social-btn" />
+          <Button shape="circle" icon={<TwitterOutlined />} className="detail-course-social-btn !h-7 !w-7" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên YouTube">
-          <Button shape="circle" icon={<YoutubeOutlined />} className="detail-course-social-btn" />
+          <Button shape="circle" icon={<YoutubeOutlined />} className="detail-course-social-btn !h-7 !w-7" />
         </Tooltip>
         <Tooltip title="Chia sẻ trên Instagram">
-          <Button shape="circle" icon={<InstagramOutlined />} className="detail-course-social-btn" />
+          <Button shape="circle" icon={<InstagramOutlined />} className="detail-course-social-btn !h-7 !w-7" />
         </Tooltip>
       </div>
 

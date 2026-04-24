@@ -140,24 +140,24 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
   ];
 
   return (
-    <div className="py-2">
-      <div className="detail-course-rating-summary mb-6 p-6">
-        <div className="flex flex-col items-center gap-6 md:flex-row">
+    <div className="py-1">
+      <div className="detail-course-rating-summary mb-4 p-4">
+        <div className="flex flex-col items-center gap-4 md:flex-row">
           <div className="text-center">
-            <h1 className="mb-1 text-5xl font-bold">{ratingSummary.average.toFixed(1)}</h1>
+            <h1>{ratingSummary.average.toFixed(1)}</h1>
             <Rate disabled value={ratingSummary.average || 0} allowHalf className="text-state-light-orange" />
-            <p className="mt-1 text-sm text-blue-100">Dựa trên {ratingSummary.total} đánh giá</p>
+            <p className="mt-1 text-xs text-blue-100">Dựa trên {ratingSummary.total} đánh giá</p>
           </div>
           <div className="w-full flex-1">
             {ratingSummary.breakdown.map(({ star, percent }) => {
               return (
                 <div
                   key={star}
-                  className="mb-2.5 flex cursor-pointer items-center gap-2.5 transition-opacity hover:opacity-80"
+                  className="mb-1.5 flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
                   onClick={() => setFilterRating(filterRating === star ? null : star)}
                 >
-                  <div className="flex w-16 items-center gap-1">
-                    <span className="font-medium text-white">{star}</span>
+                  <div className="flex w-14 items-center gap-1">
+                    <span className="text-sm font-medium text-white">{star}</span>
                     <Rate disabled defaultValue={1} count={1} className="text-state-light-orange text-xs" />
                   </div>
                   <Progress
@@ -167,7 +167,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
                     showInfo={false}
                     className="flex-1"
                   />
-                  <span className="w-16 text-right text-blue-100">{percent}%</span>
+                  <span className="w-12 text-right text-xs text-blue-100">{percent}%</span>
                 </div>
               );
             })}
@@ -175,16 +175,16 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
         </div>
       </div>
 
-      <div className="detail-course-surface mb-5 flex flex-wrap items-center justify-between gap-3 p-3">
+      <div className="detail-course-surface mb-4 flex flex-wrap items-center justify-between gap-2 p-2.5">
         <div className="flex items-center gap-2">
           <FilterOutlined className="text-state-500-primary" />
-          <Text className="text-sm text-gray-500">Lọc theo:</Text>
+          <Text className="text-xs text-gray-500">Lọc theo:</Text>
           <Select
             value={filterRating ?? undefined}
             onChange={value => setFilterRating(value ?? null)}
             placeholder="Tất cả đánh giá"
             allowClear
-            className="w-32"
+            className="w-28"
             options={[
               { value: 5, label: '5 Sao' },
               { value: 4, label: '4 Sao' },
@@ -194,7 +194,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
             ]}
           />
         </div>
-        <Text className="text-sm text-gray-500">
+        <Text className="text-xs text-gray-500">
           Hiển thị {filteredReviews.length} trên {ratingSummary.total} đánh giá
         </Text>
       </div>
@@ -204,20 +204,20 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
         dataSource={filteredReviews}
         locale={{ emptyText: 'Chưa có đánh giá phù hợp.' }}
         renderItem={(item) => (
-          <List.Item className="detail-course-review-card mb-3 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+          <List.Item className="detail-course-review-card mb-2.5 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
             <List.Item.Meta
               avatar={
                 <Avatar
                   src={item.avatar}
-                  size={48}
+                  size={40}
                   className="border-2 border-gray-100"
                 />
               }
               title={
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="mb-1 text-base font-bold text-[var(--primaryColor)]">{item.user}</h4>
-                    <div className="flex items-center gap-3">
+                    <h4 className="mb-1 text-[13px] font-bold text-[var(--primaryColor)]">{item.user}</h4>
+                    <div className="flex items-center gap-2">
                       <Rate disabled value={item.rate} className="text-sm text-state-light-orange" />
                       <Tag className="!rounded-full !border-none !bg-[rgba(48,194,236,0.16)] !text-[var(--textState500Secondary)]">
                         {item.role}
@@ -225,7 +225,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-sm flex items-center gap-1">
+                    <span className="flex items-center gap-1 text-xs text-gray-400">
                       <ClockCircleOutlined /> {item.date}
                     </span>
                     <Dropdown menu={{ items: getMenuItems(item) }} trigger={['click']}>
@@ -235,23 +235,23 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
                 </div>
               }
               description={
-                <div className="mt-3">
-                  <p className="text-sm leading-relaxed text-gray-600 md:text-base">{item.content}</p>
+                <div className="mt-2.5">
+                  <p className="text-[13px] leading-relaxed text-gray-600">{item.content}</p>
 
                   {item.images && item.images.length > 0 && (
-                    <div className="flex gap-2 mt-4">
+                    <div className="mt-3 flex gap-2">
                       {item.images.map((img, idx) => (
                         <img
                           key={idx}
                           src={img}
                           alt="Review attachment"
-                          className="w-20 h-20 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                          className="h-16 w-16 cursor-pointer rounded-md object-cover hover:opacity-80"
                         />
                       ))}
                     </div>
                   )}
 
-                  <div className="mt-3 flex items-center gap-4 border-t border-gray-100 pt-3">
+                  <div className="mt-2 flex items-center gap-2.5 border-t border-gray-100 pt-2">
                     <Tooltip title="Hữu ích">
                       <Button
                         type="text"
@@ -280,17 +280,17 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
         )}
       />
 
-      <div className="detail-course-surface mt-6 p-6">
-        <h3 className="mb-1 text-xl font-bold text-[var(--primaryColor)]">Viết đánh giá</h3>
-        <p className="mb-4 text-sm text-gray-500">Chia sẻ trải nghiệm của bạn về khóa học này</p>
+      <div className="detail-course-surface mt-4 p-4">
+        <h3 className="mb-1 text-[15px] font-bold text-[var(--primaryColor)]">Viết đánh giá</h3>
+        <p className="mb-3 text-xs text-gray-500">Chia sẻ trải nghiệm của bạn về khóa học này</p>
 
-        <Form form={form} onFinish={handleFinishReview} layout="vertical" size="large">
+        <Form form={form} onFinish={handleFinishReview} layout="vertical">
           <Form.Item
             name="rate"
             label={<span className="font-medium">Đánh giá của bạn</span>}
             rules={[{ required: true, message: 'Vui lòng chọn mức đánh giá' }]}
           >
-            <Rate className="text-2xl text-state-light-orange" />
+            <Rate className="text-xl text-state-light-orange" />
           </Form.Item>
 
           <Form.Item
@@ -307,7 +307,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
             rules={[{ required: true, message: 'Vui lòng viết đánh giá' }]}
           >
             <TextArea
-              rows={5}
+              rows={4}
               placeholder="Bạn thích hoặc không thích điều gì về khóa học? Giảng viên thế nào? Bạn có giới thiệu không?"
               className="!rounded-lg"
               showCount
@@ -319,7 +319,7 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
             <Upload listType="picture-card" maxCount={5} beforeUpload={() => false}>
               <div className="text-gray-400">
                 <UploadOutlined className="text-xl" />
-                <div className="mt-2 text-sm">Tải lên</div>
+                <div className="mt-2 text-[13px]">Tải lên</div>
               </div>
             </Upload>
           </Form.Item>
@@ -328,8 +328,8 @@ const ReviewsTab: React.FC<ReviewsTabProps> = ({ reviews, stats }) => {
             <Button
               type="primary"
               htmlType="submit"
-              size="large"
-              className="detail-course-primary-btn !h-12 !rounded-xl !px-8"
+              size="middle"
+              className="detail-course-primary-btn !h-10 !rounded-lg !px-6 !text-[13px]"
             >
               Gửi đánh giá
             </Button>

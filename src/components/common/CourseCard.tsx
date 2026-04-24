@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Tag } from 'antd';
+import { Button } from 'antd';
 import {
   ClockCircleOutlined,
   BookOutlined,
@@ -15,6 +15,7 @@ import Badge from './Tag';
 interface CourseCardProps {
   course: Course;
   layout?: 'vertical' | 'horizontal';
+  compact?: boolean;
 }
 
 const formatPrice = (value: number): string => {
@@ -35,7 +36,7 @@ const levelLabel: Record<string, string> = {
   all: 'Mọi trình độ',
 };
 
-const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical' }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical', compact = false }) => {
   const isHorizontal = layout === 'horizontal';
   const coursePrice = Number(course.price) || 0;
   const discountPrice = course.discountPrice ? Number(course.discountPrice) : null;
@@ -44,13 +45,24 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical' }) 
   const totalReviews = Number(course.totalReviews) || 0;
   const hasDiscount = discountPrice !== null && discountPrice > 0 && discountPrice < coursePrice;
 
+  const imageClass = isHorizontal
+    ? compact
+      ? 'h-[164px] md:h-[164px] md:w-48 md:min-w-48'
+      : 'h-44 md:h-44 md:w-64 md:min-w-64'
+    : compact
+      ? 'h-40'
+      : 'h-44';
+
+  const contentClass = compact ? 'p-3' : 'p-4';
+  const descriptionClampClass = isHorizontal && compact ? 'line-clamp-1' : 'line-clamp-2';
+
   return (
     <article
-      className={`group h-full overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
+      className={`group h-full overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
         isHorizontal ? 'md:flex md:items-stretch' : 'flex flex-col'
       }`}
     >
-      <div className={`relative overflow-hidden ${isHorizontal ? 'h-44 md:h-auto md:w-64 md:min-w-64' : 'h-44'}`}>
+      <div className={`relative overflow-hidden ${imageClass}`}>
         <img 
           src={course.image} 
           alt={course.title} 
@@ -62,7 +74,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical' }) 
               type="primary" 
               shape="round"
               size="small"
-              className="transition-all duration-300"
+              className="!h-7 !px-2.5 !text-[12px] transition-all duration-300"
               style={{
                 backgroundColor: 'var(--textState500Secondary)',
                 borderColor: 'var(--textState500Secondary)',
@@ -73,70 +85,70 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, layout = 'vertical' }) 
           </Link>
         </div>
         <div className="absolute top-3 left-3">
-          <Badge color="blue" className="!rounded-full !border-none !px-2">{course.category}</Badge>
-          <Tag
-            className="!rounded-full !border-none !px-2"
-            style={{ backgroundColor: 'var(--primaryColor50)', color: 'var(--textState500Secondary)' }}
-          >
+          <Badge color="blue" className="!rounded-full !border-none !px-2 !py-0.5 !text-[12px]">
             {course.category}
-          </Tag>
+          </Badge>
         </div>
       </div>
       
-      <div className="flex flex-1 flex-col p-4">
-        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5">
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <StarFilled style={{ color: 'var(--textStateLightOrange)' }} />
-            <span>{rating.toFixed(1)} ({totalReviews})</span>
+      <div className={`flex flex-1 flex-col ${contentClass} ${isHorizontal && compact ? 'justify-between' : ''}`}>
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1 text-[12px] text-gray-500">
+              <StarFilled style={{ color: 'var(--textStateLightOrange)' }} />
+              <span>{rating.toFixed(1)} ({totalReviews})</span>
+            </div>
+            <span
+              className="rounded-full px-2 py-0.5 text-[12px] font-semibold"
+              style={{
+                backgroundColor: 'var(--primaryColor50)',
+                color: 'var(--textState500Primary)',
+              }}
+            >
+              {levelLabel[course.level || 'all'] || 'Mọi trình độ'}
+            </span>
           </div>
-          <span
-            className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-            style={{
-              backgroundColor: 'var(--primaryColor50)',
-              color: 'var(--textState500Primary)',
-            }}
-          >
-            {levelLabel[course.level || 'all'] || 'Mọi trình độ'}
-          </span>
+
+          <h3 className="line-clamp-2 text-[14px] font-semibold transition-colors group-hover:text-[var(--textState500Secondary)]" style={{ color: 'var(--primaryColor)' }}>
+            <Link to={`/courses/${course.id}`}>{course.title}</Link>
+          </h3>
+
+          <p className={`${descriptionClampClass} text-[12px] text-gray-500`}>
+            {course.description || 'Khóa học được thiết kế thực hành và bám sát nhu cầu thực tế.'}
+          </p>
+
+          <div className="flex items-center gap-1.5">
+            <BookOutlined style={{ color: 'var(--textState500Secondary)' }} />
+            <span className="text-[12px] text-gray-500">{course.author}</span>
+          </div>
+
+          <div className={`grid gap-x-2 gap-y-1 text-[12px] text-gray-500 ${isHorizontal ? 'sm:grid-cols-3' : 'grid-cols-2'}`}>
+            <div className="flex items-center gap-1.5">
+              <ClockCircleOutlined style={{ color: 'var(--textState500Primary)' }} />
+              <span>{course.duration}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CalendarOutlined style={{ color: 'var(--textState500Primary)' }} />
+              <span>{course.lessons} bài học</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <TeamOutlined style={{ color: 'var(--textState500Primary)' }} />
+              <span>{totalStudents} học viên</span>
+            </div>
+          </div>
         </div>
 
-        <h3 className="mb-1.5 line-clamp-2 text-base font-bold transition-colors group-hover:text-[var(--textState500Secondary)]" style={{ color: 'var(--primaryColor)' }}>
-          <Link to={`/courses/${course.id}`}>{course.title}</Link>
-        </h3>
-
-        <p className="mb-2 line-clamp-2 text-xs text-gray-500">{course.description || 'Khóa học được thiết kế thực hành và bám sát nhu cầu thực tế.'}</p>
-        
-        <div className="mb-2 flex items-center gap-1.5">
-          <BookOutlined style={{ color: 'var(--textState500Secondary)' }} />
-          <span className="text-xs text-gray-500">{course.author}</span>
-        </div>
-
-        <div className={`grid gap-1.5 text-xs text-gray-500 ${isHorizontal ? 'sm:grid-cols-3' : 'grid-cols-2'}`}>
-          <div className="flex items-center gap-1.5">
-            <ClockCircleOutlined style={{ color: 'var(--textState500Primary)' }} />
-            <span>{course.duration}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CalendarOutlined style={{ color: 'var(--textState500Primary)' }} />
-            <span>{course.lessons} bài học</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <TeamOutlined style={{ color: 'var(--textState500Primary)' }} />
-            <span>{totalStudents} học viên</span>
-          </div>
-        </div>
-
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-2 border-t border-gray-100 pt-3">
+        <div className={`flex flex-wrap items-end justify-between gap-2 border-t border-gray-100 ${isHorizontal && compact ? 'mt-1.5 pt-1.5' : 'mt-auto pt-2'}`}>
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1 text-gray-500 text-xs">
+            <div className="flex items-center gap-1 text-[12px] text-gray-500">
               <CalendarOutlined style={{ color: 'var(--textState500Primary)' }} />
               <span>Bắt đầu: {formatDate(course.startDate)}</span>
             </div>
-            {course.language && <span className="text-xs text-gray-500">Ngôn ngữ: {course.language}</span>}
+            {course.language && <span className="text-[12px] text-gray-500">Ngôn ngữ: {course.language}</span>}
           </div>
           <div className="text-right">
-            {hasDiscount && <div className="text-xs text-gray-400 line-through">{formatPrice(coursePrice)}</div>}
-            <div className="flex items-center justify-end gap-1 text-base font-bold" style={{ color: 'var(--textState500Secondary)' }}>
+            {hasDiscount && <div className="text-[12px] text-gray-400 line-through">{formatPrice(coursePrice)}</div>}
+            <div className="flex items-center justify-end gap-1 text-[14px] font-semibold" style={{ color: 'var(--textState500Secondary)' }}>
               <DollarCircleOutlined />
               <span>{formatPrice(hasDiscount ? discountPrice || coursePrice : coursePrice)}</span>
             </div>

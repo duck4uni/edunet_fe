@@ -28,7 +28,6 @@ import {
   LockOutlined,
   ReloadOutlined,
   UnlockOutlined,
-  UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -36,7 +35,6 @@ import { PageHeader, StatusBadge } from '../../../../components/admin';
 import {
   useDeleteCourseMutation,
   useGetCourseByIdQuery,
-  usePublishCourseByIdMutation,
   useReviewCourseMutation,
   useUpdateCourseMutation,
 } from '../../../../services/courseApi';
@@ -107,7 +105,6 @@ const AdminCourseDetail: React.FC = () => {
   );
 
   const [reviewCourse, { isLoading: isReviewing }] = useReviewCourseMutation();
-  const [publishCourse, { isLoading: isPublishing }] = usePublishCourseByIdMutation();
   const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
   const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
 
@@ -168,17 +165,6 @@ const AdminCourseDetail: React.FC = () => {
       refetch();
     } catch {
       notify.error('Không thể từ chối khóa học');
-    }
-  };
-
-  const handlePublish = async (): Promise<void> => {
-    if (!id) return;
-    try {
-      await publishCourse(id).unwrap();
-      notify.success('Đã xuất bản khóa học');
-      refetch();
-    } catch {
-      notify.error('Không thể xuất bản khóa học');
     }
   };
 
@@ -332,14 +318,7 @@ const AdminCourseDetail: React.FC = () => {
         )}
 
         {course.status === 'approved' && (
-          <Button
-            type="primary"
-            icon={<UploadOutlined />}
-            loading={isPublishing}
-            onClick={handlePublish}
-          >
-            Xuất bản
-          </Button>
+          <Text type="secondary">Chờ giảng viên công khai khóa học</Text>
         )}
 
         {(course.status === 'published' || course.status === 'archived') && (

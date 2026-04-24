@@ -33,14 +33,14 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({
   };
 
   return (
-    <div className="rounded-2xl border border-sky-100 bg-white p-3.5 shadow-sm md:p-4">
-      <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto pb-1">
-        <div className="flex min-w-max items-center gap-2">
-          <Title level={5} className="!mb-0 !text-base md:!text-lg" style={{ color: 'var(--primaryColor)' }}>
+    <div className="course-toolbar-panel rounded-[8px] border px-3 py-2 shadow-sm">
+      <div className="course-toolbar-row flex flex-wrap items-center gap-2 md:flex-nowrap">
+        <div className="course-toolbar-head flex items-center gap-2">
+          <Title level={5} className="!mb-0 !text-[14px] font-semibold" style={{ color: 'var(--primaryColor)' }}>
             Khám phá khóa học
           </Title>
-          <span className="text-xs text-gray-300">|</span>
-          <Text className="whitespace-nowrap text-xs text-gray-500 md:text-sm">
+          <span className="course-toolbar-divider inline-block h-4 w-px" aria-hidden="true" />
+          <Text className="whitespace-nowrap text-[13px]" style={{ color: 'var(--textState500Primary)' }}>
             Hiển thị
             <span className="font-semibold" style={{ color: 'var(--textState500Secondary)' }}>
               {' '}{totalCourses}
@@ -49,10 +49,8 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({
           </Text>
         </div>
 
-        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200" aria-hidden="true" />
-
-        <div className="flex shrink-0 items-center gap-2">
-          <Text className="text-xs text-gray-500">Dạng xem:</Text>
+        <div className="course-toolbar-view flex shrink-0 items-center gap-2">
+          <Text className="text-[13px]" style={{ color: 'var(--textState500Primary)' }}>Dạng xem:</Text>
           <Segmented
             size="small"
             value={view}
@@ -65,25 +63,25 @@ const SortAndSearch: React.FC<SortAndSearchProps> = ({
           />
         </div>
 
-        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200" aria-hidden="true" />
-
-        <Input
-          size="middle"
-          placeholder="Tìm tên khóa học hoặc giảng viên"
-          prefix={<SearchOutlined className="text-gray-400" />}
-          value={searchValue}
-          onChange={(event) => onSearchValueChange(event.target.value)}
-          className="!w-72 !rounded-lg !border-gray-200 hover:!border-[var(--textState500Primary)] focus:!border-[var(--textState500Primary)]"
-          allowClear
-        />
+        <div className="course-toolbar-search-wrap min-w-[220px] flex-1">
+          <Input
+            size="small"
+            placeholder="Tìm tên khóa học hoặc giảng viên"
+            prefix={<SearchOutlined className="course-toolbar-search-icon" />}
+            value={searchValue}
+            onChange={(event) => onSearchValueChange(event.target.value)}
+            className="course-toolbar-search !w-full !rounded-lg"
+            allowClear
+          />
+        </div>
 
         <Select
-          size="middle"
+          size="small"
           value={sortValue}
           onChange={(value) => onSortChange(value as CourseSortOption)}
-          className="!w-[170px]"
-          popupClassName="rounded-xl"
-          suffixIcon={<SortAscendingOutlined className="text-gray-400" />}
+          className="course-toolbar-sort !w-full md:!w-[168px]"
+          popupClassName="rounded-lg"
+          suffixIcon={<SortAscendingOutlined className="course-toolbar-sort-icon" />}
           options={[
             { value: 'newest', label: 'Mới cập nhật' },
             { value: 'popular', label: 'Nhiều học viên' },

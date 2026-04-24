@@ -48,15 +48,15 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
   ];
 
   return (
-    <div className="detail-course-main-card mb-6">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <div className="detail-course-main-card mb-2.5">
+      <div className="mb-1 flex flex-wrap items-center gap-1">
         <span className="detail-course-brand-pill">{course.category || 'Khóa học'}</span>
         <span className="detail-course-brand-pill detail-course-brand-pill-secondary">Được đề xuất</span>
       </div>
 
-      <h1 className="detail-course-title text-2xl font-bold text-[var(--primaryColor)] md:text-3xl">{course.title}</h1>
+      <h1 className="detail-course-title">{course.title}</h1>
 
-      <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-gray-500 md:text-sm">
+      <div className="detail-course-meta-row">
         <div className="detail-course-meta-chip">
           <Avatar src={course.teacher?.avatar} size="small" />
           <span className="font-medium text-[var(--primaryColor)]">{course.teacher?.name || 'Giảng viên Academix'}</span>
@@ -79,7 +79,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
         </div>
       </div>
 
-      <div className="detail-course-kpi-grid mb-5">
+      <div className="detail-course-kpi-grid mb-2.5">
         {stats.map((stat) => (
           <div key={stat.key} className="detail-course-kpi-item">
             <div className="detail-course-kpi-icon">{stat.icon}</div>
@@ -92,7 +92,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course, items }) => {
       </div>
 
       {course.tags?.length ? (
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="mb-2.5 flex flex-wrap gap-1">
           {course.tags.map((tag) => (
             <Tag key={tag} className="detail-course-tag-pill">
               #{tag}

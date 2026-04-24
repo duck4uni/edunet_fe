@@ -8,7 +8,7 @@ const DescriptionTab: React.FC<DescriptionTabProps> = ({ goal }) => {
   const hasGoal = Boolean(goal?.trim());
 
   return (
-    <div className="py-2">
+    <div className="py-0.5">
       <h3 className="detail-course-section-title">Bạn sẽ học được gì</h3>
       {hasGoal ? (
         <div dangerouslySetInnerHTML={{ __html: goal }} className="detail-course-richtext" />

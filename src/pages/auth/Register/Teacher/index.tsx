@@ -358,7 +358,8 @@ const RegisterTeacher: React.FC = () => {
           <div className="mb-5">
             <Title level={2} className="!text-[#0c4055] !mb-1 !text-3xl !font-bold">Đăng ký giảng viên</Title>
             <Text className="text-gray-600 text-base">
-              Hoàn thành 3 bước để gửi đơn đăng ký. Tài khoản cần được admin phê duyệt trước khi sử dụng.
+               Hoàn thành các bước dưới đây để tạo tài khoản.
+
             </Text>
           </div>
 
