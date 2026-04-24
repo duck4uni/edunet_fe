@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="mt-12 w-full overflow-hidden border-t border-[rgba(48,194,236,0.24)] bg-[linear-gradient(180deg,rgba(48,194,236,0.08)_0%,rgba(255,255,255,0.94)_36%,#ffffff_100%)]">
-      <div className="mx-auto w-full max-w-[1380px] px-4 pb-5 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-none px-[22px] pb-5 pt-6 sm:px-[22px] lg:px-[22px]">
         <div className="mb-5 rounded-2xl border border-[rgba(48,194,236,0.24)] bg-white/95 p-4 shadow-[0_8px_20px_rgba(2,40,72,0.06)]">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>

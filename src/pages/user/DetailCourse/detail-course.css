@@ -8,9 +8,10 @@
 }
 
 .detail-course-container {
-  width: min(96vw, 1320px);
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
-  padding: 0 0.72rem;
+  padding: 0 22px;
 }
 
 .detail-course-page,
@@ -402,6 +403,41 @@
 
 .detail-course-review-action.is-active {
   color: var(--textState500Secondary) !important;
+}
+
+/* Compact review form spacing */
+.detail-course-surface > h3 {
+  margin-bottom: 0.25rem !important;
+}
+
+.detail-course-surface > p {
+  margin-bottom: 0.75rem !important;
+}
+
+.detail-course-surface .ant-form {
+  margin: 0;
+}
+
+.detail-course-surface .ant-form-item {
+  margin-bottom: 0.65rem !important;
+}
+
+.detail-course-surface .ant-form-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.detail-course-surface .ant-form-item-label {
+  margin-bottom: 0.28rem !important;
+  padding-bottom: 0 !important;
+}
+
+.detail-course-surface .ant-form-item-label > label {
+  height: auto;
+  margin-bottom: 0 !important;
+}
+
+.detail-course-surface .ant-upload-list {
+  margin-top: 0.45rem !important;
 }
 
 @media (max-width: 1200px) {

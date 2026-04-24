@@ -132,9 +132,22 @@ export const useSchedule = () => {
   const todayEvents = useMemo(() => getEventsForDate(dayjs()), [getEventsForDate]);
 
   const upcomingEvents = useMemo(() => {
+    const now = dayjs();
+
     return calendarEvents
-      .filter(e => filterType === 'all' || e.type === filterType)
-      .sort((a, b) => dayjs(a.date).diff(dayjs(b.date)))
+      .filter(e => {
+        if (filterType !== 'all' && e.type !== filterType) {
+          return false;
+        }
+
+        const eventEnd = dayjs(`${dayjs(e.date).format('YYYY-MM-DD')} ${e.endTime}`);
+        return eventEnd.isAfter(now);
+      })
+      .sort((a, b) => {
+        const aDate = dayjs(`${dayjs(a.date).format('YYYY-MM-DD')} ${a.startTime}`);
+        const bDate = dayjs(`${dayjs(b.date).format('YYYY-MM-DD')} ${b.startTime}`);
+        return aDate.diff(bDate);
+      })
       .slice(0, 5);
   }, [calendarEvents, filterType]);
 

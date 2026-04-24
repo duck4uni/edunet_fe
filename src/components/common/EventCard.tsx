@@ -36,39 +36,48 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, compact = false, onClick }) => {
   const config = EVENT_TYPE_CONFIG[event.type as keyof typeof EVENT_TYPE_CONFIG];
+  const cardStyle: React.CSSProperties = {
+    borderColor: `${config.color}4D`,
+    backgroundColor: `${config.color}14`,
+  };
   
   return (
-    <div 
-      className={`p-4 rounded-xl border ${config.borderColor} ${config.bgColor} cursor-pointer hover:shadow-md transition-all`}
+    <div
+      className={`schedule-event-card ${compact ? 'is-compact' : ''}`}
+      style={cardStyle}
       onClick={() => onClick?.(event)}
     >
-      <div className="flex items-start gap-3">
-        <div 
-          className={`w-10 h-10 rounded-lg flex items-center justify-center ${config.textColor}`} 
-          style={{ backgroundColor: `${config.color}20` }}
+      <div className="schedule-event-card__inner">
+        <div
+          className="schedule-event-card__icon"
+          style={{ backgroundColor: `${config.color}24`, color: config.color }}
         >
           {getEventIcon(event.type)}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge color={config.color} className="!rounded-full !text-xs !m-0">
+        <div className="schedule-event-card__content">
+          <div className="schedule-event-card__top">
+            <Badge color={config.color} className="schedule-event-card__badge">
               {config.label}
             </Badge>
-            <Text className="text-xs text-gray-400">
+            <Text className="schedule-event-card__date">
               {dayjs(event.date).format('MMM D')}
             </Text>
           </div>
-          <Text className="font-semibold text-[#012643] block truncate">{event.title}</Text>
+          <Text className="schedule-event-card__title">{event.title}</Text>
+
+          <div className="schedule-event-card__time-row">
+            <span className="schedule-event-card__time-item">
+              <ClockCircleOutlined />
+              {event.startTime} - {event.endTime}
+            </span>
+          </div>
+
           {!compact && (
             <>
-              <Text className="text-sm text-gray-500 block truncate">{event.courseName}</Text>
-              <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <ClockCircleOutlined />
-                  {event.startTime} - {event.endTime}
-                </span>
+              <Text className="schedule-event-card__course">{event.courseName}</Text>
+              <div className="schedule-event-card__meta">
                 {event.instructor && (
-                  <span className="flex items-center gap-1">
+                  <span className="schedule-event-card__meta-item">
                     <UserOutlined />
                     {event.instructor}
                   </span>
