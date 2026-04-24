@@ -1,18 +1,180 @@
 /* ListCourse page-specific styles */
 
+.course-filter-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  color: #667085;
+}
+
+.course-filter-reset:hover {
+  background-color: #eef7ff !important;
+}
+
+.course-filter-reset {
+  color: #667085 !important;
+}
+
+.course-filter-active-tag {
+  line-height: 18px;
+}
+
+.course-filter-label {
+  letter-spacing: 0.08em;
+  color: #667085 !important;
+}
+
+.course-filter-panel h3 {
+  color: #475467;
+}
+
+.course-filter-section {
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 14px;
+}
+
+.course-filter-section:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.course-filter-chip {
+  border: 1px solid #d6e2ee;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #475467;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: all 0.2s ease;
+}
+
+.course-filter-chip:hover {
+  border-color: #9fc5e8;
+  background: #f5fbff;
+}
+
+.course-filter-chip.is-active {
+  border-color: var(--textState500Secondary);
+  background: var(--textState500Secondary);
+  color: #ffffff;
+  box-shadow: 0 8px 18px -14px rgba(14, 165, 233, 0.75);
+}
+
+.course-filter-level {
+  width: 100%;
+  border: 1px solid #dbe4ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #475467;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.25;
+  transition: all 0.2s ease;
+}
+
+.course-filter-level:hover {
+  border-color: #9fc5e8;
+  background: #f6fbff;
+}
+
+.course-filter-level.is-active {
+  border-color: var(--textState500Primary);
+  background: var(--primaryColor50);
+  color: #475467;
+}
+
+.course-toolbar-panel {
+  border-color: #dbe4ee;
+  background: var(--textStateWhite);
+}
+
+.course-toolbar-divider {
+  background: #edf2f7;
+}
+
+.course-toolbar-row {
+  width: 100%;
+}
+
+.course-toolbar-search-wrap {
+  flex: 1 1 auto;
+}
+
+.course-toolbar-search.ant-input-affix-wrapper {
+  border-color: #dbe4ee !important;
+  min-height: 24px !important;
+  height: 24px !important;
+  padding: 0 8px !important;
+  border-radius: 8px !important;
+}
+
+.course-toolbar-sort .ant-select-selector {
+  border-color: #dbe4ee !important;
+  min-height: 24px !important;
+  height: 24px !important;
+  padding: 0 8px !important;
+  border-radius: 8px !important;
+}
+
+.course-toolbar-search .ant-input,
+.course-toolbar-sort .ant-select-selection-item,
+.course-toolbar-sort .ant-select-selection-placeholder {
+  font-size: 12px !important;
+  color: var(--primaryColor) !important;
+}
+
+.course-toolbar-search .ant-input {
+  line-height: 20px !important;
+}
+
+.course-toolbar-sort .ant-select-selection-item,
+.course-toolbar-sort .ant-select-selection-placeholder {
+  line-height: 22px !important;
+}
+
+.course-toolbar-search-icon,
+.course-toolbar-sort-icon {
+  color: var(--textState500Secondary) !important;
+}
+
+.course-toolbar-search:hover,
+.course-toolbar-sort:hover .ant-select-selector {
+  border-color: #d6e2ee !important;
+}
+
+.course-toolbar-search.ant-input-affix-wrapper-focused,
+.course-toolbar-sort.ant-select-focused .ant-select-selector {
+  border-color: #dbe4ee !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1024px) {
+  .course-toolbar-head,
+  .course-toolbar-view {
+    width: 100%;
+  }
+
+  .course-toolbar-search-wrap,
+  .course-toolbar-sort {
+    width: 100%;
+  }
+}
+
 .course-list-segmented .ant-segmented-item-selected {
   background-color: var(--textState500Secondary) !important;
   color: var(--textStateWhite) !important;
 }
 
 .course-list-segmented.ant-segmented {
-  padding: 2px !important;
+  padding: 1px !important;
+  min-height: 24px;
 }
 
 .course-list-segmented .ant-segmented-item-label {
-  padding: 2px 10px !important;
+  padding: 1px 8px !important;
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 20px;
 }
 
 .course-list-segmented .ant-segmented-item-selected .anticon,
@@ -22,6 +184,10 @@
 
 .course-filter-slider .ant-slider-track {
   background-color: var(--textState500Secondary) !important;
+}
+
+.course-filter-slider .ant-slider-rail {
+  background-color: #e8eef4 !important;
 }
 
 .course-filter-slider .ant-slider-handle::after {

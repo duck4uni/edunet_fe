@@ -24,6 +24,7 @@ import {
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
@@ -34,6 +35,7 @@ import {
   useCreateCourseMutation,
   useGetCategoriesQuery,
   useGetCoursesQuery,
+  usePublishCourseByIdMutation,
   useSubmitCourseForReviewMutation,
   useUpdateCourseMutation,
 } from '../../../services/courseApi';
@@ -70,6 +72,7 @@ const TeacherDashboard: React.FC = () => {
   const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
   const [createRecurringSchedule, { isLoading: isCreatingSchedule }] = useCreateRecurringScheduleMutation();
   const [submitForReview, { isLoading: isSubmitting }] = useSubmitCourseForReviewMutation();
+  const [publishCourseById, { isLoading: isPublishing }] = usePublishCourseByIdMutation();
 
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -254,7 +257,7 @@ const TeacherDashboard: React.FC = () => {
           teacherId: user?.id,
         }).unwrap();
         courseId = createdCourse.data?.id;
-        notify.success('Tạo khóa học thành công, khóa học đang chờ xét duyệt');
+        notify.success('Tạo khóa học thành công ở trạng thái bản nháp');
       }
 
       if (createTimetable && courseId) {
@@ -285,8 +288,19 @@ const TeacherDashboard: React.FC = () => {
     }
   };
 
+  const handlePublishCourse = async (courseId: string) => {
+    try {
+      await publishCourseById(courseId).unwrap();
+      notify.success('Đã công khai khóa học thành công');
+      refetch();
+    } catch {
+      notify.error('Không thể công khai khóa học, vui lòng thử lại');
+    }
+  };
+
   const canEdit = (course: Course) => course.status === 'draft' || course.status === 'rejected';
   const canSubmit = (course: Course) => course.status === 'draft' || course.status === 'rejected';
+  const canPublish = (course: Course) => course.status === 'approved';
 
   const getCourseCount = (course: Course, numberKeys: string[], arrayKeys: string[] = []): number => {
     const rawCourse = course as unknown as Record<string, unknown>;
@@ -412,6 +426,20 @@ const TeacherDashboard: React.FC = () => {
             >
               <Button size="small" type="primary" icon={<SendOutlined />} loading={isSubmitting}>
                 Gửi duyệt
+              </Button>
+            </Popconfirm>
+          )}
+
+          {canPublish(record) && (
+            <Popconfirm
+              title="Công khai khóa học này?"
+              description="Khóa học sẽ hiển thị cho học viên và mở đăng ký."
+              onConfirm={() => handlePublishCourse(record.id)}
+              okText="Công khai"
+              cancelText="Hủy"
+            >
+              <Button size="small" type="primary" ghost icon={<UploadOutlined />} loading={isPublishing}>
+                Công khai
               </Button>
             </Popconfirm>
           )}

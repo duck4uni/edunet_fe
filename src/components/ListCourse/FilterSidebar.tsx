@@ -49,9 +49,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const categories = categoriesData?.data?.rows || [];
 
   return (
-    <aside className="h-full rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-bold" style={{ color: 'var(--primaryColor)' }}>
+    <aside className="course-filter-panel h-full rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_8px_26px_-20px_rgba(15,23,42,0.45)]">
+      <div className="mb-1 flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+        <h3 className="text-[12px] font-semibold uppercase tracking-[0.04em]">
           Bộ lọc khóa học
         </h3>
         <Button
@@ -59,20 +59,19 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           size="small"
           icon={<ReloadOutlined />}
           onClick={onReset}
-          className="!px-1 font-medium"
-          style={{ color: 'var(--textState500Secondary)' }}
+          className="course-filter-reset !h-7 !px-1.5 !text-[11px] font-medium"
         >
           Đặt lại
         </Button>
       </div>
 
       {(selectedCategoryId || selectedLevel !== 'all' || minimumRating > 0) && (
-        <div className="mb-4 flex flex-wrap gap-1.5">
+        <div className="mb-3.5 flex flex-wrap gap-1.5">
           {selectedCategoryId && (
             <Tag
               closable
               onClose={() => onCategoryChange(undefined)}
-              className="!rounded-full !border-none !px-2 !py-0 !text-xs"
+              className="course-filter-active-tag !rounded-full !border-none !px-2 !py-0.5 !text-[11px]"
               style={{
                 backgroundColor: 'var(--textState500Secondary)',
                 color: 'var(--textStateWhite)',
@@ -81,22 +80,18 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               {categories.find((category) => category.id === selectedCategoryId)?.name || 'Danh mục đã chọn'}
             </Tag>
           )}
-          {selectedLevel !== 'all' && (
-            <Tag className="!rounded-full !border-none !px-2 !py-0 !text-xs" style={{ backgroundColor: 'var(--primaryColor50)' }}>
-              {LEVEL_OPTIONS.find((item) => item.value === selectedLevel)?.label}
-            </Tag>
-          )}
+       
           {minimumRating > 0 && (
-            <Tag className="!rounded-full !border-none !px-2 !py-0 !text-xs" style={{ backgroundColor: 'var(--textStateLightOrange)' }}>
+            <Tag className="course-filter-active-tag !rounded-full !border-none !px-2 !py-0.5 !text-[11px]" style={{ backgroundColor: 'var(--textStateLightOrange)' }}>
               <StarFilled /> {minimumRating}+ sao
             </Tag>
           )}
         </div>
       )}
 
-      <div className="space-y-5">
-        <section>
-          <Text className="mb-2 block text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--primaryColor)' }}>
+      <div className="space-y-4">
+        <section className="course-filter-section">
+          <Text className="course-filter-label mb-2 block text-[11px] font-semibold uppercase">
             Danh mục
           </Text>
           {isCategoriesLoading ? (
@@ -104,7 +99,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <Spin size="small" />
             </div>
           ) : (
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {categories.map((category) => {
                 const isActive = selectedCategoryId === category.id;
                 return (
@@ -112,12 +107,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     key={category.id}
                     type="button"
                     onClick={() => onCategoryChange(isActive ? undefined : category.id)}
-                    className="rounded-full border px-2.5 py-1 text-xs transition-all"
-                    style={{
-                      borderColor: isActive ? 'var(--textState500Secondary)' : '#dbeafe',
-                      color: isActive ? 'var(--textStateWhite)' : 'var(--primaryColor)',
-                      backgroundColor: isActive ? 'var(--textState500Secondary)' : 'transparent',
-                    }}
+                    className={`course-filter-chip ${isActive ? 'is-active' : ''}`}
                   >
                     {category.name}
                   </button>
@@ -127,11 +117,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           )}
         </section>
 
-        <section>
-          <Text className="mb-2 block text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--primaryColor)' }}>
+        <section className="course-filter-section">
+          <Text className="course-filter-label mb-2 block text-[11px] font-semibold uppercase">
             Trình độ
           </Text>
-          <div className="grid gap-1.5">
+          <div className="grid gap-2">
             {LEVEL_OPTIONS.map((levelOption) => {
               const isActive = selectedLevel === levelOption.value;
 
@@ -140,12 +130,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   key={levelOption.value}
                   type="button"
                   onClick={() => onLevelChange(levelOption.value)}
-                  className="rounded-lg border px-2.5 py-1.5 text-left text-xs transition-all"
-                  style={{
-                    borderColor: isActive ? 'var(--textState500Primary)' : '#e2e8f0',
-                    backgroundColor: isActive ? 'var(--primaryColor50)' : 'transparent',
-                    color: 'var(--primaryColor)',
-                  }}
+                  className={`course-filter-level ${isActive ? 'is-active' : ''}`}
                 >
                   {levelOption.label}
                 </button>
@@ -154,8 +139,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </div>
         </section>
 
-        <section>
-          <Text className="mb-2 block text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--primaryColor)' }}>
+        <section className="course-filter-section">
+          <Text className="course-filter-label mb-2 block text-[11px] font-semibold uppercase">
             Khoảng giá
           </Text>
           <Slider
@@ -167,18 +152,18 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             className="course-filter-slider"
             tooltip={{ formatter: (value) => formatPrice(value || 0) }}
           />
-          <div className="mt-1.5 flex justify-between text-xs text-gray-500">
+          <div className="mt-1.5 flex justify-between text-[12px] text-slate-500">
             <span>{formatPrice(priceRange[0])}</span>
             <span>{formatPrice(priceRange[1])}</span>
           </div>
         </section>
 
         <section>
-          <Text className="mb-2 block text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--primaryColor)' }}>
+          <Text className="course-filter-label mb-2 block text-[11px] font-semibold uppercase">
             Đánh giá tối thiểu
           </Text>
           <Rate
-            className="text-base"
+            className="text-[13px]"
             allowClear
             value={minimumRating}
             onChange={(value) => onMinimumRatingChange(value || 0)}

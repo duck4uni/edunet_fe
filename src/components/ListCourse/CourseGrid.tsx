@@ -14,7 +14,7 @@ interface CourseGridProps {
 }
 
 const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view = 'grid', className }) => {
-  const containerClassName = `flex min-h-0 flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-sm ${className || ''}`;
+  const containerClassName = `flex min-h-0 flex-col overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-sm ${className || ''}`;
 
   if (loading) {
     return (
@@ -33,8 +33,8 @@ const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view 
           <Empty
             description={
               <div className="mt-4">
-                <Text className="text-gray-500 text-lg">Không tìm thấy khóa học</Text>
-                <p className="mt-2 text-gray-400">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+                <Text className="text-[14px] text-gray-600">Không tìm thấy khóa học</Text>
+                <p className="mt-2 text-[12px] text-gray-400">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
               </div>
             }
           />
@@ -45,31 +45,31 @@ const CourseGrid: React.FC<CourseGridProps> = ({ courses, loading = false, view 
 
   return (
     <div className={containerClassName}>
-      <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-2.5">
-        <Text className="text-sm text-gray-600">
+      <div className="flex items-center justify-between border-b border-slate-100 bg-white px-3 py-2">
+        <Text className="text-[13px] text-gray-600">
           Kết quả phù hợp: <span className="font-semibold" style={{ color: 'var(--primaryColor)' }}>{courses.length}</span> khóa học
         </Text>
         <Tag
-          className="!rounded-full !border-none !px-2 !py-0.5 !text-xs"
+          className="!rounded-full !border-none !px-2 !py-0.5 !text-[12px]"
           style={{ backgroundColor: 'var(--primaryColor50)', color: 'var(--textState500Secondary)' }}
         >
           {view === 'grid' ? 'Hiển thị dạng lưới' : 'Hiển thị dạng danh sách'}
         </Tag>
       </div>
 
-      <div className="course-grid-scroll flex-1 overflow-y-auto p-4">
+      <div className="course-grid-scroll flex-1 overflow-y-auto p-3">
         {view === 'grid' ? (
-          <Row gutter={[16, 16]}>
+          <Row gutter={[12, 12]}>
             {courses.map((course) => (
               <Col xs={24} md={12} xl={8} key={course.id}>
-                <CourseCard course={course} layout="vertical" />
+                <CourseCard course={course} layout="vertical" compact />
               </Col>
             ))}
           </Row>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} layout="horizontal" />
+              <CourseCard key={course.id} course={course} layout="horizontal" compact />
             ))}
           </div>
         )}

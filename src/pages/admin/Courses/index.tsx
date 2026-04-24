@@ -41,7 +41,6 @@ const CourseManagement: React.FC = () => {
     total,
     fetchCourses,
     fetchReviews,
-    publishCourse,
     toggleCourseLock,
     deleteCourse,
     hideReview,
@@ -110,9 +109,8 @@ const CourseManagement: React.FC = () => {
         discountPrice: values.discountPrice ? Number(values.discountPrice) : undefined,
         totalLessons: values.totalLessons ? Number(values.totalLessons) : 0,
         startDate: values.startDate ? values.startDate.toISOString() : undefined,
-        // Admin create → backend sets status = published automatically
       }).unwrap();
-      notify.success('Tạo khóa học thành công — đã xuất bản ngay lập tức');
+      notify.success('Tạo khóa học thành công ở trạng thái bản nháp');
       setCreateModalOpen(false);
       createForm.resetFields();
       fetchCourses();
@@ -163,14 +161,6 @@ const CourseManagement: React.FC = () => {
         onClick: () => handleViewEnrollments(record),
       },
       { type: 'divider' as const },
-      ...(record.status === 'approved' ? [
-        {
-          key: 'publish',
-          icon: <CheckOutlined />,
-          label: 'Xuất bản',
-          onClick: () => publishCourse(record.id),
-        },
-      ] : []),
       ...(record.status === 'published' || record.status === 'archived' ? [
         {
           key: 'toggle',
@@ -631,7 +621,11 @@ const CourseManagement: React.FC = () => {
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="teacherId" label="Giảng viên (tuỳ chọn)">
+              <Form.Item
+                name="teacherId"
+                label="Giảng viên"
+                rules={[{ required: true, message: 'Vui lòng chọn giảng viên phụ trách khóa học' }]}
+              >
                 <Select placeholder="Chọn giảng viên" allowClear showSearch optionFilterProp="label">
                   {teachersData?.data?.rows?.map(t => (
                     <Option key={t.id} value={t.userId} label={t.user ? `${t.user.firstName} ${t.user.lastName}` : t.id}>

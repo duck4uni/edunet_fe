@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Layout, theme } from 'antd';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
+import SiteFooter from './Footer';
 import RouteBreadcrumb from './RouteBreadcrumb';
 import FloatingChatBot from '../Chat/FloatingChatBot';
 import socketService from '../../services/socketService';
@@ -11,7 +12,7 @@ import { useAppDispatch } from '../../redux/hooks';
 import { notify } from '../../utils/notify';
 import { useRouteSeo } from '../../hooks/useRouteSeo';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -85,9 +86,7 @@ const AppLayout: React.FC = () => {
       <Content>
         <Outlet />
       </Content>
-      <Footer style={{ textAlign: 'center', background: '#f0f2f5' }}>
-        Academix ©{new Date().getFullYear()} Được phát triển bởi Academix Team
-      </Footer>
+      <SiteFooter />
       <FloatingChatBot />
     </Layout>
   );

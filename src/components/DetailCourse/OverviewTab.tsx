@@ -8,7 +8,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ description }) => {
   const hasDescription = Boolean(description?.trim());
 
   return (
-    <div className="py-2">
+    <div className="py-0.5">
       <h3 className="detail-course-section-title">Tổng quan khóa học</h3>
       {hasDescription ? (
         <div dangerouslySetInnerHTML={{ __html: description }} className="detail-course-richtext" />

@@ -123,7 +123,7 @@ const DetailCourse: React.FC = () => {
   return (
     <div className="detail-course-page">
       <div className="detail-course-container">
-        <div className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
           <div>
             <CourseHeader course={courseData} items={items} />
           </div>

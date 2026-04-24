@@ -12,25 +12,25 @@ interface ContentTabProps {
 const ContentTab: React.FC<ContentTabProps> = ({ content }) => {
   if (!content?.length) {
     return (
-      <div className="py-4">
+      <div className="py-3">
         <Empty description="Nội dung khóa học đang được cập nhật" />
       </div>
     );
   }
 
   return (
-    <div className="py-2">
+    <div className="py-1">
       <Collapse defaultActiveKey={['0']} ghost className="detail-course-collapse">
         {content?.map((section, index) => (
           <Panel
             key={index}
             header={
-              <div className="flex items-center justify-between gap-4 pr-3">
-                <span className="text-base font-semibold text-[var(--primaryColor)] md:text-lg">
+              <div className="flex items-center justify-between gap-2 pr-2">
+                <span className="text-[13px] font-semibold text-[var(--primaryColor)] md:text-[14px]">
                   {typeof section.order === 'number' ? `Bài ${section.order}: ` : ''}
                   {section.title}
                 </span>
-                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 md:text-sm">
+                <div className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500">
                   {section.duration ? (
                     <span className="inline-flex items-center gap-1">
                       <ClockCircleOutlined className="text-state-500-primary" />
@@ -46,14 +46,14 @@ const ContentTab: React.FC<ContentTabProps> = ({ content }) => {
               {section.items.map((item, idx) => (
                 <li
                   key={idx}
-                  className="mb-2 flex items-center justify-between rounded-xl border border-[rgba(48,194,236,0.16)] bg-white px-3 py-2.5 last:mb-0"
+                  className="mb-1.5 flex items-center justify-between rounded-md border border-[rgba(48,194,236,0.16)] bg-white px-2.5 py-1.5 last:mb-0"
                 >
-                  <div className="flex flex-col gap-1 text-gray-600">
+                  <div className="flex flex-col gap-0.5 text-[12px] text-gray-600">
                     <div className="flex items-center gap-2">
                       <ReadOutlined className="text-state-500-secondary" />
                       <span>{item}</span>
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                    <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-gray-500">
                       {section.type ? (
                         <span className="inline-flex items-center gap-1">
                           <PlayCircleOutlined className="text-state-500-primary" />

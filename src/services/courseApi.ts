@@ -548,7 +548,7 @@ export const courseApi = createApi({
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Courses', id }, { type: 'Courses', id: 'LIST' }],
     }),
 
-    /** Admin: publish an approved course */
+    /** Teacher: publish own approved course */
     publishCourseById: builder.mutation<ApiResponse<Course>, string>({
       query: (id) => ({
         url: `/courses/${id}/publish`,
