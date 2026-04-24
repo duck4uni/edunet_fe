@@ -100,6 +100,46 @@ export interface QuizAttempt {
   quiz?: Quiz;
 }
 
+export interface TeacherQuizAttemptDetail {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  studentAvatar?: string | null;
+  status: 'in_progress' | 'completed' | 'timed_out';
+  score: number;
+  correctAnswers: number;
+  totalAnswered: number;
+  startedAt: string;
+  completedAt?: string | null;
+  timeSpent: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TeacherQuizAttemptSummary {
+  totalAttempts: number;
+  completedAttempts: number;
+  inProgressAttempts: number;
+  timedOutAttempts: number;
+  totalStudents: number;
+  averageScore: number;
+  highestScore: number;
+  passRate: number;
+}
+
+export interface TeacherQuizAttemptsReport {
+  quiz: {
+    id: string;
+    title: string;
+    totalQuestions: number;
+    maxAttempts: number;
+    passingScore: number;
+  };
+  summary: TeacherQuizAttemptSummary;
+  attempts: TeacherQuizAttemptDetail[];
+}
+
 // Schedule Types
 export interface Schedule {
   id: string;
@@ -351,6 +391,14 @@ export const learningApi = createApi({
       providesTags: ['QuizAttempts'],
     }),
 
+    getQuizAttemptsForTeacher: builder.query<ApiResponse<TeacherQuizAttemptsReport>, string>({
+      query: (quizId) => ({
+        url: `/quizzes/${quizId}/attempts/teacher`,
+        method: 'get',
+      }),
+      providesTags: ['QuizAttempts'],
+    }),
+
     getQuizAttemptById: builder.query<ApiResponse<QuizAttempt>, string>({
       query: (attemptId) => ({
         url: `/quizzes/attempts/${attemptId}`,
@@ -528,6 +576,7 @@ export const {
   useStartQuizAttemptMutation,
   useSubmitQuizAttemptMutation,
   useGetQuizAttemptsQuery,
+  useGetQuizAttemptsForTeacherQuery,
   useGetQuizAttemptByIdQuery,
   useGetQuizBestScoreQuery,
   useGetMyQuizProgressQuery,

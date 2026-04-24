@@ -15,9 +15,17 @@ import {
   Typography,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  BarChartOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import QuizQuestionManager from './QuizQuestionManager';
 import QuizGenerationDrawer from './QuizGenerationDrawer';
+import QuizAttemptsDrawer from './QuizAttemptsDrawer';
 import { notify } from '../../../../../utils/notify';
 import {
   type Quiz,
@@ -58,6 +66,7 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerationDrawerOpen, setIsGenerationDrawerOpen] = useState(false);
   const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
+  const [attemptsQuiz, setAttemptsQuiz] = useState<Quiz | null>(null);
   const [searchText, setSearchText] = useState('');
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
   const [questionManagerState, setQuestionManagerState] = useState<QuestionManagerState | null>(null);
@@ -191,7 +200,7 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
     {
       title: 'Hành động',
       key: 'action',
-      width: 180,
+      width: 220,
       render: (_value: unknown, record: Quiz) => (
         <Space size={4}>
           <Tooltip title="Quản lý câu hỏi">
@@ -206,6 +215,16 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
                   questions: record.questions,
                 });
               }}
+              size="small"
+            />
+          </Tooltip>
+          <Tooltip title="Theo dõi kết quả học viên">
+            <Button
+              type="text"
+              aria-label="Theo dõi kết quả học viên"
+              className="manage-action-icon-btn"
+              icon={<BarChartOutlined />}
+              onClick={() => setAttemptsQuiz(record)}
               size="small"
             />
           </Tooltip>
@@ -351,6 +370,12 @@ const QuizzesTab: React.FC<QuizzesTabProps> = ({ courseId }) => {
         onClose={() => setIsGenerationDrawerOpen(false)}
         courseId={courseId}
         onCreated={refetch}
+      />
+
+      <QuizAttemptsDrawer
+        open={!!attemptsQuiz}
+        onClose={() => setAttemptsQuiz(null)}
+        quiz={attemptsQuiz}
       />
 
       <QuizQuestionManager
