@@ -115,8 +115,10 @@ export {
   useStartQuizAttemptMutation,
   useSubmitQuizAttemptMutation,
   useGetQuizAttemptsQuery,
+  useGetQuizAttemptsForTeacherQuery,
   useGetQuizAttemptByIdQuery,
   useGetQuizBestScoreQuery,
+  useGetMyQuizProgressQuery,
   useGetSchedulesQuery,
   useGetUpcomingSchedulesQuery,
   useGetSchedulesByDateRangeQuery,
@@ -139,6 +141,9 @@ export type {
   Quiz,
   GenerateAiQuizRequest,
   QuizAttempt,
+  TeacherQuizAttemptDetail,
+  TeacherQuizAttemptSummary,
+  TeacherQuizAttemptsReport,
   Schedule,
 } from './learningApi';
 
